@@ -1,0 +1,83 @@
+{
+    "name": "freesurfer v5.3.0",
+    "description": "Runs Freesurfer v5.3.0 using vistalab/recon-all.",
+    "docker-image": "vistalab/recon-all",
+    "info-url": "https://github.com/vistalab/docker/tree/master/freesurfer/recon-all",
+    "run": {
+        "command-line": "recon-all #SUBJECT_ID# #OTHER_ARGS# -sd /output -i /input",
+        "mounts": [
+            {
+                "name": "input",
+                "type": "input",
+                "path": "/input",
+                "root": "$.inputs[name='resource']",
+            },
+            {
+                "name": "output",
+                "type": "output",
+                "path": "/output"
+            }
+        ]
+    },
+    "inputs": [
+        {
+            "name": "session",
+            "description": "Input session",
+            "type": "Session",
+            "required": true
+        },
+        {
+            "name": "label",
+            "description": "Session label. Used as Freesurfer subject identifier.",
+            "type": "string",
+            "required": true,
+            "root": "$.inputs[name='session']",
+            "property": "label",
+            "command-line-key": "#SUBJECT_ID#",
+            "command-line-flag": "-s"
+        },
+        {
+            "name": "T1",
+            "description": "Input T1 scan",
+            "type": "Scan",
+            "root": "$.inputs[name='session']",
+            "property": "scans"
+        },
+        {
+            "name": "resource",
+            "description": "Input resource: DICOM or NIFTI",
+            "type": "Resource",
+            "root": "$.inputs[name='T1']",
+            "property": "resources[label='DICOM|NIFTI']"
+        },
+        {
+            "name": "other-recon-all-args",
+            "description": "Arguments to pass to recon-all",
+            "default": "-all",
+            "command-line-key": "#OTHER_ARGS#"
+        }
+    ],
+    "outputs": [
+        {
+            "name": "fs",
+            "type": "Assessor",
+            "root": "$.inputs[name='session']",
+            "files": {
+                "type": "xml",
+                "root": "$.run.mounts[name='output']",
+                "path": "{$.inputs[name='label'].value}/fs.xml"
+            }
+        },
+        {
+            "name": "data",
+            "type": "Resource",
+            "root": "$.outputs[name='fs']",
+            "property": "resources[name='DATA']",
+            "files": {
+                "type": "directory",
+                "root": "$.run.mounts[name='output']",
+                "path": "{$.inputs[name='label'].value}"
+            }
+        }
+    ]
+}
