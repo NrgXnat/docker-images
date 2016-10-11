@@ -31,8 +31,8 @@
             "description": "Session label. Used as Freesurfer subject identifier.",
             "type": "string",
             "required": true,
-            "root": "$.inputs[name='session']",
-            "property": "label",
+            "parent": "session",
+            "parent-property": "label",
             "command-line-key": "#SUBJECT_ID#",
             "command-line-flag": "-s"
         },
@@ -40,15 +40,14 @@
             "name": "T1",
             "description": "Input T1 scan",
             "type": "Scan",
-            "root": "$.inputs[name='session']",
-            "property": "scans"
+            "parent": "session"
         },
         {
             "name": "resource",
             "description": "Input resource: DICOM or NIFTI",
             "type": "Resource",
-            "root": "$.inputs[name='T1']",
-            "property": "resources[label='DICOM|NIFTI']"
+            "parent": "T1",
+            "parent-property": "resources[label='DICOM|NIFTI']"
         },
         {
             "name": "other-recon-all-args",
