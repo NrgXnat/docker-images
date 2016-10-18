@@ -9,12 +9,12 @@
                 "name": "dicom-in",
                 "type": "input",
                 "path": "/input",
-                "parent": "scan-dicoms"
+                "file-input": "scan-dicoms"
             },
             {
                 "name": "nifti-out",
                 "type": "output",
-                "path": "/output",
+                "path": "/output"
             }
         ]
     },
@@ -42,7 +42,6 @@
             "parent": "scan",
             "label": "NIFTI",
             "files": {
-                "type": "directory",
                 "mount": "nifti-out"
             }
         }
