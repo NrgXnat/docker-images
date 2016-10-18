@@ -10,7 +10,7 @@
                 "name": "input",
                 "type": "input",
                 "path": "/input",
-                "root": "$.inputs[name='resource']",
+                "file-input": "resource",
             },
             {
                 "name": "output",
@@ -37,17 +37,32 @@
             "command-line-flag": "-s"
         },
         {
+            "name": "project",
+            "description": "Project in which session is stored",
+            "type": "Project",
+            "parent": "session"
+        },
+        {
+            "name": "T1-scantype",
+            "description": "Scantype of T1 scans",
+            "type": "ProjectConfig",
+            "parent": "project",
+            "default-value": "pipelines/mr_scan_types"
+        },
+        {
             "name": "T1",
             "description": "Input T1 scan",
             "type": "Scan",
-            "parent": "session"
+            "parent": "session",
+            "prerequisites": ["T1-scantype"],
+            "matcher": "@.scan-type in [^$.inputs[?(@.name == 'T1-scantype')].value^]"
         },
         {
             "name": "resource",
             "description": "Input resource: DICOM or NIFTI",
             "type": "Resource",
             "parent": "T1",
-            "parent-property": "resources[label='DICOM|NIFTI']"
+            "matcher": "@.label in ['DICOM', 'NIFTI']"
         },
         {
             "name": "other-recon-all-args",
@@ -60,22 +75,22 @@
         {
             "name": "fs",
             "type": "Assessor",
-            "root": "$.inputs[name='session']",
+            "parent": "session",
             "files": {
                 "type": "xml",
-                "root": "$.run.mounts[name='output']",
-                "path": "{$.inputs[name='label'].value}/fs.xml"
+                "mount": "output",
+                "path": "^$.inputs[?(@.name == 'label')].value^/fs.xml"
             }
         },
         {
             "name": "data",
             "type": "Resource",
-            "root": "$.outputs[name='fs']",
-            "property": "resources[name='DATA']",
+            "parent": "fs",
+            "label": "DATA",
             "files": {
                 "type": "directory",
-                "root": "$.run.mounts[name='output']",
-                "path": "{$.inputs[name='label'].value}"
+                "mount": "output",
+                "path": "^$.inputs[?(@.name == 'label')].value^"
             }
         }
     ]

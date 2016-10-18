@@ -9,15 +9,12 @@
                 "name": "dicom-in",
                 "type": "input",
                 "path": "/input",
-                "file-input": "scan",
-                "resource": "DICOM"
+                "parent": "scan-dicoms"
             },
             {
                 "name": "nifti-out",
                 "type": "output",
                 "path": "/output",
-                "file-input": "scan",
-                "resource": "NIFTI"
             }
         ]
     },
@@ -25,7 +22,29 @@
         {
             "name": "scan",
             "description": "Input scan",
-            "type": "Scan"
+            "type": "Scan",
+            "required": true,
+            "matcher": "'DICOM' in @.resources[*].label"
+        },
+        {
+            "name": "scan-dicoms",
+            "description": "The scan's dicom resource",
+            "type": "Resource",
+            "parent": "scan",
+            "matcher": "@.label == 'DICOM'"
+        }
+    ],
+    "outputs": [
+        {
+            "name": "nifti",
+            "description": "The nifti files",
+            "type": "Resource",
+            "parent": "scan",
+            "label": "NIFTI",
+            "files": {
+                "type": "directory",
+                "mount": "nifti-out"
+            }
         }
     ]
 }
