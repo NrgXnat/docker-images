@@ -10,7 +10,7 @@
                 "name": "input",
                 "type": "input",
                 "path": "/input",
-                "file-input": "resource",
+                "file-input": "resource"
             },
             {
                 "name": "output",
@@ -33,7 +33,7 @@
             "required": true,
             "parent": "session",
             "parent-property": "label",
-            "command-line-key": "#SUBJECT_ID#",
+            "replacement-key": "#SUBJECT_ID#",
             "command-line-flag": "-s"
         },
         {
@@ -45,7 +45,7 @@
         {
             "name": "T1-scantype",
             "description": "Scantype of T1 scans",
-            "type": "ProjectConfig",
+            "type": "Config",
             "parent": "project",
             "default-value": "pipelines/mr_scan_types"
         },
@@ -54,7 +54,7 @@
             "description": "Input T1 scan",
             "type": "Scan",
             "parent": "session",
-            "prerequisites": ["T1-scantype"],
+            "prerequisites": "T1-scantype",
             "matcher": "@.scan-type in [^$.inputs[?(@.name == 'T1-scantype')].value^]"
         },
         {
@@ -62,13 +62,13 @@
             "description": "Input resource: DICOM or NIFTI",
             "type": "Resource",
             "parent": "T1",
-            "matcher": "@.label in ['DICOM', 'NIFTI']"
+            "matcher": "@.label in [\"DICOM\", \"NIFTI\"]"
         },
         {
             "name": "other-recon-all-args",
             "description": "Arguments to pass to recon-all",
-            "default": "-all",
-            "command-line-key": "#OTHER_ARGS#"
+            "default-value": "-all",
+            "replacement-key": "#OTHER_ARGS#"
         }
     ],
     "outputs": [
@@ -77,7 +77,6 @@
             "type": "Assessor",
             "parent": "session",
             "files": {
-                "type": "xml",
                 "mount": "output",
                 "path": "^$.inputs[?(@.name == 'label')].value^/fs.xml"
             }
@@ -88,7 +87,6 @@
             "parent": "fs",
             "label": "DATA",
             "files": {
-                "type": "directory",
                 "mount": "output",
                 "path": "^$.inputs[?(@.name == 'label')].value^"
             }
