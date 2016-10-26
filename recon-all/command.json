@@ -78,7 +78,7 @@
             "parent": "session",
             "files": {
                 "mount": "output",
-                "path": "^$.inputs[?(@.name == 'label')].value^/fs.xml"
+                "path": "fs.xml"
             }
         },
         {
@@ -88,7 +88,7 @@
             "label": "DATA",
             "files": {
                 "mount": "output",
-                "path": "^$.inputs[?(@.name == 'label')].value^"
+                "path": "#SUBJECT_ID#"
             }
         }
     ]
