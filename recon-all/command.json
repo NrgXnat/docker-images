@@ -10,7 +10,7 @@
                 "name": "input",
                 "type": "input",
                 "path": "/input",
-                "root": "$.inputs[name='resource']",
+                "file-input": "resource"
             },
             {
                 "name": "output",
@@ -31,52 +31,64 @@
             "description": "Session label. Used as Freesurfer subject identifier.",
             "type": "string",
             "required": true,
-            "root": "$.inputs[name='session']",
-            "property": "label",
-            "command-line-key": "#SUBJECT_ID#",
+            "parent": "session",
+            "parent-property": "label",
+            "replacement-key": "#SUBJECT_ID#",
             "command-line-flag": "-s"
+        },
+        {
+            "name": "project",
+            "description": "Project in which session is stored",
+            "type": "Project",
+            "parent": "session"
+        },
+        {
+            "name": "T1-scantype",
+            "description": "Scantype of T1 scans",
+            "type": "Config",
+            "parent": "project",
+            "default-value": "pipelines/mr_scan_types"
         },
         {
             "name": "T1",
             "description": "Input T1 scan",
             "type": "Scan",
-            "root": "$.inputs[name='session']",
-            "property": "scans"
+            "parent": "session",
+            "prerequisites": "T1-scantype",
+            "matcher": "@.scan-type in [^$.inputs[?(@.name == 'T1-scantype')].value^]"
         },
         {
             "name": "resource",
             "description": "Input resource: DICOM or NIFTI",
             "type": "Resource",
-            "root": "$.inputs[name='T1']",
-            "property": "resources[label='DICOM|NIFTI']"
+            "parent": "T1",
+            "matcher": "@.label in [\"DICOM\", \"NIFTI\"]"
         },
         {
             "name": "other-recon-all-args",
             "description": "Arguments to pass to recon-all",
-            "default": "-all",
-            "command-line-key": "#OTHER_ARGS#"
+            "default-value": "-all",
+            "replacement-key": "#OTHER_ARGS#"
         }
     ],
     "outputs": [
         {
             "name": "fs",
             "type": "Assessor",
-            "root": "$.inputs[name='session']",
+            "parent": "session",
             "files": {
-                "type": "xml",
-                "root": "$.run.mounts[name='output']",
-                "path": "{$.inputs[name='label'].value}/fs.xml"
+                "mount": "output",
+                "path": "fs.xml"
             }
         },
         {
             "name": "data",
             "type": "Resource",
-            "root": "$.outputs[name='fs']",
-            "property": "resources[name='DATA']",
+            "parent": "fs",
+            "label": "DATA",
             "files": {
-                "type": "directory",
-                "root": "$.run.mounts[name='output']",
-                "path": "{$.inputs[name='label'].value}"
+                "mount": "output",
+                "path": "#SUBJECT_ID#"
             }
         }
     ]

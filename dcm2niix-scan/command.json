@@ -2,17 +2,48 @@
     "name": "dcm2niix scan",
     "description": "Runs dcm2niix on an XNAT scan's DICOM resource",
     "docker-image": "xnat/dcm2niix-scan",
-    "command-line": "dcm2niix -o /output /input",
-    "mounts-in": [
+    "run": {
+        "command-line": "dcm2niix -o /output /input",
+        "mounts": [
+            {
+                "name": "dicom-in",
+                "type": "input",
+                "path": "/input",
+                "file-input": "scan-dicoms"
+            },
+            {
+                "name": "nifti-out",
+                "type": "output",
+                "path": "/output"
+            }
+        ]
+    },
+    "inputs": [
         {
-            "name": "DICOM",
-            "remote-path": "/input"
+            "name": "scan",
+            "description": "Input scan",
+            "type": "Scan",
+            "required": true,
+            "matcher": "'DICOM' in @.resources[*].label"
+        },
+        {
+            "name": "scan-dicoms",
+            "description": "The scan's dicom resource",
+            "type": "Resource",
+            "parent": "scan",
+            "matcher": "@.label == 'DICOM'"
         }
     ],
-    "mounts-out": [
+    "outputs": [
         {
-            "name": "NIFTI",
-            "remote-path": "/output"
+            "name": "nifti",
+            "description": "The nifti files",
+            "type": "Resource",
+            "parent": "scan",
+            "label": "NIFTI",
+            "files": {
+                "mount": "nifti-out"
+            }
         }
     ]
 }
