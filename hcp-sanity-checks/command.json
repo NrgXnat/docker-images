@@ -12,21 +12,24 @@
 		"type": "string",
 		"required": false,
 		"replacement-key": "#HOST#",
-		"command-line-flag": "--host"
+		"command-line-flag": "--host",
+        "default-value": "$XNAT_HOST"
 	}, {
 		"name": "user",
 		"description": "User name (Should be from a token. NOTE:  This parameter is optional, as the script can use the environment variable passed by the container service)",
 		"type": "string",
 		"required": false,
 		"replacement-key": "#USER#",
-		"command-line-flag": "--user"
+		"command-line-flag": "--user",
+        "default-value": "$XNAT_USER"
 	}, {
 		"name": "pw",
 		"description": "Password (Should be from a token. NOTE:  This parameter is optional, as the script can use the environment variable passed by the container service)",
 		"type": "string",
 		"required": false,
 		"replacement-key": "#PW#",
-		"command-line-flag": "--pw"
+		"command-line-flag": "--pw",
+        "default-value": "$XNAT_PASS"
 	}, {
 		"name": "project",
 		"description": "Project ID",
