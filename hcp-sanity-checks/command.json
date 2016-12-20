@@ -1,0 +1,61 @@
+{
+	"name": "sanity-checks-runner",
+	"description": "Runs sanity checks script",
+	"info-url": "https://wiki.xnat.org/display/CS/Port+HCP+sanity+checks+script+run+in+docker+container",
+	"docker-image": "hackathon-ubuntu",
+	"run": {
+		"command-line": "/nrgpackages/tools.release/intradb/sanity_checks/callSanityChecks.sh #HOST# #USER# #PW# #PROJECT# #SUBJECT# #EXP# #OTHER_ARGS#"
+	},
+	"inputs": [{
+		"name": "host",
+		"description": "Host specified as http://[hostname] (NOTE:  This parameter is optional, as the script can use the environment variable passed by the container service)",
+		"type": "string",
+		"required": false,
+		"replacement-key": "#HOST#",
+		"command-line-flag": "--host",
+        "default-value": "$XNAT_HOST"
+	}, {
+		"name": "user",
+		"description": "User name (Should be from a token. NOTE:  This parameter is optional, as the script can use the environment variable passed by the container service)",
+		"type": "string",
+		"required": false,
+		"replacement-key": "#USER#",
+		"command-line-flag": "--user",
+        "default-value": "$XNAT_USER"
+	}, {
+		"name": "pw",
+		"description": "Password (Should be from a token. NOTE:  This parameter is optional, as the script can use the environment variable passed by the container service)",
+		"type": "string",
+		"required": false,
+		"replacement-key": "#PW#",
+		"command-line-flag": "--pw",
+        "default-value": "$XNAT_PASS"
+	}, {
+		"name": "project",
+		"description": "Project ID",
+		"type": "string",
+		"required": true,
+		"replacement-key": "#PROJECT#",
+		"command-line-flag": "--project"
+	}, {
+		"name": "subject",
+		"description": "Subject ID",
+		"type": "string",
+		"required": true,
+		"replacement-key": "#SUBJECT#",
+		"command-line-flag": "--subject"
+	}, {
+		"name": "exp",
+		"description": "Experiment ID",
+		"type": "string",
+		"required": true,
+		"replacement-key": "#EXP#",
+		"command-line-flag": "--exp"
+	}, {
+		"name": "other-args",
+		"description": "Other arguments to pass",
+		"default-value": "--create-report",
+		"replacement-key": "#OTHER_ARGS#"
+	}],
+	"outputs": []
+}
