@@ -1,15 +1,16 @@
 {
     "name": "dcm2niix scan",
     "description": "Runs dcm2niix on an XNAT scan's DICOM resource",
-    "docker-image": "xnat/dcm2niix-scan",
+    "docker-image": "xnat/dcm2niix",
     "run": {
-        "command-line": "dcm2niix -o /output /input",
+        "command-line": "dcm2niix [BIDS] [OTHER_OPTIONS] -o /output /input",
         "mounts": [
             {
                 "name": "dicom-in",
                 "type": "input",
                 "path": "/input",
-                "file-input": "scan-dicoms"
+                "file-input": "scan",
+                "resource": "DICOM"
             },
             {
                 "name": "nifti-out",
@@ -32,6 +33,24 @@
             "type": "Resource",
             "parent": "scan",
             "matcher": "@.label == 'DICOM'"
+        },
+        {
+            "name": "bids",
+            "description": "Create BIDS metadata file",
+            "type": "boolean",
+            "required": false,
+            "default-value": false,
+            "replacement-key": "[BIDS]",
+            "command-line-flag": "-b",
+            "true-value": "y",
+            "false-value": "n"
+        },
+        {
+            "name": "other-options",
+            "description": "Other command-line flags to pass to dcm2niix",
+            "type": "string",
+            "required": false,
+            "replacement-key": "[OTHER_OPTIONS]"
         }
     ],
     "outputs": [
