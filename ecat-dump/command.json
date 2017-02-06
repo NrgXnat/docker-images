@@ -1,57 +1,71 @@
 {
-    "name": "ecat-dump scan",
-    "description": "Runs ECAT dump tools on an XNAT scan's ECAT resource",
-    "docker-image": "ecat-dump",
-    "run": {
-        "command-line": "lmhdr /input >> /output/ecat-dump.txt && lshdr /input >> /output/ecat-dump.txt",
-        "mounts": [
-            {
-                "name": "ecat-in",
-                "type": "input",
-                "path": "/input",
-                "file-input": "scan-ecat-file"
-            },
-            {
-                "name": "dump-out",
-                "type": "output",
-                "path": "/output"
-            }
-        ]
-    },
-    "inputs": [
+    "name": "ecat-dump",
+    "label": "ECAT Dump",
+    "description": "Runs Turku PET Centre's ECAT dump tool",
+    "info-url": "http://turkupetcentre.net/programs/",
+    "type": "docker",
+    "image": "ecat-dump",
+    "command-line": "lmhdr /input >> /output/ecat-dump.txt && lshdr /input >> /output/ecat-dump.txt",
+    "mounts": [
         {
-            "name": "scan",
-            "description": "Input scan",
-            "type": "Scan",
-            "required": true,
-            "matcher": "'ECAT' in @.resources[*].label"
+            "name": "ecat-in",
+            "type": "input",
+            "path": "/input",
         },
         {
-            "name": "scan-ecats",
-            "description": "The scan's ecat resource",
-            "type": "Resource",
-            "parent": "scan",
-            "matcher": "@.label == 'ECAT'"
-        },
-        {
-            "name": "scan-ecat-file",
-            "description": "The scan's ecat resource's files",
-            "type": "File",
-            "parent": "scan-ecats",
-            "matcher": "@.name =~ /.*v/"
+            "name": "dump-out",
+            "type": "output",
+            "path": "/output"
         }
     ],
+    "inputs": [],
     "outputs": [
         {
             "name": "dump-out",
-            "description": "The ECAT file dump resource",
-            "type": "Resource",
-            "parent": "scan",
-            "label": "HEADERDUMP",
-            "files": {
-                "mount": "dump-out",
-                "path": "ecat-dump.txt"
-            }
+            "description": "The ECAT file dump",
+            "mount": "dump-out",
+            "path": "ecat-dump.txt",
+            "required": true
+        }
+    ],
+    "xnat": [
+        {
+            "name": "ecat-dump-scan",
+            "description": "Run the ECAT dump image on an XNAT ECAT scan",
+            "external-inputs": [
+                {
+                    "name": "scan",
+                    "description": "Input scan",
+                    "type": "Scan",
+                    "required": true,
+                    "matcher": "'ECAT' in @.resources[*].label"
+                }
+            ],
+            "derived-inputs": [
+                {
+                    "name": "scan-ecat",
+                    "description": "The scan's ecat resource",
+                    "type": "Resource",
+                    "derived-from-xnat-input": "scan",
+                    "matcher": "@.label == 'ECAT'"
+                },
+                {
+                    "name": "scan-ecat-file",
+                    "description": "The scan's ecat resource's files",
+                    "type": "File",
+                    "derived-from-xnat-input": "scan-ecats",
+                    "provides-files-for-command-mount": "ecat-in",
+                    "matcher": "@.name =~ /.*v/"
+                }
+            ],
+            "output-handlers": [
+                {
+                    "accepts-command-output": "dump-out",
+                    "type": "Resource",
+                    "as-a-child-of-xnat-input": "scan",
+                    "label": "HEADERDUMP"
+                }
+            ]
         }
     ]
 }
