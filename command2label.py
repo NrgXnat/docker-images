@@ -23,4 +23,4 @@ for commandFile in args.get('<command>', []):
     singleLineCommand = singleLineCommand.replace('"', r'\"')
     labelList.append(singleLineCommand)
 
-print 'LABEL org.nrg.command="[{}]"'.format(', \\\n\t'.join(labelList))
+print 'LABEL org.nrg.commands="[{}]"'.format(', \\\n\t'.join(labelList))
