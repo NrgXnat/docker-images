@@ -1,0 +1,83 @@
+{
+    "name": "dcm2niix",
+    "description": "Runs dcm2niix",
+    "info-url": "https://github.com/rordenlab/dcm2niix",
+    "version": "1.0",
+    "schema-version": "1.0",
+    "type": "docker",
+    "image": "xnat/dcm2niix",
+    "command-line": "dcm2niix [BIDS] [OTHER_OPTIONS] -o /output /input",
+    "mounts": [
+        {
+            "name": "dicom-in",
+            "writable": "false",
+            "path": "/input",
+        },
+        {
+            "name": "nifti-out",
+            "writable": "true",
+            "path": "/output"
+        }
+    ],
+    "inputs": [
+        {
+            "name": "bids",
+            "description": "Create BIDS metadata file",
+            "type": "boolean",
+            "required": false,
+            "default-value": false,
+            "replacement-key": "[BIDS]",
+            "command-line-flag": "-b",
+            "true-value": "y",
+            "false-value": "n"
+        },
+        {
+            "name": "other-options",
+            "description": "Other command-line flags to pass to dcm2niix",
+            "type": "string",
+            "required": false,
+            "replacement-key": "[OTHER_OPTIONS]"
+        }
+    ],
+    "outputs": [
+        {
+            "name": "nifti",
+            "description": "The nifti files",
+            "mount": "nifti-out",
+            "required": "true"
+        }
+    ],
+    "xnat": [
+        {
+            "name": "dcm2niix-scan",
+            "description": "Run dcm2niix on a Scan",
+            "external-inputs": [
+                {
+                    "name": "scan",
+                    "description": "Input scan",
+                    "type": "Scan",
+                    "required": true,
+                    "matcher": "'DICOM' in @.resources[*].label",
+                }
+            ],
+            "derived-inputs": [
+                {
+                    "name": "scan-dicoms",
+                    "description": "The scan's dicom resource",
+                    "type": "Resource",
+                    "derived-from-xnat-input": "scan",
+                    "provides-files-for-command-mount": "dicom-in",
+                    "matcher": "@.label == 'DICOM'"
+                }
+            ],
+            "output-handlers": [
+                {
+                    "accepts-command-output": "nifti",
+                    "as-a-child-of-xnat-input": "scan",
+                    "type": "Resource",
+                    "label": "NIFTI"
+                }
+            ]
+        }
+    ]
+}
