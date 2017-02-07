@@ -1,11 +1,13 @@
 {
     "name": "webapp-test",
+    "label": "Webapp test",
     "description": "Create a container running a webapp and expose the port",
-    "docker-image": "training/webapp:latest",
-    "run": {
-        "command-line": "python app.py",
-        "ports": {
-            "5000": "50000"
-        }
+    "version": "1.0",
+    "schema-version": "1.0",
+    "type": "docker",
+    "image": "training/webapp:latest",
+    "command-line": "python app.py",
+    "ports": {
+        "5000": "50000"
     }
 }

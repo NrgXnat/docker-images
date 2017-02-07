@@ -1,95 +1,117 @@
 {
-    "name": "freesurfer v5.3.0",
+    "name": "freesurfer-5-3-0",
+    "label": "Freesurfer v5.3.0",
     "description": "Runs Freesurfer v5.3.0 using vistalab/recon-all.",
-    "docker-image": "vistalab/recon-all",
     "info-url": "https://github.com/vistalab/docker/tree/master/freesurfer/recon-all",
-    "run": {
-        "command-line": "recon-all #SUBJECT_ID# #OTHER_ARGS# -sd /output -i /input",
-        "mounts": [
-            {
-                "name": "input",
-                "type": "input",
-                "path": "/input",
-                "file-input": "resource"
-            },
-            {
-                "name": "output",
-                "type": "output",
-                "path": "/output"
-            }
-        ]
-    },
+    "version": "1.0",
+    "schema-version": "1.0",
+    "type": "docker",
+    "image": "vistalab/recon-all",
+    "command-line": "recon-all #SUBJECT_ID# #RECON_ALL_ARGS# -sd /output -i /input",
+    "mounts": [
+        {
+            "name": "input",
+            "type": "input",
+            "path": "/input"
+        },
+        {
+            "name": "output",
+            "type": "output",
+            "path": "/output"
+        }
+    ],
     "inputs": [
         {
-            "name": "session",
-            "description": "Input session",
-            "type": "Session",
-            "required": true
-        },
-        {
-            "name": "label",
-            "description": "Session label. Used as Freesurfer subject identifier.",
-            "type": "string",
-            "required": true,
-            "parent": "session",
-            "parent-property": "label",
-            "replacement-key": "#SUBJECT_ID#",
-            "command-line-flag": "-s"
-        },
-        {
-            "name": "project",
-            "description": "Project in which session is stored",
-            "type": "Project",
-            "parent": "session"
-        },
-        {
-            "name": "T1-scantype",
-            "description": "Scantype of T1 scans",
-            "type": "Config",
-            "parent": "project",
-            "default-value": "pipelines/mr_scan_types"
-        },
-        {
-            "name": "T1",
-            "description": "Input T1 scan",
-            "type": "Scan",
-            "parent": "session",
-            "prerequisites": "T1-scantype",
-            "matcher": "@.scan-type in [^$.inputs[?(@.name == 'T1-scantype')].value^]"
-        },
-        {
-            "name": "resource",
-            "description": "Input resource: DICOM or NIFTI",
-            "type": "Resource",
-            "parent": "T1",
-            "matcher": "@.label in [\"DICOM\", \"NIFTI\"]"
-        },
-        {
-            "name": "other-recon-all-args",
+            "name": "recon-all-args",
             "description": "Arguments to pass to recon-all",
             "default-value": "-all",
-            "replacement-key": "#OTHER_ARGS#"
+            "replacement-key": "#RECON_ALL_ARGS#"
+        },
+        {
+            "name": "subject-id",
+            "description": "subject identifier",
+            "type": "string",
+            "required": true,
+            "replacement-key": "#SUBJECT_ID#",
+            "command-line-flag": "-s"
         }
     ],
     "outputs": [
         {
             "name": "fs",
-            "type": "Assessor",
-            "parent": "session",
-            "files": {
-                "mount": "output",
-                "path": "fs.xml"
-            }
+            "mount": "output",
+            "path": "fs.xml"
         },
         {
             "name": "data",
-            "type": "Resource",
-            "parent": "fs",
-            "label": "DATA",
-            "files": {
-                "mount": "output",
-                "path": "#SUBJECT_ID#"
-            }
+            "mount": "output",
+            "path": "#SUBJECT_ID#"
+        }
+    ],
+    "xnat": [
+        {
+            "name": "freesurfer-session",
+            "description": "Freesurfer 5.3 on a session",
+            "external-inputs": [
+                {
+                    "name": "session",
+                    "description": "Input session",
+                    "type": "Session",
+                    "required": true
+                },
+                {
+                    "name": "T1-scantype",
+                    "description": "Scantype of T1 scans",
+                    "type": "Config",
+                    "parent": "project",
+                    "default-value": "pipelines/mr_scan_types"
+                }
+            ],
+            "derived-inputs": [
+                {
+                    "name": "label",
+                    "description": "Session label. Used as Freesurfer subject identifier.",
+                    "type": "string",
+                    "required": true,
+                    "derived-from-xnat-input": "session",
+                    "derived-from-xnat-object-property": "label",
+                    "provides-value-for-command-input": "session-id"
+                },
+                {
+                    "name": "project",
+                    "description": "Project in which session is stored",
+                    "type": "Project",
+                    "parent": "session"
+                },
+                {
+                    "name": "T1",
+                    "description": "Input T1 scan",
+                    "type": "Scan",
+                    "derived-from-xnat-input": "session",
+                    "matcher": "@.scan-type in [^wrapper:$.external-inputs[?(@.name == 'T1-scantype')].value^]"
+                },
+                {
+                    "name": "resource",
+                    "description": "Input resource: DICOM or NIFTI",
+                    "type": "Resource",
+                    "derived-from-xnat-input": "T1",
+                    "matcher": "@.label in [\"DICOM\", \"NIFTI\"]",
+                    "provides-files-for-command-mount": "input"
+                }
+            ],
+            "output-handlers": [
+                {
+                    "type": "Assessor",
+                    "accepts-command-output": "fs",
+                    "as-a-child-of-xnat-input": "session"
+                },
+                {
+                    "accepts-command-output": "data",
+                    "as-a-child-of-xnat-output": "fs",
+                    "type": "Resource",
+                    "label": "DATA",
+                }
+            ]
         }
     ]
 }
