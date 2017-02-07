@@ -11,7 +11,7 @@
         {
             "name": "dicom-in",
             "writable": "false",
-            "path": "/input",
+            "path": "/input"
         },
         {
             "name": "nifti-out",
@@ -57,13 +57,13 @@
                     "description": "Input scan",
                     "type": "Scan",
                     "required": true,
-                    "matcher": "'DICOM' in @.resources[*].label",
+                    "matcher": "'DICOM' in @.resources[*].label"
                 }
             ],
             "derived-inputs": [
                 {
                     "name": "scan-dicoms",
-                    "description": "The scan's dicom resource",
+                    "description": "The dicom resource on the scan",
                     "type": "Resource",
                     "derived-from-xnat-input": "scan",
                     "provides-files-for-command-mount": "dicom-in",
