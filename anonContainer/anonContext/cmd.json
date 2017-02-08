@@ -1,78 +1,89 @@
 {
   "name": "anon-on-demand",
-  "description": "anon-on-demand",
+  "description": "Run anonymize script on demand",
+  "schema-version": "1.0",
+  "version": "1.0",
   "info-url": "",
-  "docker-image": "dmaffitt/anon:0.2",
-  "run": {
-    "command-line": "anonymize /script /dicom-in/#dicomFileIn# /dicom-out",
-    "mounts": [
-      {
-        "name": "anonScript-in",
-        "type": "input",
-        "path": "/script",
-        "file-input": "anonScript"
-      },
-      {
-        "name": "dicom-in",
-        "type": "input",
-        "path": "/dicom-in",
-        "file-input": "dicomFileIn"
-      },
-      {
-        "name": "dicom-out",
-        "type": "output",
-        "path": "/dicom-out",
-        "file-input": "dicomFileOut"
-      }
-    ]
-  },
-  "inputs": [
+  "type": "docker",
+  "image": "dmaffitt/anon:0.2",
+  "command-line": "anonymize /script /dicom-in/#dicomFileIn# /dicom-out",
+  "mounts": [
     {
-      "name": "session",
-      "description": "the parent session",
-      "type": "Session",
-      "required": true
+      "name": "anonScript-in",
+      "writable": "false",
+      "path": "/script"
     },
     {
-      "name": "anonScript",
-      "description": "the anonScript",
-      "type": "Resource",
-      "required": true,
-      "parent": "session"
+      "name": "dicom-in",
+      "writable": "false",
+      "path": "/dicom-in"
     },
     {
-      "name": "scan",
-      "description": "the scan",
-      "type": "Scan",
-      "required": true,
-      "parent": "session"
-    },
-    {
-      "name": "dicomScanResource",
-      "description": "the dicom input",
-      "type": "Resource",
-      "required": true,
-      "parent": "scan",
-      "matcher": "@.label == 'DICOM'"
-    },
-    {
-      "name": "dicomFileIn",
-      "description": "the dicom input",
-      "type": "File",
-      "required": true,
-      "parent": "dicomScanResource"
+      "name": "dicom-out",
+      "path": "/dicom-out"
     }
   ],
+  "inputs": [],
   "outputs": [
     {
       "name": "dicomFileOut",
       "description": "The anonymized dicom output",
-      "type": "Resource",
-      "label": "DICOM_ANON",
-      "parent": "scan",
-      "files": {
-        "mount": "dicom-out"
-      }
+      "mount": "dicom-out"
+    }
+  ],
+  "xnat": [
+    {
+      "name": "anon-session",
+      "description": "Run anon-on-demand on a session, which must have the anon script in a resource.",
+      "external-inputs": [
+        {
+          "name": "session",
+          "description": "the parent session",
+          "type": "Session",
+          "required": true
+        }
+      ],
+      "derived-inputs": [
+        {
+          "name": "anonScript",
+          "description": "the anonScript",
+          "type": "Resource",
+          "required": true,
+          "derived-from-xnat-input": "session",
+          "provides-files-for-command-mount": "anonScript-in"
+        },
+        {
+          "name": "scan",
+          "description": "the scan",
+          "type": "Scan",
+          "required": true,
+          "derived-from-xnat-input": "session"
+        },
+        {
+          "name": "dicomScanResource",
+          "description": "the dicom input",
+          "type": "Resource",
+          "required": true,
+          "derived-from-xnat-input": "scan",
+          "matcher": "@.label == 'DICOM'"
+        },
+        {
+          "name": "dicomFileIn",
+          "description": "the dicom input",
+          "type": "File",
+          "required": true,
+          "derived-from-xnat-input": "dicomScanResource",
+          "provides-files-for-command-mount": "dicom-in"
+        }
+      ],
+      "output-handlers": [
+        {
+          "type": "Resource",
+          "label": "DICOM_ANON",
+          "accepts-command-output": "dicomFileOut",
+          "as-a-child-of-xnat-input": "scan"
+        }
+      ]
     }
   ]
 }
