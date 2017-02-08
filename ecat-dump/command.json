@@ -3,6 +3,8 @@
     "label": "ECAT Dump",
     "description": "Runs Turku PET Centre's ECAT dump tool",
     "info-url": "http://turkupetcentre.net/programs/",
+    "schema-version": "1.0",
+    "version": "1.0",
     "type": "docker",
     "image": "ecat-dump",
     "command-line": "lmhdr /input >> /output/ecat-dump.txt && lshdr /input >> /output/ecat-dump.txt",
