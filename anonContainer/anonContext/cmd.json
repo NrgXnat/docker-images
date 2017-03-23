@@ -78,6 +78,7 @@
       ],
       "output-handlers": [
         {
+          "name": "anonResource",
           "type": "Resource",
           "label": "DICOM_ANON",
           "accepts-command-output": "dicomFileOut",

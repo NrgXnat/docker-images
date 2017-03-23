@@ -101,11 +101,13 @@
             ],
             "output-handlers": [
                 {
+                    "name": "fs-assessor",
                     "type": "Assessor",
                     "accepts-command-output": "fs",
                     "as-a-child-of-xnat-input": "session"
                 },
                 {
+                    "name": "data-resource",
                     "accepts-command-output": "data",
                     "as-a-child-of-xnat-output": "fs",
                     "type": "Resource",
