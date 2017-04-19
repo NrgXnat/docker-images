@@ -52,6 +52,7 @@
         {
             "name": "freesurfer-session",
             "description": "Freesurfer 5.3 on a session",
+            "contexts": ["xnat:imageSessionData"],
             "external-inputs": [
                 {
                     "name": "session",
