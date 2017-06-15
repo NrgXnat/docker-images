@@ -1,0 +1,19 @@
+{
+    "name": "xnat-populate",
+    "version": "3.1-SNAPSHOT",
+    "image": "greppy/xnat-populate:1.0",
+    "working-directory": "/xnat_populate",
+    "type": "docker",
+    "command-line": "echo #project_list# | sed 's/,/\\n/g' > projectList.txt && groovy PopulateXnat.groovy -u $XNAT_USER -p $XNAT_PASS --url $XNAT_HOST --d projectList.txt",
+    "inputs": [
+        {
+            "name": "project_list",
+            "type": "string"
+        }
+    ],
+    "xnat": [
+        {
+            "name": "empty_wrapper"
+        }
+    ]
+}
