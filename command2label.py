@@ -20,7 +20,7 @@ for commandFile in args.get('<command>', []):
         multiLineCommand = f.read()
     singleLineCommand = commaAndNewlineRe.sub(', ', multiLineCommand)
     singleLineCommand = justNewlineRe.sub('', singleLineCommand)
-    singleLineCommand = singleLineCommand.replace('"', r'\"')
+    singleLineCommand = singleLineCommand.replace('"', r'\"').replace('$', r'\$')
     labelList.append(singleLineCommand)
 
 print('LABEL org.nrg.commands="[{}]"'.format(', \\\n\t'.join(labelList)))
