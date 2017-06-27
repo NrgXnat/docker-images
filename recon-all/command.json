@@ -6,7 +6,7 @@
     "version": "1.0",
     "schema-version": "1.0",
     "type": "docker",
-    "image": "vistalab/recon-all",
+    "image": "xnat/freesurfer:b",
     "command-line": "run.sh /input /output #SESSION_ID# #SESSION_LABEL# #PROJECT# #SCAN_ID# #RECON_ALL_ARGS#",
     "workdir": "/output",
     "mounts": [
@@ -134,7 +134,7 @@
                     "accepts-command-output": "data",
                     "as-a-child-of-xnat-input": "session",
                     "type": "Resource",
-                    "label": "FREESURFER_DATA",
+                    "label": "FREESURFER_DATA"
                 }
             ]
         }
