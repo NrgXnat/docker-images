@@ -31,6 +31,7 @@ RUN wget -N -qO- ftp://surfer.nmr.mgh.harvard.edu/pub/dist/freesurfer/5.3.0/free
 COPY license /opt/freesurfer/.license
 COPY stats2xml_fs5.3.pl /usr/local/bin
 COPY fs2xml /usr/local/bin
+COPY run.sh /usr/local/bin
 
 # Configure basic freesurfer ENV
 ENV OS=Linux \
