@@ -91,18 +91,11 @@
                     "provides-value-for-command-input": "SESSION_ID"
                 },
                 {
-                    "name": "project",
-                    "description": "Project in which session is stored",
-                    "type": "Project",
-                    "derived-from-xnat-input": "session",
-                    "load-children": false
-                },
-                {
                     "name": "project-id",
                     "description": "Project id",
                     "type": "string",
-                    "derived-from-xnat-input": "project",
-                    "derived-from-xnat-object-property": "id",
+                    "derived-from-xnat-input": "session",
+                    "derived-from-xnat-object-property": "project-id",
                     "provides-value-for-command-input": "PROJECT"
                 },
                 {
