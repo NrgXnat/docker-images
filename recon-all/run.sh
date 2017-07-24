@@ -20,11 +20,25 @@ scan_id=$6
 shift 6
 other_args="$@"
 
+
 ###########
-# Recon-all
+# Start up
+echo "Executing recon-all script"
+echo "inputdir=${inputdir}"
+echo "outputdir=${outputdir}"
+echo "id=${id}"
+echo "label=${label}"
+echo "project=${project}"
+echo "scan_id=${scan_id}"
+echo "other_args=${other_args}"
+
 inputfile=$(ls $inputdir | sort | head -1)
 [[ $inputfile == "" ]] && die "Could not find an input file in input directory $inputdir"
+echo "inputfile=${inputfile}"
 
+###########
+# Recon-all
+echo
 echo "Starting recon-all"
 date
 cmd="recon-all -i ${inputdir}/${inputfile} -sd ${outputdir} -subjid ${label} ${other_args}"
