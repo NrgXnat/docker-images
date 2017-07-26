@@ -5,7 +5,6 @@
             "name": "expectedVolume",
             "default-value": "50",
             "required": true,
-            "true-value": "",
             "type": "number",
             "description": "The approximate volume of the object, in mL."
         },
@@ -14,7 +13,6 @@
             "name": "intensityHomogeneity",
             "default-value": "0.6",
             "required": true,
-            "true-value": "",
             "type": "number",
             "description": "What is the homogeneity of intensity within the object? Given constant intensity at 1.0 score and extreme fluctuating intensity at 0."
         },
@@ -23,7 +21,6 @@
             "name": "curvatureWeight",
             "default-value": "0.5",
             "required": true,
-            "true-value": "",
             "type": "number",
             "description": "Given sphere 1.0 score and extreme rough bounday/surface 0 score, what is the expected smoothness of the object?"
         },
@@ -32,7 +29,6 @@
             "name": "labelValue",
             "default-value": "1",
             "required": true,
-            "true-value": "",
             "type": "number",
             "description": "Label value of the output image"
         },
@@ -41,35 +37,28 @@
             "name": "maxRunningTime",
             "default-value": "10",
             "required": true,
-            "true-value": "",
             "type": "number",
             "description": "The program will stop if this time is reached."
         },
         {
-            "command-line-flag": "",
+            "required": true,
+            "type": "string",
             "name": "originalImageFileName",
             "default-value": "",
-            "required": true,
-            "true-value": "",
-            "type": "string",
             "description": "Original image to be segmented"
         },
         {
-            "command-line-flag": "",
+            "required": true,
+            "type": "string",
             "name": "labelImageFileName",
             "default-value": "",
-            "required": true,
-            "true-value": "",
-            "type": "string",
             "description": "Label image for initialization"
         },
         {
-            "command-line-flag": "",
+            "required": true,
+            "type": "string",
             "name": "segmentedImageFileName",
             "default-value": "",
-            "required": true,
-            "true-value": "",
-            "type": "string",
             "description": "Segmented image"
         }
     ],

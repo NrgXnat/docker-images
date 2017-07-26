@@ -85,21 +85,25 @@ for param in parameters:
     if debug:
         print("tag \"{}\" -> input type \"{}\".".format(tag, inputType))
 
+    commandInput = {
+        "name": name[0].text,
+        "type": inputType,
+        "description": xpathOrDefault(param, "./description"),
+        "required": True,
+        "default-value": xpathOrDefault(param, "./default")
+    }
+
     longflag = xpathOrDefault(param, "./longflag")
     shortflag = xpathOrDefault(param, "./flag")
     flag = "--" + longflag if longflag and inputType != "boolean" else \
             "-" + shortflag if shortflag and inputType != "boolean" else \
             ""
     trueValue = longflag if longflag and inputType == "boolean" else ""
-    commandInput = {
-        "name": name[0].text,
-        "type": inputType,
-        "description": xpathOrDefault(param, "./description"),
-        "required": True,
-        "default-value": xpathOrDefault(param, "./default"),
-        "command-line-flag": flag,
-        "true-value": trueValue
-    }
+
+    if inputType == "boolean":
+        commandInput["true-value"] = trueValue
+    elif flag:
+        commandInput["command-line-flag"] = flag
 
     if debug:
         print("Input: {}".format(commandInput))
