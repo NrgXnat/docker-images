@@ -1,10 +1,10 @@
 {
     "name": "ecat-dump",
     "label": "ECAT Dump",
-    "description": "Runs Turku PET Centre's ECAT dump tool",
+    "description": "Runs ECAT dump tool from Turku PET Centre",
     "info-url": "http://turkupetcentre.net/programs/",
     "schema-version": "1.0",
-    "version": "1.1",
+    "version": "1.2",
     "type": "docker",
     "image": "ecat-dump",
     "command-line": "lmhdr /input >> /output/ecat-dump.txt && lshdr /input >> /output/ecat-dump.txt",
@@ -47,16 +47,16 @@
             "derived-inputs": [
                 {
                     "name": "scan-ecat",
-                    "description": "The scan's ecat resource",
+                    "description": "The ecat resource on the scan",
                     "type": "Resource",
-                    "derived-from-xnat-input": "scan",
+                    "derived-from-wrapper-input": "scan",
                     "matcher": "@.label == 'ECAT'"
                 },
                 {
                     "name": "scan-ecat-file",
-                    "description": "The scan's ecat resource's files",
+                    "description": "The files in the ecat resource on the scan",
                     "type": "File",
-                    "derived-from-xnat-input": "scan-ecats",
+                    "derived-from-wrapper-input": "scan-ecats",
                     "provides-files-for-command-mount": "ecat-in",
                     "matcher": "@.name =~ /.*v/"
                 }
@@ -66,7 +66,7 @@
                     "name": "headerdump-resource",
                     "accepts-command-output": "dump-out",
                     "type": "Resource",
-                    "as-a-child-of-xnat-input": "scan",
+                    "as-a-child-of-wrapper-input": "scan",
                     "label": "HEADERDUMP"
                 }
             ]

@@ -2,7 +2,7 @@
   "name": "anon-on-demand",
   "description": "Run anonymize script on demand",
   "schema-version": "1.0",
-  "version": "1.1",
+  "version": "1.2",
   "info-url": "",
   "type": "docker",
   "image": "dmaffitt/anon:0.2",
@@ -50,7 +50,7 @@
           "description": "the anonScript",
           "type": "Resource",
           "required": true,
-          "derived-from-xnat-input": "session",
+          "derived-from-wrapper-input": "session",
           "provides-files-for-command-mount": "anonScript-in"
         },
         {
@@ -58,14 +58,14 @@
           "description": "the scan",
           "type": "Scan",
           "required": true,
-          "derived-from-xnat-input": "session"
+          "derived-from-wrapper-input": "session"
         },
         {
           "name": "dicomScanResource",
           "description": "the dicom input",
           "type": "Resource",
           "required": true,
-          "derived-from-xnat-input": "scan",
+          "derived-from-wrapper-input": "scan",
           "matcher": "@.label == 'DICOM'"
         },
         {
@@ -73,7 +73,7 @@
           "description": "the dicom input",
           "type": "File",
           "required": true,
-          "derived-from-xnat-input": "dicomScanResource",
+          "derived-from-wrapper-input": "dicomScanResource",
           "provides-files-for-command-mount": "dicom-in"
         }
       ],
@@ -83,7 +83,7 @@
           "type": "Resource",
           "label": "DICOM_ANON",
           "accepts-command-output": "dicomFileOut",
-          "as-a-child-of-xnat-input": "scan"
+          "as-a-child-of-wrapper-input": "scan"
         }
       ]
     }

@@ -1,7 +1,7 @@
 {
     "name": "dcm2bids-session",
     "description": "Runs dcm2niix on a session's scans, and uploads the nifti and bids json",
-    "version": "1.0",
+    "version": "1.1",
     "schema-version": "1.0",
     "type": "docker",
     "image": "xnat/dcm2bids-session:beta",
@@ -54,7 +54,7 @@
                     "name": "session-id",
                     "description": "The session's id",
                     "type": "string",
-                    "derived-from-xnat-input": "session",
+                    "derived-from-wrapper-input": "session",
                     "derived-from-xnat-object-property": "id",
                     "provides-value-for-command-input": "session_id"
                 }

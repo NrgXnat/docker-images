@@ -1,7 +1,7 @@
 {
     "name": "debug",
     "description": "Runs a user-provided command",
-    "version": "1.1",
+    "version": "1.2",
     "schema-version": "1.0",
     "type": "docker",
     "command-line": "#COMMAND# > /output/#OUTFILE#",
@@ -63,7 +63,7 @@
                 {
                     "name": "output-resource",
                     "accepts-command-output": "output",
-                    "as-a-child-of-xnat-input": "project",
+                    "as-a-child-of-wrapper-input": "project",
                     "type": "Resource",
                     "label": "DEBUG_OUTPUT"
                 }
@@ -88,7 +88,7 @@
                 {
                     "name": "output-resource",
                     "accepts-command-output": "output",
-                    "as-a-child-of-xnat-input": "subject",
+                    "as-a-child-of-wrapper-input": "subject",
                     "type": "Resource",
                     "label": "DEBUG_OUTPUT"
                 }
@@ -113,7 +113,7 @@
                 {
                     "name": "output-resource",
                     "accepts-command-output": "output",
-                    "as-a-child-of-xnat-input": "session",
+                    "as-a-child-of-wrapper-input": "session",
                     "type": "Resource",
                     "label": "DEBUG_OUTPUT"
                 }
@@ -138,7 +138,7 @@
                 {
                     "name": "output-resource",
                     "accepts-command-output": "output",
-                    "as-a-child-of-xnat-input": "scan",
+                    "as-a-child-of-wrapper-input": "scan",
                     "type": "Resource",
                     "label": "DEBUG_OUTPUT"
                 }
@@ -163,7 +163,7 @@
                 {
                     "name": "output-resource",
                     "accepts-command-output": "output",
-                    "as-a-child-of-xnat-input": "assessor",
+                    "as-a-child-of-wrapper-input": "assessor",
                     "type": "Resource",
                     "label": "DEBUG_OUTPUT"
                 }
