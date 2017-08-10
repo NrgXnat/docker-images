@@ -8,19 +8,17 @@ Usage: command2label <command>...
 
 import re
 import sys
-from docopt import docopt
+import json
 
-args = docopt(__doc__)
+argsList = sys.argv[1:]
 
-commaAndNewlineRe = re.compile(r',\n\s*')
-justNewlineRe = re.compile(r'\n\s*')
-labelList = []
-for commandFile in args.get('<command>', []):
+commandStrList = []
+for commandFile in argsList:
     with open(commandFile) as f:
-        multiLineCommand = f.read()
-    singleLineCommand = commaAndNewlineRe.sub(', ', multiLineCommand)
-    singleLineCommand = justNewlineRe.sub('', singleLineCommand)
-    singleLineCommand = singleLineCommand.replace('"', r'\"').replace('$', r'\$')
-    labelList.append(singleLineCommand)
+        commandObj = json.load(f)
+    commandStr = json.dumps(commandObj) \
+                        .replace('"', r'\"') \
+                        .replace('$', r'\$')
+    commandStrList.append(commandStr)
 
-print('LABEL org.nrg.commands="[{}]"'.format(', \\\n\t'.join(labelList)))
+print('LABEL org.nrg.commands="[{}]"'.format(', \\\n\t'.join(commandStrList)))
