@@ -1,0 +1,33 @@
+{
+    "name": "xnat_populate",
+    "version": "2.0",
+    "working-directory": "/xnat_populate",
+    "type": "docker",
+    "command-line": "groovy PopulateXnat.groovy -u $XNAT_USER -p $XNAT_PASS --url $XNAT_HOST #project_list# #config# #delay#",
+    "inputs": [
+        {
+            "name": "project_list",
+            "description": "A comma-separated list of known projects to populate this XNAT with (or the name of one of the standard text files containing a list of projects).",
+            "command-line-flag": "-d",
+            "type": "string",
+            "required": true
+        },
+        {
+            "name": "config",
+            "description": "The filename for one of the standard provided configuration YAML files.",
+            "command-line-flag": "-g",
+            "type": "string"
+        },
+        {
+            "name": "delay",
+            "description": "Delay in milliseconds to wait after each session upload.",
+            "command-line-flag": "-w",
+            "type": "number"
+        }
+    ],
+    "xnat": [
+        {
+            "name": "xnat_populate"
+        }
+    ]
+}
