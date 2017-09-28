@@ -1,0 +1,25 @@
+{
+    "name": "create-debug-project",
+    "description": "Runs a script to create new debug project",
+    "version": "1.0",
+    "schema-version": "1.0",
+    "type": "docker",
+    "command-line": "create-debug-project.py $XNAT_HOST $XNAT_USER $XNAT_PASS #PROJECT_PREFIX#",
+    "inputs": [
+        {
+            "name": "project-prefix",
+            "description": "The name of the project to create (which will be postfixed with the next available _NN for N in 0-9).",
+            "type": "string",
+            "required": true,
+            "default-value": "DEBUG",
+            "replacement-key": "#PROJECT_PREFIX#"
+        }
+    ],
+    "xnat": [
+        {
+            "name": "debug-site",
+            "description": "Run the debug-site command at the site level",
+            "contexts": ["site"]
+        }
+    ]
+}
