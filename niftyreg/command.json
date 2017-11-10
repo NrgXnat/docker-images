@@ -1,0 +1,270 @@
+{
+    "name": "RegAladin (NiftyReg)",
+    "label": "RegAladin (NiftyReg)",
+    "description": "Module/executable for global registration (rigid and/or affine) based on a block-matching approach and a trimmed least squared optimisation.",
+    "version": "1.0",
+    "schema-version": "1.0",
+    "type": "docker",
+    "image": "xnat/niftyreg:1.0",
+    "info-url": "http://cmic.cs.ucl.ac.uk/home/software/",
+    "command-line": "run.sh /ref /float #smoothReferenceWidth# #smoothFloatingWidth# #referenceLowerThreshold# #referenceUpperThreshold# #floatingLowerThreshold# #floatingUpperThreshold# #inputAffineName# #outputAffineFileName# #outputWarpedImageName# #levelPyramidNumber# #levelToPerformNumber# #iterationNumber# #blockPercentage# #inlierPercentage# #noSym# #rigidOnly# #affineOnly# #useHeaderOrigin# #useMaskCenters# #makeIsotropic# #interpolation#",
+    "workdir": "/output",
+    "mounts": [
+        {
+            "name": "ref-scan-mount",
+            "writable": "false",
+            "path": "/ref"
+        },
+        {
+            "name": "float-scan-mount",
+            "writable": "false",
+            "path": "/float"
+        },
+        {
+            "name": "output-mount",
+            "writable": "true",
+            "path": "/output"
+        }
+    ],
+    "inputs": [
+        {
+            "command-line-flag": "--smooR",
+            "name": "smoothReferenceWidth",
+            "default-value": "0",
+            "required": true,
+            "type": "number",
+            "description": "Standard deviation in mm (voxel if negative) of the Gaussian kernel used to smooth the reference image"
+        },
+        {
+            "command-line-flag": "--smooF",
+            "name": "smoothFloatingWidth",
+            "default-value": "0",
+            "required": true,
+            "type": "number",
+            "description": "Standard deviation in mm (voxel if negative) of the Gaussian kernel used to smooth the Floating image"
+        },
+        {
+            "command-line-flag": "--refLowThr",
+            "name": "referenceLowerThreshold",
+            "default-value": "0",
+            "required": true,
+            "type": "number",
+            "description": "Lower threshold value applied to the reference image"
+        },
+        {
+            "command-line-flag": "--refUpThr",
+            "name": "referenceUpperThreshold",
+            "default-value": "0",
+            "required": true,
+            "type": "number",
+            "description": "Upper threshold value applied to the reference image"
+        },
+        {
+            "command-line-flag": "--floLowThr",
+            "name": "floatingLowerThreshold",
+            "default-value": "0",
+            "required": true,
+            "type": "number",
+            "description": "Lower threshold value applied to the floating image"
+        },
+        {
+            "command-line-flag": "--floUpThr",
+            "name": "floatingUpperThreshold",
+            "default-value": "0",
+            "required": true,
+            "type": "number",
+            "description": "Upper threshold value applied to the floating image"
+        },
+        {
+            "command-line-flag": "--inaff",
+            "name": "inputAffineName",
+            "default-value": null,
+            "required": true,
+            "type": "string",
+            "description": "Affine registration matrix stored as a text file"
+        },
+        {
+            "command-line-flag": "--aff",
+            "name": "outputAffineFileName",
+            "default-value": "outputAffineResult.txt",
+            "required": true,
+            "type": "string",
+            "description": "Affine registration matrix output, saved as a text file"
+        },
+        {
+            "command-line-flag": "--res",
+            "name": "outputWarpedImageName",
+            "default-value": "outputAffineResult.nii",
+            "required": true,
+            "type": "string",
+            "description": "Warped floating image"
+        },
+        {
+            "command-line-flag": "--ln",
+            "name": "levelPyramidNumber",
+            "default-value": "3",
+            "required": true,
+            "type": "number",
+            "description": "Number of levels to use to generate the pyramids for the coarse-to-fine approach"
+        },
+        {
+            "command-line-flag": "--lp",
+            "name": "levelToPerformNumber",
+            "default-value": "3",
+            "required": true,
+            "type": "number",
+            "description": "Number of levels to use to run the registration once the pyramids have been created"
+        },
+        {
+            "command-line-flag": "--maxit",
+            "name": "iterationNumber",
+            "default-value": "5",
+            "required": true,
+            "type": "number",
+            "description": "Maximal number of iterations of the trimmed least square approach to perform per level"
+        },
+        {
+            "command-line-flag": "--pv",
+            "name": "blockPercentage",
+            "default-value": "50",
+            "required": true,
+            "type": "number",
+            "description": "Percentage of blocks to use in the optimisation scheme"
+        },
+        {
+            "command-line-flag": "--pi",
+            "name": "inlierPercentage",
+            "default-value": "50",
+            "required": true,
+            "type": "number",
+            "description": "Percentage of blocks to consider as inlier in the optimisation scheme"
+        },
+        {
+            "name": "noSym",
+            "true-value": "noSym",
+            "required": true,
+            "default-value": "false",
+            "type": "boolean",
+            "description": "The symmetric version of the algorithm is used by default. Use this flag to disable it"
+        },
+        {
+            "name": "rigidOnly",
+            "true-value": "rigOnly",
+            "required": true,
+            "default-value": "false",
+            "type": "boolean",
+            "description": "Performs only a rigid registration, rigid then affine by default"
+        },
+        {
+            "name": "affineOnly",
+            "true-value": "affDirect",
+            "required": true,
+            "default-value": "false",
+            "type": "boolean",
+            "description": "Performs only an affine registration, rigid then affine by default"
+        },
+        {
+            "name": "useHeaderOrigin",
+            "true-value": "nac",
+            "required": true,
+            "default-value": "false",
+            "type": "boolean",
+            "description": "Use the nifti header origin to initialise the transformation. Image centres are used by default"
+        },
+        {
+            "name": "useMaskCenters",
+            "true-value": "cog",
+            "required": true,
+            "default-value": "false",
+            "type": "boolean",
+            "description": "Use the centre of mass for the input masks files initialise the transformation. Image centres are used by default"
+        },
+        {
+            "name": "makeIsotropic",
+            "true-value": "iso",
+            "required": true,
+            "default-value": "false",
+            "type": "boolean",
+            "description": "Make floating and reference images isotropic if required"
+        },
+        {
+            "command-line-flag": "--interp",
+            "name": "interpolation",
+            "default-value": "1",
+            "required": true,
+            "type": "number",
+            "description": "Interpolation order to use internally to warp the floating image"
+        }
+    ],
+    "outputs": [
+        {
+            "name": "registered-output",
+            "description": "The floating image registered to the reference image",
+            "required": true,
+            "mount": "output-mount"
+        }
+    ],
+    "xnat": [
+        {
+            "name": "niftyreg-session",
+            "description": "Run niftyreg from a Session",
+            "contexts": ["xnat:imageSessionData"],
+            "external-inputs": [
+                {
+                    "name": "session",
+                    "description": "Input session",
+                    "type": "Session",
+                    "required": true
+                }
+            ],
+            "derived-inputs": [
+                {
+                    "name": "ref-scan",
+                    "description": "The reference scan, to which the floating scan is registered",
+                    "type": "Scan",
+                    "derived-from-wrapper-input": "session",
+                    "matcher": "'NIFTI' in @.resources[*].label"
+                },
+                {
+                    "name": "ref-scan-nifti",
+                    "description": "The reference scan's nifti resource",
+                    "type": "Resource",
+                    "derived-from-wrapper-input": "ref-scan",
+                    "provides-files-for-command-mount": "ref-scan-mount",
+                    "matcher": "@.label == 'NIFTI'"
+                },
+                {
+                    "name": "ref-scan-id",
+                    "description": "The reference scan's id",
+                    "type": "string",
+                    "derived-from-wrapper-input": "ref-scan",
+                    "derived-from-xnat-object-property": "id"
+                },
+                {
+                    "name": "float-scan",
+                    "description": "The flaoting scan, which is registered to the reference scan",
+                    "type": "Scan",
+                    "derived-from-wrapper-input": "session",
+                    "matcher": "'NIFTI' in @.resources[*].label"
+                },
+                {
+                    "name": "float-scan-nifti",
+                    "description": "The floating scan's nifti resource",
+                    "type": "Resource",
+                    "derived-from-wrapper-input": "float-scan",
+                    "provides-files-for-command-mount": "float-scan-mount",
+                    "matcher": "@.label == 'NIFTI'"
+                }
+            ],
+            "output-handlers": [
+                {
+                    "name": "registered",
+                    "type": "Resource",
+                    "accepts-command-output": "registered-output",
+                    "as-a-child-of-wrapper-input": "float-scan",
+                    "label": "REG_#ref-scan-id#"
+                }
+            ]
+        }
+    ]
+}
