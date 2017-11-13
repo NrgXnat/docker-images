@@ -1,0 +1,8 @@
+{
+    "name": "xnat2bids",
+    "description": "xnat2bids setup command. Transforms an XNAT session with BIDS and NIFTI resources into BIDS format.",
+    "version": "1.0",
+    "type": "docker-setup",
+    "image": "xnat/xnat2bids-setup:1.0",
+    "command-line": "xnat2bids.py /input /output"
+}
