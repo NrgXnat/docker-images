@@ -1,0 +1,11 @@
+{
+    "name": "debug-setup-command",
+    "description": "The debug setup command. Copies /input to /output/setup-command-was-here.",
+    "version": "1.0",
+    "type": "docker-setup",
+    "image": "xnat/debug-setup:latest",
+    "command-line": "setup-command-script.sh",
+    "inputs": [],
+    "mounts": [],
+    "xnat": []
+}

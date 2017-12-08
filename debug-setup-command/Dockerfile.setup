@@ -1,0 +1,3 @@
+FROM busybox:latest
+COPY setup-command-script.sh /usr/local/bin/
+LABEL org.nrg.commands="[{\"inputs\": [], \"name\": \"debug-setup-command\", \"command-line\": \"setup-command-script.sh\", \"xnat\": [], \"image\": \"xnat/debug-setup:latest\", \"version\": \"1.0\", \"mounts\": [], \"type\": \"docker-setup\", \"description\": \"The debug setup command. Copies /input to /output/setup-command-was-here.\"}]"

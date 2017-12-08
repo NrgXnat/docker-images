@@ -1,0 +1,178 @@
+{
+    "name": "debug-command-with-setup-commands",
+    "description": "Runs a user-provided command. By default, makes a list of files in /input.",
+    "version": "1.0",
+    "schema-version": "1.0",
+    "type": "docker",
+    "command-line": "#COMMAND# > /output/#OUTFILE#",
+    "mounts": [
+        {
+            "name": "in",
+            "writable": "false",
+            "path": "/input"
+        },
+        {
+            "name": "out",
+            "writable": "true",
+            "path": "/output"
+        }
+    ],
+    "inputs": [
+        {
+            "name": "command",
+            "description": "The command to run",
+            "type": "string",
+            "required": true,
+            "default-value": "find /input",
+            "replacement-key": "#COMMAND#"
+        },
+        {
+            "name": "output-file",
+            "description": "Name of the file to collect stdout",
+            "type": "string",
+            "required": false,
+            "default-value": "out.txt",
+            "replacement-key": "#OUTFILE#"
+        }
+    ],
+    "outputs": [
+        {
+            "name": "output",
+            "description": "The command's stdout",
+            "mount": "out",
+            "required": true
+        }
+    ],
+    "xnat": [
+        {
+            "name": "debug-project-with-setup",
+            "description": "Run the debug container with a project mounted via a setup container",
+            "contexts": ["xnat:projectData"],
+            "external-inputs": [
+                {
+                    "name": "project",
+                    "description": "Input project",
+                    "type": "Project",
+                    "required": true,
+                    "provides-files-for-command-mount": "in",
+                    "via-setup-command": "xnat/debug-setup:latest:debug-setup-command",
+                    "load-children": false
+                }
+            ],
+            "derived-inputs": [],
+            "output-handlers": [
+                {
+                    "name": "output-resource",
+                    "accepts-command-output": "output",
+                    "as-a-child-of-wrapper-input": "project",
+                    "type": "Resource",
+                    "label": "DEBUG_OUTPUT"
+                }
+            ]
+        },
+        {
+            "name": "debug-subject-with-setup",
+            "description": "Run the debug container with a subject mounted via a setup container",
+            "contexts": ["xnat:subjectData"],
+            "external-inputs": [
+                {
+                    "name": "subject",
+                    "description": "Input subject",
+                    "type": "Subject",
+                    "required": true,
+                    "provides-files-for-command-mount": "in",
+                    "via-setup-command": "xnat/debug-setup:latest:debug-setup-command",
+                    "load-children": false
+                }
+            ],
+            "derived-inputs": [],
+            "output-handlers": [
+                {
+                    "name": "output-resource",
+                    "accepts-command-output": "output",
+                    "as-a-child-of-wrapper-input": "subject",
+                    "type": "Resource",
+                    "label": "DEBUG_OUTPUT"
+                }
+            ]
+        },
+        {
+            "name": "debug-session-with-setup",
+            "description": "Run the debug container with a session mounted via a setup container",
+            "contexts": ["xnat:imageSessionData"],
+            "external-inputs": [
+                {
+                    "name": "session",
+                    "description": "Input session",
+                    "type": "Session",
+                    "required": true,
+                    "provides-files-for-command-mount": "in",
+                    "via-setup-command": "xnat/debug-setup:latest:debug-setup-command",
+                    "load-children": false
+                }
+            ],
+            "derived-inputs": [],
+            "output-handlers": [
+                {
+                    "name": "output-resource",
+                    "accepts-command-output": "output",
+                    "as-a-child-of-wrapper-input": "session",
+                    "type": "Resource",
+                    "label": "DEBUG_OUTPUT"
+                }
+            ]
+        },
+        {
+            "name": "debug-scan-with-setup",
+            "description": "Run the debug container with a scan mounted via a setup container",
+            "contexts": ["xnat:imageScanData"],
+            "external-inputs": [
+                {
+                    "name": "scan",
+                    "description": "Input scan",
+                    "type": "Scan",
+                    "required": true,
+                    "provides-files-for-command-mount": "in",
+                    "via-setup-command": "xnat/debug-setup:latest:debug-setup-command",
+                    "load-children": false
+                }
+            ],
+            "derived-inputs": [],
+            "output-handlers": [
+                {
+                    "name": "output-resource",
+                    "accepts-command-output": "output",
+                    "as-a-child-of-wrapper-input": "scan",
+                    "type": "Resource",
+                    "label": "DEBUG_OUTPUT"
+                }
+            ]
+        },
+        {
+            "name": "debug-assessor-with-setup",
+            "description": "Run the debug container with a assessor mounted via a setup container",
+            "contexts": ["xnat:imageAssessorData"],
+            "external-inputs": [
+                {
+                    "name": "assessor",
+                    "description": "Input assessor",
+                    "type": "Assessor",
+                    "required": true,
+                    "provides-files-for-command-mount": "in",
+                    "via-setup-command": "xnat/debug-setup:latest:debug-setup-command",
+                    "load-children": false
+                }
+            ],
+            "derived-inputs": [],
+            "output-handlers": [
+                {
+                    "name": "output-resource",
+                    "accepts-command-output": "output",
+                    "as-a-child-of-wrapper-input": "assessor",
+                    "type": "Resource",
+                    "label": "DEBUG_OUTPUT"
+                }
+            ]
+        }
+    ]
+}
