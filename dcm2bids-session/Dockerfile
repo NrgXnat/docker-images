@@ -21,7 +21,6 @@ RUN apt-get update && apt-get install -y \
     mkdir /src && cd /src && \
     hg clone https://bitbucket.org/nrg_customizations/nrg_pipeline_dicomtobids && \
     cp nrg_pipeline_dicomtobids/scripts/catalog/DicomToBIDS/scripts/dcm2bids_wholeSession.py . && \
-    cp nrg_pipeline_dicomtobids/resources/catalog/DicomToBIDS/resources/bidsmap.json . && \
     rm -r nrg_pipeline_dicomtobids && \
     apt-get remove -y \
         curl \
