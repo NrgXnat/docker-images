@@ -1,0 +1,58 @@
+{
+    "name": "bids-mriqc",
+    "description": "Runs the MRIQC BIDS App",
+    "version": "1.0",
+    "schema-version": "1.0",
+    "type": "docker",
+    "command-line": "mriqc /input /output participant",
+    "image": "poldracklab/mriqc:0.10.0",
+    "mounts": [
+        {
+            "name": "in",
+            "writable": "false",
+            "path": "/input"
+        },
+        {
+            "name": "out",
+            "writable": "true",
+            "path": "/output"
+        }
+    ],
+    "inputs": [],
+    "outputs": [
+        {
+            "name": "output",
+            "description": "Output QC files",
+            "mount": "out",
+            "required": true
+        }
+    ],
+    "xnat": [
+        {
+            "name": "bids-mriqc-session",
+            "description": "Run the MRIQC BIDS App with a session mounted",
+            "contexts": ["xnat:imageSessionData"],
+            "external-inputs": [
+                {
+                    "name": "session",
+                    "description": "Input session",
+                    "type": "Session",
+                    "required": true,
+                    "provides-files-for-command-mount": "in",
+                    "via-setup-command": "xnat/xnat2bids-setup:1.0:xnat2bids",
+                    "load-children": false
+                }
+            ],
+            "derived-inputs": [],
+            "output-handlers": [
+                {
+                    "name": "output-resource",
+                    "accepts-command-output": "output",
+                    "as-a-child-of-wrapper-input": "session",
+                    "type": "Resource",
+                    "label": "MRIQC"
+                }
+            ]
+        }
+    ]
+}
