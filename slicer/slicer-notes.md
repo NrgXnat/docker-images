@@ -190,6 +190,7 @@ Inside `quay.io/federov/slicerdockers:4.8.1` at path `/opt/slicer/lib/Slicer-4.8
 
 * AddScalarVolumes
 * BRAINSFit
+    * Has a lot of parameters. May be too complex for me to learn for a test.
 * BRAINSROIAuto
 * BRAINSResize
 * BRAINSStripRotation
