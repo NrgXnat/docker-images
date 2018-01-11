@@ -4,11 +4,12 @@
 Convert Slicer executable XML into XNAT command
 
 Usage:
-    slicerxml2command.py [--debug] [--docker-image IMAGE] --input SLICER_XML_FILE --output COMMAND_JSON_FILE
+    slicerxml2command.py [--debug] [--docker-image IMAGE] [--path-to-slicer PATH_TO_SLICER] --input SLICER_XML_FILE --output COMMAND_JSON_FILE
     slicerxml2command.py --help | --version
 
 Options:
     -d IMAGE, --docker-image IMAGE                      Docker image for the command. [default: slicer]
+    -p PATH_TO_SLICER, --path-to-slicer PATH_TO_SLICER  Path to slicer executable within image [default: /opt/slicer/Slicer]
     -i SLICER_XML_FILE, --input SLICER_XML_FILE         Input file: Slicer XML.
     -o COMMAND_JSON_FILE, --output COMMAND_JSON_FILE    Output file: command JSON.
     --debug                                             Turn on debug print statements
@@ -31,6 +32,7 @@ def xpathOrDefault(node, path, default=""):
 
 args = docopt(__doc__, version=__version__)
 image = args["--docker-image"]
+slicerPath = args["--path-to-slicer"]
 slicerXmlFilePath = args["--input"]
 commandJsonFilePath = args["--output"]
 debug = args["--debug"]
@@ -114,7 +116,7 @@ for param in parameters:
     else:
         commandInputs.append(commandInput)
 
-commandLineParts = ["is there some prefix here?", slicerExecutableName]
+commandLineParts = [slicerPath, "--launch", slicerExecutableName]
 commandLineParts += ["#{}#".format(commandInput["name"]) for commandInput in commandInputs]
 if commandInputsWithIndices:
     commandLineParts += ["--"]  # Is this necessary? check slicer docs
@@ -137,7 +139,8 @@ command = {
     "type": "docker",
     "image": image,
     "command-line": " ".join(commandLineParts),
-    "inputs": commandInputs + [commandInput for index, commandInput in commandInputsWithIndices]
+    "inputs": commandInputs + [commandInput for index, commandInput in commandInputsWithIndices],
+    "xnat": []
 }
 
 with open(commandJsonFilePath, 'w') as f:
