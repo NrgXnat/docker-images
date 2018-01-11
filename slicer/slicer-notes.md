@@ -25,80 +25,191 @@ Example
 Inside `quay.io/federov/slicerdockers:4.8.1` at path `/opt/slicer/lib/Slicer-4.8/cli-modules`.
 
 * ACPCTransform
+    * Calculates a transform from a series of points.
+    * Doesn't need any image data, just lists of points.
+    * We could run it, maybe, but I don't know that we would want to.
 * AddScalarVolumes
+    * Adds two images.
+    * Seems like a perfect test case.
 * BRAINSDWICleanup
+    * Remove bad gradients/volumes from DWI NRRD file.
+    * We don't have any NRRD files to test with.
 * BRAINSDemonWarp
+    * finds a deformation field to warp a moving image onto a fixed image
+    * Seems cool. But I don't think we have the test images (one moving, one fixed).
 * BRAINSFit
+    * Register a three-dimensional volume to a reference volume
+    * Good test case.
 * BRAINSLabelStats
+    * Compute image statistics within each label of a label map.
+    * I don't think we have any "label maps". I also don't know what one is.
 * BRAINSROIAuto
+    * create a mask over the most prominant forground region in an image
+    * Sounds interesting. Not sure why it is useful, but I could test it.
 * BRAINSResample
+    * collects together three common image processing tasks that all involve resampling an image volume: Resampling to a new resolution and spacing, applying a transformation (using an ITK transform IO mechanisms) and Warping (using a vector image deformation field).
+    * Could be interesting, but it seems like this would require a lot of setup. Not sure how to assemble the transformation and the "vector image deformation field".
+* BRAINSResize
+    * downsampling an image by a constant scale factor.
+    * Good test
+* BRAINSStripRotation
+    * Read an Image, write out same image with identity rotation matrix plus an ITK transform file
+    * Good test
+* BRAINSTransformConvert
+    * Convert ITK transforms to higher order transforms
+    * We do not have any ITK transforms (...yet. maybe we will after running BRAINSStripRotation)
+* CastScalarVolume
+    * Cast a volume to a given data type.
+    * type options: Char, UnsignedChar, Short, UnsignedShort, Int, UnsignedInt, Float, Double
+    * I guess we could run this, but I don't know why one would want to
+* CheckerBoardFilter
+    * Create a checkerboard volume of two volumes. The output volume will show the two inputs alternating according to the user supplied checkerPattern. This filter is often used to compare the results of image registration.
+    * Could be interesting. But hard to interpret the results. Maybe not good for the first round of testing.
+* CreateDICOMSeries
+    * Create a DICOM Series from a Slicer volume. User can specify values for selected DICOM tags in the UI.
+    * No. We do not have any slicer volumes.
+* CurvatureAnisotropicDiffusion
+    * Performs anisotropic diffusion on an image using a modified curvature diffusion equation (MCDE).
+    * Maybe we could run this?
+* DWIConvert
+    * Converts diffusion weighted MR images in DICOM series into NRRD format for analysis in Slicer.
+    * Perfect test case if we have DWI.
+* EMSegmentCommandLine
+    * simplify the process of segmenting large collections of images by providing a command line interface to the EMSegment algorithm
+    * Not a good test case
+* EMSegmentTransformToNewFormat
+    * Transform MRML Files to New EMSegmenter Standard
+    * Not a good test case
+* ExecutionModelTour
+    * Shows one of each type of parameter.
+    * I don't know what this means or does.
+* ExpertAutomatedRegistration
+    * Provides rigid, affine, and BSpline registration methods via a simple GUI
+    * No. We don't want any GUI interactions.
+* ExtractSkeleton
+    * Extract the skeleton of a binary object.
+    * Not a good test case. We don't have any skeletons to use as input.
+* FiducialRegistration
+    * Computes a rigid, similarity or affine transform from a matched list of fiducials
+    * Not a good test case. I don't know what "fiducials" are.
+* GaussianBlurImageFilter
+    * Apply a gaussian blurr (sic) to an image
+    * Good test case
+* GradientAnisotropicDiffusion
+    * Runs gradient anisotropic diffusion on a volume.
+    * Maybe a good test case?
+* GrayscaleFillHoleImageFilter
+    * fills holes in a grayscale image
+    * Maybe? Not sure we have any images with holes
+* GrayscaleGrindPeakImageFilter
+    * removes peaks in a grayscale image
+    * maybe?
+* GrayscaleModelMaker
+    * Create 3D surface models from grayscale data.
+    * Maybe? Could be cool. Not sure what to use for input.
+* HistogramMatching
+    * Normalizes the grayscale values of a source image based on the grayscale values of a reference image
+    * Not a good test case. Don't have the right kinds of inputs.
+* ImageLabelCombine
+    * Combine two label maps into one
+    * Not a good test case. Don't have any test data.
+* IslandRemoval
+    * Removes island smaller than threshold by assigning them to the label associated with the majority of neighboring voxels.
+    * Not a good test case. Don't have any test data.
+* LabelMapSmoothing
+    * This filter smoothes a binary label map.
+    * Not a good test case. Don't have any test data.
+* MaskScalarVolume
+    * Masks two images.
+    * Could be a good test case.
+* MedianImageFilter
+    * computes the value of each output pixel as the statistical median of the neighborhood of values around the corresponding input pixel
+    * Maybe?
+* MergeModels
+    * Merge the polydata from two input models and output a new model with the combined polydata.
+    * Not a good test case. Don't have any test data.
+* ModelMaker
+    * Create 3D surface models from segmented data.
+    * Not a good test case. Don't have any test data.
+* ModelToLabelMap
+    * Intersects an input model with an reference volume and produces an output label map.
+    * Not a good test case. Don't have any test data.
+* MultiplyScalarVolumes
+    * Multiplies two images.
+    * Good test case.
+* N4ITKBiasFieldCorrection
+    * Performs image bias correction using N4 algorithm.
+    * We could maybe run this, but I don't know how. I would need to study the inputs. So not a good test case in the first round.
+* OrientScalarVolume
+    * Orients an output volume.
+    * Orientation choices: Axial, Coronal, Sagittal, RIP, LIP, RSP, LSP, RIA, LIA, RSA, LSA, IRP, ILP, SRP, SLP, IRA, ILA, SRA, SLA, RPI, LPI, RAI, LAI, RPS, LPS, RAS, LAS, PRI, PLI, ARI, ALI, PRS, PLS, ARS, ALS, IPR, SPR, IAR, SAR, IPL, SPL, IAL, SAL, PIR, PSR, AIR, ASR, PIL, PSL, AIL, ASL
+    * Maybe good test case
+* OtsuThresholdImageFilter
+    * creates a binary thresholded image that separates an image into foreground and background components
+    * Maybe?
+* PETStandardUptakeValueComputation
+    * Computes the standardized uptake value based on body weight.
+    * Maybe?
+* PerformMetricTest
+    * Compare Mattes/MSQ metric value for two input images and a possible input BSpline transform.
+    * No. Need a moving and fixed image.
+* ProbeVolumeWithModel
+    * Paint a model by a volume (using vtkProbeFilter).
+    * No. Need an input model.
+* ResampleDTIVolume
+    * Just what it says
+    * Not a good test case.
+* ResampleScalarVectorDWIVolume
+    * image and vector-image resampling
+    * Not a good test case. Need NRRD inputs.
+* ResampleScalarVolume
+    * Just what it says
+    * Maybe a good test case
+* RobustStatisticsSegmenter
+    * Active contour segmentation using robust statistic.
+    * Maybe
+* SimpleRegionGrowingSegmentation
+    * A simple region growing segmentation algorithm based on intensity statistics.
+    * Not a good test case. Need a list of seed points.
+* SubtractScalarVolumes
+    * Subtracts two images.
+    * good test case
+* ThresholdScalarVolume
+    * Threshold an image.
+    * Maybe
+* VBRAINSDemonWarp
+    * finds a deformation field to warp a moving image onto a fixed image.
+    * Not a good test case. Need a moving image and a fixed image.
+* VotingBinaryHoleFillingImageFilter
+    * Applies a voting operation in order to fill-in (sic) cavities.
+    * Not a good test case. Need data with cavities to fill.
+
+## Test cases
+
+### Good
+
+* AddScalarVolumes
+* BRAINSFit
+* BRAINSROIAuto
 * BRAINSResize
 * BRAINSStripRotation
-* BRAINSTransformConvert
-* CastScalarVolume
-* CheckerBoardFilter
-* CreateDICOMSeries
-* CurvatureAnisotropicDiffusion
-* DWIConvert
-* EMSegmentCommandLine
-* EMSegmentTransformToNewFormat
-* ExecutionModelTour
-* ExpertAutomatedRegistration
-* ExtractSkeleton
-* FiducialRegistration
 * GaussianBlurImageFilter
-* GradientAnisotropicDiffusion
-* GrayscaleFillHoleImageFilter
-* GrayscaleGrindPeakImageFilter
-* GrayscaleModelMaker
-* HistogramMatching
-* ImageLabelCombine
-* IslandRemoval
-* LabelMapSmoothing
-* MaskScalarVolume
-* MedianImageFilter
-* MergeModels
-* ModelMaker
-* ModelToLabelMap
 * MultiplyScalarVolumes
-* N4ITKBiasFieldCorrection
+* SubtractScalarVolumes
+
+### Maybe
+
+* DWIConvert (great if we have DWI for testing)
+* MaskScalarVolume
 * OrientScalarVolume
-* OtsuThresholdImageFilter
 * PETStandardUptakeValueComputation
-* PerformMetricTest
-* ProbeVolumeWithModel
-* ResampleDTIVolume
-* ResampleScalarVectorDWIVolume
 * ResampleScalarVolume
 * RobustStatisticsSegmenter
-* SimpleRegionGrowingSegmentation
-* SubtractScalarVolumes
 * ThresholdScalarVolume
-* VBRAINSDemonWarp
-* VotingBinaryHoleFillingImageFilter
 
 ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINSLabelStats BRAINSROIAuto BRAINSResample BRAINSResize BRAINSStripRotation BRAINSTransformConvert CastScalarVolume CheckerBoardFilter CreateDICOMSeries CurvatureAnisotropicDiffusion DWIConvert EMSegmentCommandLine EMSegmentTransformToNewFormat ExecutionModelTour ExpertAutomatedRegistration ExtractSkeleton FiducialRegistration GaussianBlurImageFilter GradientAnisotropicDiffusion GrayscaleFillHoleImageFilter GrayscaleGrindPeakImageFilter GrayscaleModelMaker HistogramMatching ImageLabelCombine IslandRemoval LabelMapSmoothing MaskScalarVolume MedianImageFilter MergeModels ModelMaker ModelToLabelMap MultiplyScalarVolumes N4ITKBiasFieldCorrection OrientScalarVolume OtsuThresholdImageFilter PETStandardUptakeValueComputation PerformMetricTest ProbeVolumeWithModel ResampleDTIVolume ResampleScalarVectorDWIVolume ResampleScalarVolume RobustStatisticsSegmenter SimpleRegionGrowingSegmentation SubtractScalarVolumes ThresholdScalarVolume VBRAINSDemonWarp VotingBinaryHoleFillingImageFilter
 
 ### ACPCTransform
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -119,27 +230,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
     Where:
 
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
-
        -d,  --
          Click this checkbox to see debugging output. (value: 0)
 
@@ -154,16 +244,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
        --acpc <std::vector<std::vector<float> >>  (accepted multiple times)
          ACPC line, a list of two fiducial points, one at the anterior
          commissure and one at the posterior commissure. (value: None)
-
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
-
 
        Description: <p>Calculate a transformation from two lists of fiducial
        points.</p><p>The ACPC line extends between two points, one at the
@@ -186,25 +266,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 ### AddScalarVolumes
 
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
-
     USAGE:
 
        /opt/slicer/lib/Slicer-4.8/cli-modules/./AddScalarVolumes
@@ -221,39 +282,9 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
     Where:
 
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
-
        --order <0|1|2|3>
          Interpolation order if two images are in different coordinate frames
          or have different sampling. (value: 1)
-
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
 
        <std::string>
          (required)  Input volume 1
@@ -263,7 +294,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
        <std::string>
          (required)  Volume1 + Volume2
-
 
        Description: Adds two images. Although all image types are supported on
        input, only signed types are produced. The two images do not have to
@@ -277,25 +307,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### BRAINSDWICleanup
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -313,27 +324,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
     Where:
 
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
-
        -b <std::vector<int>>,  --badGradients <std::vector<int>>
 
        -o <std::string>,  --outputVolume <std::string>
@@ -342,41 +332,12 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
        -i <std::string>,  --inputVolume <std::string>
          Required: input image is a 4D NRRD image.
 
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
-
-
        Description: Remove bad gradients/volumes from DWI NRRD file.
 
        Author(s): This tool was developed by Kent Williams.
 
 
 ### BRAINSDemonWarp
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -439,27 +400,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
     Where:
-
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
 
        --numberOfThreads <int>
          Explicitly specify the maximum number of threads to use. (value: -1)
@@ -616,16 +556,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
        -m <std::string>,  --movingVolume <std::string>
          Required: input moving image
 
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
-
-
        Description: This program finds a deformation field to warp a moving
        image onto a fixed image.  The images must be of the same signal kind,
        and contain an image of the same kind of object.  This program uses the
@@ -644,25 +574,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### BRAINSFit
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -759,27 +670,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
     Where:
-
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
 
        -v,  --
           (value: 0)
@@ -1151,16 +1041,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
          Input fixed image (the moving image will be transformed into this
          image space).
 
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
-
-
        Description: Register a three-dimensional volume to a reference volume
        (Mattes Mutual Information by default). Full documentation avalable
        here:
@@ -1182,25 +1062,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### BRAINSLabelStats
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -1228,27 +1089,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
     Where:
-
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
 
        --userDefineMaximum <float>
          User define maximum value (value: 4095)
@@ -1281,16 +1121,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
        --imageVolume <std::string>
          Image Volume
 
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
-
-
        Description: Compute image statistics within each label of a label
        map.
 
@@ -1301,25 +1131,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### BRAINSROIAuto
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -1348,27 +1159,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
     Where:
-
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
 
        --numberOfThreads <int>
          Explicitly specify the maximum number of threads to use. (value: -1)
@@ -1413,16 +1203,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
        --inputVolume <std::string>
          The input image for finding the largest region filled mask.
 
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
-
-
        Description: This program is used to create a mask over the most
        prominant forground region in an image.  This is accomplished via a
        combination of otsu thresholding and a closing operation.  More
@@ -1443,25 +1223,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### BRAINSResample
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -1492,27 +1253,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
     Where:
-
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
 
        --numberOfThreads <int>
          Explicitly specify the maximum number of threads to use. (value: -1)
@@ -1561,16 +1301,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
        --inputVolume <std::string>
          Image To Warp
 
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
-
-
        Description: This program collects together three common image
        processing tasks that all involve resampling an image volume: Resampling
        to a new resolution and spacing, applying a transformation (using an ITK
@@ -1589,25 +1319,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### BRAINSResize
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -1628,27 +1339,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
     Where:
 
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
-
        --scaleFactor <float>
          The scale factor for the image spacing. (value: 2)
 
@@ -1665,16 +1355,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
        --inputVolume <std::string>
          Image To Scale
 
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
-
-
        Description: This program is useful for downsampling an image by a
        constant scale factor.
 
@@ -1687,25 +1367,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### BRAINSStripRotation
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -1724,27 +1385,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
     Where:
 
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
-
        --transform <std::string>
          Filename for the transform file
 
@@ -1754,16 +1394,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
        --inputVolume <std::string>
          Image To Warp
 
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
-
-
        Description: Read an Image, write out same image with identity rotation
        matrix plus an ITK transform file
 
@@ -1771,25 +1401,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### BRAINSTransformConvert
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -1815,32 +1426,9 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
     Where:
 
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
-
        --outputTransform <std::string>
 
-
        --displacementVolume <std::string>
-
 
        --outputPrecisionType <double|float>
          Precision type of the output transform. It can be either single
@@ -1853,19 +1441,7 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
        --referenceVolume <std::string>
 
-
        --inputTransform <std::string>
-
-
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
-
 
        Description: Convert ITK transforms to higher order
        transforms
@@ -1874,25 +1450,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### CastScalarVolume
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -1911,47 +1468,16 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
     Where:
 
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
-
        -t <Char|UnsignedChar|Short|UnsignedShort|Int|UnsignedInt|Float|Double>,
           --type <Char|UnsignedChar|Short|UnsignedShort|Int|UnsignedInt|Float
           |Double>
          Scalar data type for the new output volume. (value: UnsignedChar)
-
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
 
        <std::string>
          (required)  Input volume, the volume to cast.
 
        <std::string>
          (required)  Output volume, cast to the new type.
-
 
        Description: Cast a volume to a given data type.
 
@@ -1970,25 +1496,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 ### CheckerBoardFilter
 
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
-
     USAGE:
 
        /opt/slicer/lib/Slicer-4.8/cli-modules/./CheckerBoardFilter
@@ -2006,42 +1513,12 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
     Where:
 
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
-
        --checkerPattern <std::vector<int>>
          The pattern of input 1 and input 2 in the output image. The user can
          specify the number of checkers in each dimension. A checkerPattern of
          2,2,1 means that images will alternate in every other checker in the
          first two dimensions. The same pattern will be used in the 3rd
          dimension. (value: 2,2,2)
-
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
 
        <std::string>
          (required)  First Input volume
@@ -2051,7 +1528,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
        <std::string>
          (required)  Output filtered
-
 
        Description: Create a checkerboard volume of two volumes. The output
        volume will show the two inputs alternating according to the user
@@ -2069,25 +1545,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### CreateDICOMSeries
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -2123,27 +1580,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
     Where:
-
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
 
        -t <UnsignedChar|Char|UnsignedChar|Short|UnsignedShort|Int|UnsignedInt>,
           --type <UnsignedChar|Char|UnsignedChar|Short|UnsignedShort|Int
@@ -2218,18 +1654,8 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
        --patientName <std::string>
          The name of the patient [0010-0010] (value: Anonymous)
 
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
-
        <std::string>
          (required)  Input volume to be resampled
-
 
        Description: Create a DICOM Series from a Slicer volume. User can
        specify values for selected DICOM tags in the UI. Given the number of
@@ -2243,25 +1669,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### CurvatureAnisotropicDiffusion
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -2280,27 +1687,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
     Where:
 
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
-
        --timeStep <double>
          Time Step (value: 0.0625)
 
@@ -2313,34 +1699,20 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
        --conductance <double>
          Conductance (value: 1)
 
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
-
        <std::string>
          (required)  Input volume to be filtered
 
        <std::string>
          (required)  Output filtered
 
-
        Description: Performs anisotropic diffusion on an image using a modified
        curvature diffusion equation (MCDE).
-
-
 
        MCDE does not exhibit the edge enhancing properties of classic
        anisotropic diffusion, which can under certain conditions undergo a
        'negative' diffusion, which enhances the contrast of edges.  Equations
        of the form of MCDE always undergo positive diffusion, with the
        conductance term only varying the strength of that diffusion.
-
-
 
        Qualitatively, MCDE compares well with other non-linear diffusion
        techniques.  It is less sensitive to contrast than classic Perona-Malik
@@ -2357,25 +1729,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### DWIConvert
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -2409,27 +1762,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
     Where:
-
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
 
        --fMRI
          DEPRECATED:  No support or testing.  Output a NRRD file, but without
@@ -2514,16 +1846,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
          File + gradient/bvalue text files FSLToNrrd: Convert NIfTI File +
          gradient/bvalue text files to NRRD file. (value: DicomToNrrd)
 
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
-
-
        Description: Converts diffusion weighted MR images in DICOM series into
        NRRD format for analysis in Slicer. This program has been tested on only
        a limited subset of DTI DICOM formats available from Siemens, GE, and
@@ -2547,25 +1869,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### EMSegmentCommandLine
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -2611,27 +1914,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
     Where:
-
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
 
        --registrationDeformableType <int>
          specify the accuracy of the deformable registration. -2: Do not
@@ -2721,16 +2003,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
        --mrmlSceneFileName <std::string>
          Active MRML scene that contains EMSegment algorithm parameters.
 
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
-
-
        Description: This module is used to simplify the process of segmenting
        large collections of images by providing a command line interface to the
        EMSegment algorithm for script and batch processing.
@@ -2744,25 +2016,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### EMSegmentTransformToNewFormat
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -2780,27 +2033,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
     Where:
 
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
-
        -t,  --templateFlag
          Set to true if the transformed mrml file should be used as template
          file (value: 0)
@@ -2814,16 +2046,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
          Active MRML scene that contains EMSegment algorithm parameters in the
          format before 3.6.3 - please include absolute  file name in path.
 
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
-
-
        Description: Transform MRML Files to New EMSegmenter Standard
 
        Author(s): Anonymous
@@ -2832,25 +2054,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### ExecutionModelTour
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -2901,27 +2104,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
     Where:
-
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
 
        --outputDT <std::string>
          Array of processed (output) Table values
@@ -3029,21 +2211,11 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
        -i <int>,  --integer <int>
          An integer without constraints (value: 30)
 
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
-
        <std::string>
          (required)  First index argument is an image
 
        <std::string>
          (required)  Second index argument is an image
-
 
        Description: Shows one of each type of parameter.
 
@@ -3055,25 +2227,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### ExpertAutomatedRegistration
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -3122,27 +2275,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
     Where:
-
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
 
        --controlPointSpacing <int>
          Number of pixels between control points (value: 40)
@@ -3232,15 +2364,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
        --resampledImage <std::string>
          Registration results
 
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
-
        <std::string>
          (required)  Image which defines the space into which the moving image
          is registered
@@ -3248,7 +2371,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
        <std::string>
          (required)  The transform goes from the fixed image's space into the
          moving image's space
-
 
        Description: Provides rigid, affine, and BSpline registration methods
        via a simple GUI
@@ -3262,25 +2384,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### ExtractSkeleton
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -3299,27 +2402,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
     Where:
 
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
-
        --pointsFile <std::string>
          Name of the file to store the coordinates of the central (1D) skeleton
          points (value: skeleton.txt)
@@ -3333,21 +2415,11 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
        --type <1D|2D>
          Type of skeleton to create (value: 1D)
 
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
-
        <std::string>
          (required)  Input image
 
        <std::string>
          (required)  Skeleton of the input image
-
 
        Description: Extract the skeleton of a binary object.  The skeleton can
        be limited to being a 1D curve or allowed to be a full 2D manifold.  The
@@ -3365,25 +2437,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### FiducialRegistration
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -3405,27 +2458,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
     Where:
 
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
-
        --transformType <Translation|Rigid|Similarity>
          Type of transform to produce (value: Rigid)
 
@@ -3440,16 +2472,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
           times)
          Ordered list of landmarks in the fixed image
 
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
-
-
        Description: Computes a rigid, similarity or affine transform from a
        matched list of fiducials
 
@@ -3462,25 +2484,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### GaussianBlurImageFilter
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -3497,46 +2500,15 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
     Where:
 
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
-
        -s <double>,  --sigma <double>
          Sigma value in physical units (e.g., mm) of the Gaussian kernel
          (value: 1)
-
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
 
        <std::string>
          (required)  Input volume
 
        <std::string>
          (required)  Blurred Volume
-
 
        Description: Apply a gaussian blurr to an image
 
@@ -3549,25 +2521,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### GradientAnisotropicDiffusion
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -3586,27 +2539,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
     Where:
-
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
 
        --useImageSpacing
          ![CDATA[Take into account image spacing in the computation.  It is
@@ -3633,26 +2565,14 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
          edges. Note that the number of iterations controls how much smoothing
          is done within regions bounded by edges. (value: 1)
 
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
-
        <std::string>
          (required)  Input volume to be filtered
 
        <std::string>
          (required)  Output filtered
 
-
        Description: Runs gradient anisotropic diffusion on a
        volume.
-
-
 
        Anisotropic diffusion methods reduce noise (or unwanted detail) in
        images while preserving specific image features, like edges.  For many
@@ -3675,25 +2595,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 ### GrayscaleFillHoleImageFilter
 
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
-
     USAGE:
 
        /opt/slicer/lib/Slicer-4.8/cli-modules/./GrayscaleFillHoleImageFilter
@@ -3709,71 +2610,32 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
     Where:
 
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
-
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
-
        <std::string>
          (required)  Input volume to be filtered
 
        <std::string>
          (required)  Output filtered
 
-
        Description: GrayscaleFillholeImageFilter fills holes in a grayscale
-       image.  Holes are local minima in the grayscale topography that are not
+       image. Holes are local minima in the grayscale topography that are not
        connected to boundaries of the image. Gray level values adjacent to a
        hole are extrapolated across the hole.
 
-
-
        This filter is used to smooth over local minima without affecting the
-       values of local maxima.  If you take the difference between the output
+       values of local maxima. If you take the difference between the output
        of this filter and the original image (and perhaps threshold the
        difference above a small value), you'll obtain a map of the local
        minima.
 
-
-
-       This filter uses the itkGrayscaleGeodesicErodeImageFilter.  It provides
-       its own input as the 'mask' input to the geodesic erosion.  The 'marker'
+       This filter uses the itkGrayscaleGeodesicErodeImageFilter. It provides
+       its own input as the 'mask' input to the geodesic erosion. The 'marker'
        image for the geodesic erosion is constructed such that boundary pixels
        match the boundary pixels of the input image and the interior pixels are
        set to the maximum pixel value in the input image.
 
-
-
        Geodesic morphology and the Fillhole algorithm is described in Chapter 6
        of Pierre Soille's book 'Morphological Image Analysis: Principles and
        Applications', Second Edition, Springer, 2003.
-
-
 
        A companion filter, Grayscale Grind Peak, removes peaks in grayscale
        images.
@@ -3786,25 +2648,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### GrayscaleGrindPeakImageFilter
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -3821,77 +2664,36 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
     Where:
 
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
-
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
-
        <std::string>
          (required)  Input volume to be filtered
 
        <std::string>
          (required)  Output filtered
 
-
        Description: GrayscaleGrindPeakImageFilter removes peaks in a grayscale
        image. Peaks are local maxima in the grayscale topography that are not
        connected to boundaries of the image. Gray level values adjacent to a
        peak are extrapolated through the peak.
 
-
-
        This filter is used to smooth over local maxima without affecting the
-       values of local minima.  If you take the difference between the output
+       values of local minima. If you take the difference between the output
        of this filter and the original image (and perhaps threshold the
        difference above a small value), you'll obtain a map of the local
        maxima.
 
-
-
-       This filter uses the GrayscaleGeodesicDilateImageFilter.  It provides
-       its own input as the 'mask' input to the geodesic erosion.  The 'marker'
+       This filter uses the GrayscaleGeodesicDilateImageFilter. It provides
+       its own input as the 'mask' input to the geodesic erosion. The 'marker'
        image for the geodesic erosion is constructed such that boundary pixels
        match the boundary pixels of the input image and the interior pixels are
        set to the minimum pixel value in the input image.
 
-
-
        This filter is the dual to the GrayscaleFillholeImageFilter which
-       implements the Fillhole algorithm.  Since it is a dual, it is somewhat
+       implements the Fillhole algorithm. Since it is a dual, it is somewhat
        superfluous but is provided as a convenience.
-
-
 
        Geodesic morphology and the Fillhole algorithm is described in Chapter 6
        of Pierre Soille's book 'Morphological Image Analysis: Principles and
        Applications', Second Edition, Springer, 2003.
-
-
 
        A companion filter, Grayscale Fill Hole, fills holes in grayscale
        images.
@@ -3904,25 +2706,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### GrayscaleModelMaker
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -3941,27 +2724,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
     Where:
-
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
 
        --pointnormals
          Calculate the point normals? Calculated point normals make the surface
@@ -3989,21 +2751,11 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
          separates the volume into voxels that lie above (inside) and below
          (outside) the threshold. (value: 100)
 
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
-
        <std::string>
          (required)  Volume containing the input grayscale data.
 
        <std::string>
          (required)  Output that contains geometry model.
-
 
        Description: Create 3D surface models from grayscale data. This module
        uses Marching Cubes to create an isosurface at a given threshold. The
@@ -4021,25 +2773,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### HistogramMatching
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -4059,27 +2792,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
     Where:
 
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
-
        --threshold
          If on, only pixels above the mean in each volume are thresholded.
          (value: 0)
@@ -4089,15 +2801,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
        --numberOfHistogramLevels <int>
          The number of hisogram levels to use (value: 128)
-
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
 
        <std::string>
          (required)  Input volume to be filtered
@@ -4109,28 +2812,21 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
          (required)  Output volume. This is the input volume with intensities
          matched to the reference volume.
 
-
        Description: Normalizes the grayscale values of a source image based on
-       the grayscale values of a reference image.  This filter uses a histogram
+       the grayscale values of a reference image. This filter uses a histogram
        matching technique where the histograms of the two images are matched
        only at a specified number of quantile values.
 
-
-
        The filter was orginally designed to normalize MR images of the sameMR
        protocol and same body part. The algorithm works best if background
-       pixels are excluded from both the source and reference histograms.  A
+       pixels are excluded from both the source and reference histograms. A
        simple background exclusion method is to exclude all pixels whose
        grayscale values are smaller than the mean grayscale value.
        ThresholdAtMeanIntensity switches on this simple background exclusion
        method.
 
-
-
        Number of match points governs the number of quantile values to be
        matched.
-
-
 
        The filter assumes that both the source and reference are of the same
        type and that the input and output image type have the same number of
@@ -4144,25 +2840,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### ImageLabelCombine
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -4179,38 +2856,8 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
     Where:
 
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
-
        -f,  --first_overwrites
          Use first or second label when both are present (value: 0)
-
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
 
        <std::string>
          (required)  Label map image
@@ -4221,32 +2868,12 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
        <std::string>
          (required)  Resulting Label map image
 
-
        Description: Combine two label maps into one
 
        Author(s): Alex Yarmarkovich (SPL, BWH)
 
 
 ### IslandRemoval
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -4263,27 +2890,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
     Where:
 
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
-
        -n,  --neighborhood2D
          If set then uses 2D instead of 3D neighborhood to define connectivity.
          (value: 0)
@@ -4291,21 +2897,11 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
        -m <int>,  --min <int>
          Islands smaller than this size will be removed. (value: 10)
 
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
-
        <std::string>
          (required)  Volume containing the input label map.
 
        <std::string>
          (required)  Label map with islands removed.
-
 
        Description: Removes island smaller than threshold by assigning them to
        the label associated with the majority of neighboring voxels.
@@ -4314,25 +2910,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### LabelMapSmoothing
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -4353,27 +2930,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
     Where:
 
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
-
        --gaussianSigma <float>
          The standard deviation of the Gaussian kernel (value: 0.2)
 
@@ -4385,18 +2941,9 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
          (value: 50)
 
        --labelToSmooth <int>
-         The label to smooth.  All others will be ignored.  If no label is
+         The label to smooth. All others will be ignored. If no label is
          selected by the user, the maximum label in the image is chosen by
          default. (value: -1)
-
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
 
        <std::string>
          (required)  Input label map to smooth
@@ -4404,10 +2951,9 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
        <std::string>
          (required)  Smoothed label map
 
-
-       Description: This filter smoothes a binary label map.  With a label map
+       Description: This filter smoothes a binary label map. With a label map
        as input, this filter runs an anti-alising algorithm followed by a
-       Gaussian smoothing algorithm.  The output is a smoothed label
+       Gaussian smoothing algorithm. The output is a smoothed label
        map.
 
        Author(s): Dirk Padfield (GE), Josh Cates (Utah), Ross Whitaker
@@ -4415,31 +2961,12 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
        Acknowledgements: This work is part of the National Alliance for Medical
        Image Computing (NAMIC), funded by the National Institutes of Health
-       through the NIH Roadmap for Medical Research, Grant U54 EB005149.  This
+       through the NIH Roadmap for Medical Research, Grant U54 EB005149. This
        filter is based on work developed at the University of Utah, and
        implemented at GE Research.
 
 
 ### MaskScalarVolume
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -4457,41 +2984,11 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
     Where:
 
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
-
        -r <int>,  --replace <int>
          Value to use for the output volume outside of the mask (value: 0)
 
        -l <int>,  --label <int>
          Label value in the Mask Volume to use as the mask (value: 1)
-
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
 
        <std::string>
          (required)  Input volume to be masked
@@ -4502,7 +2999,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
        <std::string>
          (required)  Output volume: Input Volume masked by label value from
          Mask Volume
-
 
        Description: Masks two images. The output image is set to 0 everywhere
        except where the chosen label from the mask volume is present, at which
@@ -4518,25 +3014,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### MedianImageFilter
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -4554,45 +3031,14 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
     Where:
 
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
-
        --neighborhood <std::vector<int>>
          The size of the neighborhood in each dimension (value: 1,1,1)
-
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
 
        <std::string>
          (required)  Input volume to be filtered
 
        <std::string>
          (required)  Output filtered
-
 
        Description: The MedianImageFilter is commonly used as a robust approach
        for noise reduction. This filter is particularly efficient against
@@ -4610,25 +3056,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 ### MergeModels
 
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
-
     USAGE:
 
        /opt/slicer/lib/Slicer-4.8/cli-modules/./MergeModels
@@ -4644,36 +3071,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
     Where:
 
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
-
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
-
        <std::string>
          (required)  Input model 1
 
@@ -4682,7 +3079,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
        <std::string>
          (required)  Output model
-
 
        Description: Merge the polydata from two input models and output a new
        model with the combined polydata. Uses the vtkAppendPolyData filter.
@@ -4697,25 +3093,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### ModelMaker
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -4736,32 +3113,11 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
                                             <int>] [-l <std::vector<int>>]
                                             [--generateAll] [-n <std::string>]
                                             [--modelSceneFile <std::string>]
-                                            ...  [--color <std::string>] [--]
+                                            ... [--color <std::string>] [--]
                                             [--version] [-h] <std::string>
 
 
     Where:
-
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
 
        -d,  --debug
          turn this flag on in order to see debugging output (look in the Error
@@ -4823,7 +3179,7 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
          Select this to not generate models from labels that do not have names
          defined in the color look up table associated with the input label
          map. If true, only models which have an entry in the color table will
-         be generated.  If false, generate all models that exist within the
+         be generated. If false, generate all models that exist within the
          label range. (value: 0)
 
        -e <int>,  --end <int>
@@ -4871,20 +3227,10 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
        --color <std::string>
          Color table to make labels to colors and objects
 
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
-
        <std::string>
          (required)  Input label map. The Input Volume drop down menu is
          populated with the label map volumes that are present in the scene,
          select one from which to generate models.
-
 
        Description: Create 3D surface models from segmented data.<p>Models are
        imported into Slicer under a model hierarchy node in a MRML scene. The
@@ -4918,25 +3264,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 ### ModelToLabelMap
 
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
-
     USAGE:
 
        /opt/slicer/lib/Slicer-4.8/cli-modules/./ModelToLabelMap
@@ -4953,27 +3280,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
     Where:
 
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
-
        -l <int>,  --labelValue <int>
          The unsigned char label value to use in the output label map. (value:
          255)
@@ -4981,15 +3287,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
        --distance <float>
          Determines how finely the surface is sampled. Used for the distance
          argument in the vtkPolyDataPointSampler. (value: 1)
-
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
 
        <std::string>
          (required)  Input volume
@@ -4999,7 +3296,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
        <std::string>
          (required)  Unsigned char label map volume
-
 
        Description: Intersects an input model with an reference volume and
        produces an output label map. The algorithm uses flood fill from the
@@ -5015,25 +3311,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### MultiplyScalarVolumes
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -5051,39 +3328,9 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
     Where:
 
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
-
        --order <0|1|2|3>
          Interpolation order if two images are in different coordinate frames
          or have different sampling. (value: 1)
-
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
 
        <std::string>
          (required)  Input volume 1
@@ -5093,7 +3340,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
        <std::string>
          (required)  Volume1 * Volume2
-
 
        Description: Multiplies two images. Although all image types are
        supported on input, only signed types are produced. The two images do
@@ -5107,25 +3353,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### N4ITKBiasFieldCorrection
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -5154,27 +3381,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
     Where:
-
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
 
        --nhistogrambins <int>
          Number of histogram bins. Zero implies use of the default value.
@@ -5236,21 +3442,11 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
          processing results can often be obtained when a meaningful mask is
          defined.
 
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
-
        <std::string>
          (required)  Input image where you observe signal inhomegeneity
 
        <std::string>
          (required)  Result of processing
-
 
        Description: Performs image bias correction using N4 algorithm. This
        module is based on the ITK filters contributed in the following
@@ -5267,25 +3463,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### OrientScalarVolume
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -5309,27 +3486,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
     Where:
 
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
-
        -o <Axial|Coronal|Sagittal|RIP|LIP|RSP|LSP|RIA|LIA|RSA|LSA|IRP|ILP|SRP
           |SLP|IRA|ILA|SRA|SLA|RPI|LPI|RAI|LAI|RPS|LPS|RAS|LAS|PRI|PLI|ARI|ALI
           |PRS|PLS|ARS|ALS|IPR|SPR|IAR|SAR|IPL|SPL|IAL|SAL|PIR|PSR|AIR|ASR|PIL
@@ -5339,21 +3495,11 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
           |IAL|SAL|PIR|PSR|AIR|ASR|PIL|PSL|AIL|ASL>
          Orientation choices (value: LPS)
 
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
-
        <std::string>
          (required)  Input volume 1
 
        <std::string>
          (required)  The oriented volume
-
 
        Description: Orients an output volume. Rearranges the slices in a volume
        according to the selected orientation. The slices are not interpolated.
@@ -5373,25 +3519,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 ### OtsuThresholdImageFilter
 
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
-
     USAGE:
 
        /opt/slicer/lib/Slicer-4.8/cli-modules/./OtsuThresholdImageFilter
@@ -5410,27 +3537,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
     Where:
 
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
-
        --numberOfBins <int>
          This is an advanced parameter. The number of bins in the histogram
          used to model the probability mass function of the two intensity
@@ -5447,37 +3553,23 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
          The value assigned to pixels that are inside the computed threshold
          (value: 0)
 
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
-
        <std::string>
          (required)  Input volume to be filtered
 
        <std::string>
          (required)  Output filtered
 
-
        Description: This filter creates a binary thresholded image that
        separates an image into foreground and background components. The filter
        calculates the optimum threshold separating those two classes so that
        their combined spread (intra-class variance) is minimal (see
-       http://en.wikipedia.org/wiki/Otsu%27s_method).  Then the filter applies
+       http://en.wikipedia.org/wiki/Otsu%27s_method). Then the filter applies
        that threshold to the input image using the
        itkBinaryThresholdImageFilter. The numberOfHistogram bins can be set for
        the Otsu Calculator. The insideValue and outsideValue can be set for the
-       BinaryThresholdImageFilter.  The filter produces a labeled volume.
-
-
+       BinaryThresholdImageFilter. The filter produces a labeled volume.
 
        The original reference is:
-
-
 
        N.Otsu, 'A threshold selection method from gray level histograms,' IEEE
        Trans.Syst.ManCybern.SMC-9,62-66 1979.
@@ -5489,25 +3581,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### PETStandardUptakeValueComputation
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -5527,27 +3600,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
     Where:
 
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
-
        -o <std::string>,  --csvFile <std::string>
          A table holding the output SUV values in comma separated lines, one
          per label. Optional.
@@ -5565,16 +3617,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
        -p <std::string>,  --petDICOMPath <std::string>
          Input path to a directory containing a PET volume containing DICOM
          header information for SUV computation
-
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
-
 
        Description: Computes the standardized uptake value based on body
        weight. Takes an input PET image in DICOM and NRRD format (DICOM header
@@ -5595,25 +3637,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### PerformMetricTest
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -5636,27 +3659,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
     Where:
 
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
-
        --numberOfHistogramBins <int>
          The number of historgram bins when MMI (Mattes) is metric type.
          (value: 50)
@@ -5669,23 +3671,11 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
        --inputMovingImage <std::string>
 
-
        --inputFixedImage <std::string>
-
 
        --inputBSplineTransform <std::string>
          Input transform that is use to warp moving image before metric
          comparison.
-
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
-
 
        Description: Compare Mattes/MSQ metric value for two input images and a
        possible input BSpline transform.
@@ -5694,25 +3684,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### ProbeVolumeWithModel
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -5729,36 +3700,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
     Where:
 
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
-
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
-
        <std::string>
          (required)  Volume to use to 'paint' the model
 
@@ -5767,7 +3708,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
        <std::string>
          (required)  Output 'painted' model
-
 
        Description: Paint a model by a volume (using
        vtkProbeFilter).
@@ -5778,25 +3718,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### ResampleDTIVolume
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -5830,27 +3751,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
     Where:
-
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
 
        -t <rt|a>,  --transform <rt|a>
          Transform algorithm
@@ -5954,25 +3854,14 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
        -f <std::string>,  --transformationFile <std::string>
 
-
        -R <std::string>,  --Reference <std::string>
          Reference Volume (spacing,size,orientation,origin)
-
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
 
        <std::string>
          (required)  Input volume to be resampled
 
        <std::string>
          (required)  Resampled Volume
-
 
        Description: Resampling an image is a very important task in image
        analysis. It is especially important in the frame of image registration.
@@ -5994,25 +3883,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### ResampleScalarVectorDWIVolume
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -6043,27 +3913,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
     Where:
-
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
 
        -t <rt|a>,  --transform <rt|a>
          Transform algorithm
@@ -6154,18 +4003,8 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
        -f <std::string>,  --transformationFile <std::string>
 
-
        -R <std::string>,  --Reference <std::string>
          Reference Volume (spacing,size,orientation,origin)
-
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
 
        <std::string>
          (required)  Input Volume to be resampled
@@ -6173,22 +4012,15 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
        <std::string>
          (required)  Resampled Volume
 
-
        Description: This module implements image and vector-image resampling
-       through  the use of itk Transforms.It can also handle diffusion weighted
+       through the use of itk Transforms. It can also handle diffusion weighted
        MRI image resampling. 'Resampling' is performed in space coordinates,
        not pixel/grid coordinates. It is quite important to ensure that image
        spacing is properly set on the images involved. The interpolator is
        required since the mapping from one space to the other will often
        require evaluation of the intensity of the image at non-grid positions.
 
-
-
-
        Warning: To resample DWMR Images, use nrrd input and output files.
-
-
-
 
        Warning: Do not use to resample Diffusion Tensor Images, tensors would
        not be reoriented
@@ -6203,25 +4035,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### ResampleScalarVolume
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -6242,27 +4055,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
     Where:
 
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
-
        -i <linear|nearestNeighbor|bspline|hamming|cosine|welch|lanczos
           |blackman>,  --interpolation <linear|nearestNeighbor|bspline|hamming
           |cosine|welch|lanczos|blackman>
@@ -6277,21 +4069,11 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
          Spacing along each dimension (0 means use input spacing) (value: 0,0
          ,0)
 
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
-
        <std::string>
          (required)  Input volume to be resampled
 
        <std::string>
          (required)  Resampled Volume
-
 
        Description: Resampling an image is an important task in image analysis.
        It is especially important in the frame of image registration. This
@@ -6317,25 +4099,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 ### RobustStatisticsSegmenter
 
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
-
     USAGE:
 
        /opt/slicer/lib/Slicer-4.8/cli-modules/./RobustStatisticsSegmenter
@@ -6355,27 +4118,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
     Where:
 
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
-
        --maxRunningTime <double>
          The program will stop if this time is reached. (value: 10)
 
@@ -6394,15 +4136,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
        -v <double>,  --expectedVolume <double>
          The approximate volume of the object, in mL. (value: 50)
 
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
-
        <std::string>
          (required)  Original image to be segmented
 
@@ -6411,7 +4144,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
        <std::string>
          (required)  Segmented image
-
 
        Description: Active contour segmentation using robust
        statistic.
@@ -6425,25 +4157,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 ### SimpleRegionGrowingSegmentation
 
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
-
     USAGE:
 
        /opt/slicer/lib/Slicer-4.8/cli-modules/./SimpleRegionGrowingSegmentation
@@ -6454,7 +4167,7 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
                                             [--deserialize <std::string>]
                                             [--serialize <std::string>] [--seed
                                             <std::vector<std::vector<float> >>]
-                                            ...  [--labelvalue <int>]
+                                            ... [--labelvalue <int>]
                                             [--neighborhood <int>]
                                             [--multiplier <double>]
                                             [--iterations <int>] [--timestep
@@ -6464,27 +4177,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
     Where:
-
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
 
        --seed <std::vector<std::vector<float> >>  (accepted multiple times)
          Seed point(s) for region growing (value: None)
@@ -6511,21 +4203,11 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
        --smoothingIterations <int>
          Number of smoothing iterations (value: 5)
 
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
-
        <std::string>
          (required)  Input volume to be filtered
 
        <std::string>
          (required)  Output filtered
-
 
        Description: A simple region growing segmentation algorithm based on
        intensity statistics. To create a list of fiducials (Seeds) for this
@@ -6543,25 +4225,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 ### SubtractScalarVolumes
 
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
-
     USAGE:
 
        /opt/slicer/lib/Slicer-4.8/cli-modules/./SubtractScalarVolumes
@@ -6578,39 +4241,9 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
     Where:
 
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
-
        --order <0|1|2|3>
          Interpolation order if two images are in different coordinate frames
          or have different sampling. (value: 1)
-
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
 
        <std::string>
          (required)  Input volume 1
@@ -6620,7 +4253,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
        <std::string>
          (required)  Volume1 - Volume2
-
 
        Description: Subtracts two images. Although all image types are
        supported on input, only signed types are produced. The two images do
@@ -6634,25 +4266,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### ThresholdScalarVolume
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -6671,27 +4284,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
     Where:
-
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
 
        -n,  --negate
          Swap the outside value with the inside value. (value: 0)
@@ -6714,21 +4306,11 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
          and Lower values. If Below is selected, uses the ThresholdValue, if
          Above is selected, uses the ThresholdValue. (value: Outside)
 
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
-
        <std::string>
          (required)  Input volume
 
        <std::string>
          (required)  Thresholded input volume
-
 
        Description: <p>Threshold an image.</p><p>Set image values to a
        user-specified outside value if they are below, above, or between simple
@@ -6747,25 +4329,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### VBRAINSDemonWarp
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -6830,27 +4393,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
     Where:
 
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
-
        --numberOfThreads <int>
          Explicitly specify the maximum number of threads to use. (value: -1)
 
@@ -6884,7 +4426,7 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
          Flag to write debugging images after each step. (value: 0)
 
        --outputNormalized
-         Flag to warp and write the normalized images to output.  In normalized
+         Flag to warp and write the normalized images to output. In normalized
          images the image values are fit-scaled to be between 0 and the maximum
          storage type value. (value: 0)
 
@@ -6934,7 +4476,7 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
          Initial deformation field vector image file name
 
        --medianFilterSize <std::vector<int>>
-         Median filter radius in all 3 directions.  When images have a lot of
+         Median filter radius in all 3 directions. When images have a lot of
          salt and pepper noise, this step can improve the registration. (value:
          0,0,0)
 
@@ -6945,7 +4487,7 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
          The number of histogram levels (value: 256)
 
        -e,  --histogramMatch
-         Histogram Match the input images.  This is suitable for images of the
+         Histogram Match the input images. This is suitable for images of the
          same modality that may have different absolute scales, but the same
          overall intensity profile. (value: 0)
 
@@ -6979,7 +4521,7 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
        --interpolationMode <NearestNeighbor|Linear|ResampleInPlace|BSpline
           |WindowedSinc|Hamming|Cosine|Welch|Lanczos|Blackman>
          Type of interpolation to be used when applying transform to moving
-         volume.  Options are Linear, ResampleInPlace, NearestNeighbor, BSpline
+         volume. Options are Linear, ResampleInPlace, NearestNeighbor, BSpline
          , or WindowedSinc (value: Linear)
 
        --outputPixelType <float|short|ushort|int|uchar>
@@ -7006,20 +4548,10 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
           <std::vector<std::string>>  (accepted multiple times)
          Required: input moving image
 
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
-
-
        Description: This program finds a deformation field to warp a moving
-       image onto a fixed image.  The images must be of the same signal kind,
-       and contain an image of the same kind of object.  This program uses the
-       Thirion Demons warp software in ITK, the Insight Toolkit.  Additional
+       image onto a fixed image. The images must be of the same signal kind,
+       and contain an image of the same kind of object. This program uses the
+       Thirion Demons warp software in ITK, the Insight Toolkit. Additional
        information is available at:
        http://www.nitrc.org/projects/brainsdemonwarp.
 
@@ -7033,25 +4565,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
 
 ### VotingBinaryHoleFillingImageFilter
-
-    Usage
-      Slicer [options]
-
-    Options
-      --launcher-help                              Display help
-      --launcher-version                           Show launcher version information
-      --launcher-verbose                           Verbose mode
-      --launch                                     Specify the application to launch
-      --launcher-detach                            Launcher will NOT wait for the application to finish
-      --launcher-no-splash                         Hide launcher splash
-      --launcher-timeout                           Specify the time in second before the launcher kills the application. -1 means no timeout (default: -1)
-      --launcher-load-environment                  Specify the saved environment to load.
-      --launcher-dump-environment                  Launcher will print environment variables to be set, then exit
-      --launcher-show-set-environment-commands     Launcher will print commands suitable for setting the parent environment (i.e. using 'eval' in a POSIX shell), then exit
-      --launcher-additional-settings               Additional settings file to consider
-      --launcher-ignore-user-additional-settings   Ignore additional user settings
-      --launcher-generate-exec-wrapper-script      Generate executable wrapper script allowing to set the environment
-      --launcher-generate-template                 Generate an example of setting file
 
     USAGE:
 
@@ -7071,27 +4584,6 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
 
     Where:
 
-       --returnparameterfile <std::string>
-         Filename in which to write simple return parameters (int, float,
-         int-vector, etc.) as opposed to bulk return parameters (image,
-         geometry, transform, measurement, table).
-
-       --processinformationaddress <std::string>
-         Address of a structure to store process information (progress, abort,
-         etc.). (value: 0)
-
-       --xml
-         Produce xml description of command line arguments (value: 0)
-
-       --echo
-         Echo the command line arguments (value: 0)
-
-       --deserialize <std::string>
-         Restore the module's parameters that were previously archived.
-
-       --serialize <std::string>
-         Store the module's parameters to a file.
-
        --foreground <int>
          The value associated with the foreground (object) (value: 255)
 
@@ -7109,21 +4601,11 @@ ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINS
        --radius <std::vector<int>>
          The radius of a hole to be filled (value: 1,1,1)
 
-       --,  --ignore_rest
-         Ignores the rest of the labeled arguments following this flag.
-
-       --version
-         Displays version information and exits.
-
-       -h,  --help
-         Displays usage information and exits.
-
        <std::string>
          (required)  Input volume to be filtered
 
        <std::string>
          (required)  Output filtered
-
 
        Description: Applies a voting operation in order to fill-in cavities.
        This can be used for smoothing contours and for filling holes in binary
