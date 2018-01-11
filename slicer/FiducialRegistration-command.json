@@ -1,0 +1,60 @@
+{
+    "inputs": [
+        {
+            "command-line-flag": "--fixedLandmarks",
+            "name": "fixedLandmarks",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Ordered list of landmarks in the fixed image"
+        },
+        {
+            "command-line-flag": "--movingLandmarks",
+            "name": "movingLandmarks",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Ordered list of landmarks in the moving image"
+        },
+        {
+            "command-line-flag": "--saveTransform",
+            "name": "saveTransform",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Save the transform that results from registration"
+        },
+        {
+            "command-line-flag": "--transformType",
+            "name": "transformType",
+            "default-value": "Rigid",
+            "required": true,
+            "type": "string",
+            "description": "Type of transform to produce"
+        },
+        {
+            "required": true,
+            "type": "number",
+            "name": "rms",
+            "default-value": "0",
+            "description": "Display RMS Error."
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "outputMessage",
+            "default-value": "",
+            "description": "Provides more information on the output"
+        }
+    ],
+    "description": "Computes a rigid, similarity or affine transform from a matched list of fiducials",
+    "image": "quay.io/fedorov/slicerdockers:4.8.1",
+    "info-url": "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/TransformFromFiducials",
+    "name": "Fiducial Registration",
+    "command-line": "/opt/slicer/Slicer --launch FiducialRegistration #fixedLandmarks# #movingLandmarks# #saveTransform# #transformType# #rms# #outputMessage#",
+    "xnat": [],
+    "label": "Fiducial Registration",
+    "version": "0.1.0.$Revision$",
+    "schema-version": "1.0",
+    "type": "docker"
+}

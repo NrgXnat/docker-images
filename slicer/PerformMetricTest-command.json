@@ -1,0 +1,62 @@
+{
+    "inputs": [
+        {
+            "command-line-flag": "--inputBSplineTransform",
+            "name": "inputBSplineTransform",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "\n        Input transform that is use to warp moving image before metric comparison.\n      "
+        },
+        {
+            "command-line-flag": "--inputFixedImage",
+            "name": "inputFixedImage",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": ""
+        },
+        {
+            "command-line-flag": "--inputMovingImage",
+            "name": "inputMovingImage",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": ""
+        },
+        {
+            "command-line-flag": "--metricType",
+            "name": "metricType",
+            "default-value": "MMI",
+            "required": true,
+            "type": "string",
+            "description": "Comparison metric type"
+        },
+        {
+            "command-line-flag": "--numberOfSamples",
+            "name": "numberOfSamples",
+            "default-value": "0",
+            "required": true,
+            "type": "number",
+            "description": "The number of voxels sampled for metric evaluation."
+        },
+        {
+            "command-line-flag": "--numberOfHistogramBins",
+            "name": "numberOfHistogramBins",
+            "default-value": "50",
+            "required": true,
+            "type": "number",
+            "description": "The number of historgram bins when MMI (Mattes) is metric type."
+        }
+    ],
+    "description": "\n    Compare Mattes/MSQ metric value for two input images and a possible input BSpline transform.\n  ",
+    "image": "quay.io/fedorov/slicerdockers:4.8.1",
+    "info-url": "A utility to compare metric value between two input images.",
+    "name": "Metric Test",
+    "command-line": "/opt/slicer/Slicer --launch PerformMetricTest #inputBSplineTransform# #inputFixedImage# #inputMovingImage# #metricType# #numberOfSamples# #numberOfHistogramBins#",
+    "xnat": [],
+    "label": "Metric Test",
+    "version": "4.8.0",
+    "schema-version": "1.0",
+    "type": "docker"
+}

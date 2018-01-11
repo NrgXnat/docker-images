@@ -1,0 +1,124 @@
+{
+    "inputs": [
+        {
+            "command-line-flag": "--maskimage",
+            "name": "maskImageName",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Binary mask that defines the structure of your interest. NOTE: This parameter is OPTIONAL. If the mask is not specified, the module will use internally Otsu thresholding to define this mask. Better processing results can often be obtained when a meaningful mask is defined."
+        },
+        {
+            "command-line-flag": "--outputbiasfield",
+            "name": "outputBiasFieldName",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Recovered bias field (OPTIONAL)"
+        },
+        {
+            "command-line-flag": "--meshresolution",
+            "name": "initialMeshResolution",
+            "default-value": "1,1,1",
+            "required": true,
+            "type": "number",
+            "description": "Resolution of the initial bspline grid defined as a sequence of three numbers. The actual resolution will be defined by adding the bspline order (default is 3) to the resolution in each dimension specified here. For example, 1,1,1 will result in a 4x4x4 grid of control points. This parameter may need to be adjusted based on your input image. In the multi-resolution N4 framework, the resolution of the bspline grid at subsequent iterations will be doubled. The number of resolutions is implicitly defined by Number of iterations parameter (the size of this list is the number of resolutions)"
+        },
+        {
+            "command-line-flag": "--splinedistance",
+            "name": "splineDistance",
+            "default-value": "0",
+            "required": true,
+            "type": "number",
+            "description": "An alternative means to define the spline grid, by setting the distance between the control points. This parameter is used only if the grid resolution is not specified."
+        },
+        {
+            "command-line-flag": "--bffwhm",
+            "name": "bfFWHM",
+            "default-value": "0",
+            "required": true,
+            "type": "number",
+            "description": "Bias field Full Width at Half Maximum. Zero implies use of the default value."
+        },
+        {
+            "command-line-flag": "--iterations",
+            "name": "numberOfIterations",
+            "default-value": "50,40,30",
+            "required": true,
+            "type": "number",
+            "description": "Maximum number of iterations at each level of resolution. Larger values will increase execution time, but may lead to better results."
+        },
+        {
+            "command-line-flag": "--convergencethreshold",
+            "name": "convergenceThreshold",
+            "default-value": "0.0001",
+            "required": true,
+            "type": "number",
+            "description": "Stopping criterion for the iterative bias estimation. Larger values will lead to smaller execution time."
+        },
+        {
+            "command-line-flag": "--bsplineorder",
+            "name": "bsplineOrder",
+            "default-value": "3",
+            "required": true,
+            "type": "number",
+            "description": "Order of B-spline used in the approximation. Larger values will lead to longer execution times, may result in overfitting and poor result."
+        },
+        {
+            "command-line-flag": "--shrinkfactor",
+            "name": "shrinkFactor",
+            "default-value": "4",
+            "required": true,
+            "type": "number",
+            "description": "Defines how much the image should be upsampled before estimating the inhomogeneity field. Increase if you want to reduce the execution time. 1 corresponds to the original resolution. Larger values will significantly reduce the computation time."
+        },
+        {
+            "command-line-flag": "--weightimage",
+            "name": "weightImageName",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Weight Image"
+        },
+        {
+            "command-line-flag": "--wienerfilternoise",
+            "name": "wienerFilterNoise",
+            "default-value": "0",
+            "required": true,
+            "type": "number",
+            "description": "Wiener filter noise. Zero implies use of the default value."
+        },
+        {
+            "command-line-flag": "--nhistogrambins",
+            "name": "nHistogramBins",
+            "default-value": "0",
+            "required": true,
+            "type": "number",
+            "description": "Number of histogram bins. Zero implies use of the default value."
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "inputImageName",
+            "default-value": "",
+            "description": "Input image where you observe signal inhomegeneity"
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "outputImageName",
+            "default-value": "",
+            "description": "Result of processing"
+        }
+    ],
+    "description": "Performs image bias correction using N4 algorithm. This module is based on the ITK filters contributed in the following publication:  Tustison N, Gee J \"N4ITK: Nick's N3 ITK Implementation For MRI Bias Field Correction\", The Insight Journal 2009 January-June, http://hdl.handle.net/10380/3053",
+    "image": "quay.io/fedorov/slicerdockers:4.8.1",
+    "info-url": "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/N4ITKBiasFieldCorrection",
+    "name": "N4ITK MRI Bias correction",
+    "command-line": "/opt/slicer/Slicer --launch N4ITKBiasFieldCorrection #maskImageName# #outputBiasFieldName# #initialMeshResolution# #splineDistance# #bfFWHM# #numberOfIterations# #convergenceThreshold# #bsplineOrder# #shrinkFactor# #weightImageName# #wienerFilterNoise# #nHistogramBins# -- #inputImageName# #outputImageName#",
+    "xnat": [],
+    "label": "N4ITK MRI Bias correction",
+    "version": "9",
+    "schema-version": "1.0",
+    "type": "docker"
+}

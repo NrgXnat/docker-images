@@ -1,0 +1,36 @@
+{
+    "inputs": [
+        {
+            "command-line-flag": "----type",
+            "name": "Type",
+            "default-value": "UnsignedChar",
+            "required": true,
+            "type": "string",
+            "description": "Scalar data type for the new output volume."
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "InputVolume",
+            "default-value": "",
+            "description": "Input volume, the volume to cast."
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "OutputVolume",
+            "default-value": "",
+            "description": "Output volume, cast to the new type."
+        }
+    ],
+    "description": "Cast a volume to a given data type.\nUse at your own risk when casting an input volume into a lower precision type!\nAllows casting to the same type as the input volume.",
+    "image": "quay.io/fedorov/slicerdockers:4.8.1",
+    "info-url": "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/Cast",
+    "name": "Cast Scalar Volume",
+    "command-line": "/opt/slicer/Slicer --launch CastScalarVolume #Type# -- #InputVolume# #OutputVolume#",
+    "xnat": [],
+    "label": "Cast Scalar Volume",
+    "version": "0.1.0.$Revision: 2104 $(alpha)",
+    "schema-version": "1.0",
+    "type": "docker"
+}

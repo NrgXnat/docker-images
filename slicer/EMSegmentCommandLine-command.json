@@ -1,0 +1,198 @@
+{
+    "inputs": [
+        {
+            "command-line-flag": "--mrmlSceneFileName",
+            "name": "mrmlSceneFileName",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Active MRML scene that contains EMSegment algorithm parameters."
+        },
+        {
+            "command-line-flag": "--resultVolumeFileName",
+            "name": "resultVolumeFileName",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "The file name that the segmentation result volume will be written to."
+        },
+        {
+            "command-line-flag": "--targetVolumeFileNames",
+            "name": "targetVolumeFileNames",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "File names of target volumes (to be segmented).  The number of target images must be equal to the number of target images specified in the parameter set, and these images must be spatially aligned."
+        },
+        {
+            "command-line-flag": "--intermediateResultsDirectory",
+            "name": "intermediateResultsDirectory",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "write intermediate data (e.g., aligned atlas data)."
+        },
+        {
+            "name": "writeIntermediateResults",
+            "true-value": "writeIntermediateResults",
+            "required": true,
+            "default-value": "false",
+            "type": "boolean",
+            "description": "Write out intermediate data (e.g., aligned atlas data)."
+        },
+        {
+            "command-line-flag": "--parametersMRMLNodeName",
+            "name": "parametersMRMLNodeName",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "The name of the EMSegment parameters node within the active MRML scene.  Leave blank for default."
+        },
+        {
+            "command-line-flag": "--disableMultithreading",
+            "name": "disableMultithreading",
+            "default-value": "-1",
+            "required": true,
+            "type": "number",
+            "description": "Disable multithreading for the EMSegmenter algorithm only! Preprocessing might still run in multi-threaded mode. -1: Do not overwrite default value. 0: Disable. 1: Enable."
+        },
+        {
+            "command-line-flag": "--dontUpdateIntermediateData",
+            "name": "dontUpdateIntermediateData",
+            "default-value": "-1",
+            "required": true,
+            "type": "number",
+            "description": "Disable update of intermediate results.  -1: Do not overwrite default value. 0: Disable. 1: Enable."
+        },
+        {
+            "name": "verbose",
+            "true-value": "verbose",
+            "required": true,
+            "default-value": "false",
+            "type": "boolean",
+            "description": "Enable verbose output."
+        },
+        {
+            "name": "loadTargetCentered",
+            "true-value": "loadTargetCentered",
+            "required": true,
+            "default-value": "false",
+            "type": "boolean",
+            "description": "Read target files centered."
+        },
+        {
+            "name": "loadAtlasCentered",
+            "true-value": "loadAtlasCentered",
+            "required": true,
+            "default-value": "false",
+            "type": "boolean",
+            "description": "Read atlas files centered."
+        },
+        {
+            "command-line-flag": "--taskPreProcessingSetting",
+            "name": "taskPreProcessingSetting",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Specifies the different task parameter. Leave blank for default."
+        },
+        {
+            "name": "keepTempFiles",
+            "true-value": "keepTempFiles",
+            "required": true,
+            "default-value": "false",
+            "type": "boolean",
+            "description": "If flag is set then at the end of command the temporary files are not removed"
+        },
+        {
+            "name": "autoBoundaryDetection",
+            "true-value": "autoBoundaryDetection",
+            "required": true,
+            "default-value": "false",
+            "type": "boolean",
+            "description": "If flag is set then the method will automatically determine the boundary box which includes non-zero voxels in the input images. This speed things up when working with skull stripped images"
+        },
+        {
+            "command-line-flag": "--resultStandardVolumeFileName",
+            "name": "resultStandardVolumeFileName",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Used for testing.  Compare segmentation results to this image and return EXIT_FAILURE if they do not match."
+        },
+        {
+            "name": "dontWriteResults",
+            "true-value": "dontWriteResults",
+            "required": true,
+            "default-value": "false",
+            "type": "boolean",
+            "description": "Used for testing.  Don't actually write the resulting labelmap to disk."
+        },
+        {
+            "command-line-flag": "--generateEmptyMRMLSceneAndQuit",
+            "name": "generateEmptyMRMLSceneAndQuit",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Used for testing.  Only write a scene with default mrml parameters."
+        },
+        {
+            "command-line-flag": "--resultMRMLSceneFileName",
+            "name": "resultMRMLSceneFileName",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Write out the MRML scene after command line substitutions have been made."
+        },
+        {
+            "name": "disableCompression",
+            "true-value": "disableCompression",
+            "required": true,
+            "default-value": "false",
+            "type": "boolean",
+            "description": "Don't use compression when writing result image to disk."
+        },
+        {
+            "command-line-flag": "--atlasVolumeFileNames",
+            "name": "atlasVolumeFileNames",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Use an alternative atlas to the one that is specified by the mrml file - note the order matters ! "
+        },
+        {
+            "command-line-flag": "--registrationPackage",
+            "name": "registrationPackage",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "specify the registration package for preprocessing (CMTK or BRAINS or PLASTIMATCH or DEMONS)"
+        },
+        {
+            "command-line-flag": "--registrationAffineType",
+            "name": "registrationAffineType",
+            "default-value": "-2",
+            "required": true,
+            "type": "number",
+            "description": "specify the accuracy of the affine registration. -2: Do not overwrite default, -1: Test, 0: Disable, 1: Fast, 2: Accurate"
+        },
+        {
+            "command-line-flag": "--registrationDeformableType",
+            "name": "registrationDeformableType",
+            "default-value": "-2",
+            "required": true,
+            "type": "number",
+            "description": "specify the accuracy of the deformable registration. -2: Do not overwrite default, -1: Test, 0: Disable, 1: Fast, 2: Accurate"
+        }
+    ],
+    "description": "\n  This module is used to simplify the process of segmenting large collections of images by providing a command line interface to the EMSegment algorithm for script and batch processing.\n  ",
+    "image": "quay.io/fedorov/slicerdockers:4.8.1",
+    "info-url": "http://www.slicer.org/slicerWiki/index.php/Documentation/4.0/EMSegment_Command-line",
+    "name": "\n  EMSegment Command-line\n  ",
+    "command-line": "/opt/slicer/Slicer --launch EMSegmentCommandLine #mrmlSceneFileName# #resultVolumeFileName# #targetVolumeFileNames# #intermediateResultsDirectory# #writeIntermediateResults# #parametersMRMLNodeName# #disableMultithreading# #dontUpdateIntermediateData# #verbose# #loadTargetCentered# #loadAtlasCentered# #taskPreProcessingSetting# #keepTempFiles# #autoBoundaryDetection# #resultStandardVolumeFileName# #dontWriteResults# #generateEmptyMRMLSceneAndQuit# #resultMRMLSceneFileName# #disableCompression# #atlasVolumeFileNames# #registrationPackage# #registrationAffineType# #registrationDeformableType#",
+    "xnat": [],
+    "label": "\n  EMSegment Command-line\n  ",
+    "version": "",
+    "schema-version": "1.0",
+    "type": "docker"
+}

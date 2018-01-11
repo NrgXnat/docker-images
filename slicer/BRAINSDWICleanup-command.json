@@ -1,0 +1,38 @@
+{
+    "inputs": [
+        {
+            "command-line-flag": "--inputVolume",
+            "name": "inputVolume",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Required: input image is a 4D NRRD image."
+        },
+        {
+            "command-line-flag": "--outputVolume",
+            "name": "outputVolume",
+            "default-value": null,
+            "required": true,
+            "type": "string",
+            "description": "given a list of "
+        },
+        {
+            "command-line-flag": "--badGradients",
+            "name": "badGradients",
+            "default-value": null,
+            "required": true,
+            "type": "number",
+            "description": ""
+        }
+    ],
+    "description": "Remove bad gradients/volumes from DWI NRRD file.",
+    "image": "quay.io/fedorov/slicerdockers:4.8.1",
+    "info-url": null,
+    "name": "BRAINSDWICleanup",
+    "command-line": "/opt/slicer/Slicer --launch BRAINSDWICleanup #inputVolume# #outputVolume# #badGradients#",
+    "xnat": [],
+    "label": "BRAINSDWICleanup",
+    "version": "4.8.0",
+    "schema-version": "1.0",
+    "type": "docker"
+}

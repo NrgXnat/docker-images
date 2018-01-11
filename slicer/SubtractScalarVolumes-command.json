@@ -1,0 +1,43 @@
+{
+    "inputs": [
+        {
+            "command-line-flag": "--order",
+            "name": "order",
+            "default-value": "1",
+            "required": true,
+            "type": "number",
+            "description": "Interpolation order if two images are in different coordinate frames or have different sampling."
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "inputVolume1",
+            "default-value": "",
+            "description": "Input volume 1"
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "inputVolume2",
+            "default-value": "",
+            "description": "Input volume 2"
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "outputVolume",
+            "default-value": "",
+            "description": "Volume1 - Volume2"
+        }
+    ],
+    "description": "Subtracts two images. Although all image types are supported on input, only signed types are produced. The two images do not have to have the same dimensions.",
+    "image": "quay.io/fedorov/slicerdockers:4.8.1",
+    "info-url": "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/Subtract",
+    "name": "Subtract Scalar Volumes",
+    "command-line": "/opt/slicer/Slicer --launch SubtractScalarVolumes #order# -- #inputVolume1# #inputVolume2# #outputVolume#",
+    "xnat": [],
+    "label": "Subtract Scalar Volumes",
+    "version": "0.1.0.$Revision: 24799 $(alpha)",
+    "schema-version": "1.0",
+    "type": "docker"
+}

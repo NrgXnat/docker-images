@@ -1,0 +1,43 @@
+{
+    "inputs": [
+        {
+            "name": "FirstOverwrites",
+            "true-value": "--first_overwrites",
+            "required": true,
+            "default-value": "true",
+            "type": "boolean",
+            "description": "Use first or second label when both are present"
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "InputLabelMap_A",
+            "default-value": "",
+            "description": "Label map image"
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "InputLabelMap_B",
+            "default-value": "",
+            "description": "Label map image"
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "OutputLabelMap",
+            "default-value": "",
+            "description": "Resulting Label map image"
+        }
+    ],
+    "description": "Combine two label maps into one",
+    "image": "quay.io/fedorov/slicerdockers:4.8.1",
+    "info-url": "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/ImageLabelCombine",
+    "name": "Image Label Combine",
+    "command-line": "/opt/slicer/Slicer --launch ImageLabelCombine #FirstOverwrites# -- #InputLabelMap_A# #InputLabelMap_B# #OutputLabelMap#",
+    "xnat": [],
+    "label": "Image Label Combine",
+    "version": "0.1.0",
+    "schema-version": "1.0",
+    "type": "docker"
+}

@@ -1,0 +1,60 @@
+{
+    "inputs": [
+        {
+            "command-line-flag": "--type",
+            "name": "SkeletonType",
+            "default-value": "1D",
+            "required": true,
+            "type": "string",
+            "description": "Type of skeleton to create"
+        },
+        {
+            "name": "DontPruneBranches",
+            "true-value": "dontPrune",
+            "required": true,
+            "default-value": "false",
+            "type": "boolean",
+            "description": "Return the full skeleton, not just the maximal skeleton"
+        },
+        {
+            "command-line-flag": "--numPoints",
+            "name": "NumberOfPoints",
+            "default-value": "100",
+            "required": true,
+            "type": "number",
+            "description": "Number of points used to represent the skeleton"
+        },
+        {
+            "command-line-flag": "--pointsFile",
+            "name": "OutputPointsFileName",
+            "default-value": "skeleton.txt",
+            "required": true,
+            "type": "string",
+            "description": "Name of the file to store the coordinates of the central (1D) skeleton points"
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "InputImageFileName",
+            "default-value": "",
+            "description": "Input image"
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "OutputImageFileName",
+            "default-value": "",
+            "description": "Skeleton of the input image"
+        }
+    ],
+    "description": "Extract the skeleton of a binary object.  The skeleton can be limited to being a 1D curve or allowed to be a full 2D manifold.  The branches of the skeleton can be pruned so that only the maximal center skeleton is returned.",
+    "image": "quay.io/fedorov/slicerdockers:4.8.1",
+    "info-url": "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/ExtractSkeleton",
+    "name": "Extract Skeleton",
+    "command-line": "/opt/slicer/Slicer --launch ExtractSkeleton #SkeletonType# #DontPruneBranches# #NumberOfPoints# #OutputPointsFileName# -- #InputImageFileName# #OutputImageFileName#",
+    "xnat": [],
+    "label": "Extract Skeleton",
+    "version": "0.1.0.$Revision: 2104 $(alpha)",
+    "schema-version": "1.0",
+    "type": "docker"
+}

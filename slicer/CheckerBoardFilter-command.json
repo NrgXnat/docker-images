@@ -1,0 +1,43 @@
+{
+    "inputs": [
+        {
+            "command-line-flag": "----checkerPattern",
+            "name": "checkerPattern",
+            "default-value": "2,2,2",
+            "required": true,
+            "type": "number",
+            "description": "The pattern of input 1 and input 2 in the output image. The user can specify the number of checkers in each dimension. A checkerPattern of 2,2,1 means that images will alternate in every other checker in the first two dimensions. The same pattern will be used in the 3rd dimension."
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "inputVolume1",
+            "default-value": "",
+            "description": "First Input volume"
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "inputVolume2",
+            "default-value": "",
+            "description": "Second Input volume"
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "outputVolume",
+            "default-value": "",
+            "description": "Output filtered"
+        }
+    ],
+    "description": "Create a checkerboard volume of two volumes. The output volume will show the two inputs alternating according to the user supplied checkerPattern. This filter is often used to compare the results of image registration. Note that the second input is resampled to the same origin, spacing and direction before it is composed with the first input. The scalar type of the output volume will be the same as the input image scalar type.",
+    "image": "quay.io/fedorov/slicerdockers:4.8.1",
+    "info-url": "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/CheckerBoard",
+    "name": "CheckerBoard Filter",
+    "command-line": "/opt/slicer/Slicer --launch CheckerBoardFilter #checkerPattern# -- #inputVolume1# #inputVolume2# #outputVolume#",
+    "xnat": [],
+    "label": "CheckerBoard Filter",
+    "version": "0.1.0.$Revision: 24800 $(alpha)",
+    "schema-version": "1.0",
+    "type": "docker"
+}

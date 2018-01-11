@@ -1,0 +1,181 @@
+{
+    "inputs": [
+        {
+            "command-line-flag": "----patientName",
+            "name": "patientName",
+            "default-value": "Anonymous",
+            "required": true,
+            "type": "string",
+            "description": "The name of the patient [0010-0010]"
+        },
+        {
+            "command-line-flag": "----patientID",
+            "name": "patientID",
+            "default-value": "123456",
+            "required": true,
+            "type": "string",
+            "description": "The patient ID [0010-0020]"
+        },
+        {
+            "command-line-flag": "----patientComments",
+            "name": "patientComments",
+            "default-value": "None",
+            "required": true,
+            "type": "string",
+            "description": "Patient comments [0010-4000]"
+        },
+        {
+            "command-line-flag": "----studyID",
+            "name": "studyID",
+            "default-value": "123456",
+            "required": true,
+            "type": "string",
+            "description": "The study ID [0020-0010]"
+        },
+        {
+            "command-line-flag": "----studyDate",
+            "name": "studyDate",
+            "default-value": "20060101",
+            "required": true,
+            "type": "string",
+            "description": "The date of the study [0008-0020]"
+        },
+        {
+            "command-line-flag": "----studyComments",
+            "name": "studyComments",
+            "default-value": "None",
+            "required": true,
+            "type": "string",
+            "description": "Study comments[0032-4000]"
+        },
+        {
+            "command-line-flag": "----studyDescription",
+            "name": "studyDescription",
+            "default-value": "None",
+            "required": true,
+            "type": "string",
+            "description": "Study description[0008-1030]"
+        },
+        {
+            "command-line-flag": "----modality",
+            "name": "modality",
+            "default-value": "CT",
+            "required": true,
+            "type": "string",
+            "description": "Modality [0008-0060]"
+        },
+        {
+            "command-line-flag": "----manufacturer",
+            "name": "manufacturer",
+            "default-value": "GE Medical Systems",
+            "required": true,
+            "type": "string",
+            "description": "Manufacturer [0008-0070]"
+        },
+        {
+            "command-line-flag": "----model",
+            "name": "model",
+            "default-value": "None",
+            "required": true,
+            "type": "string",
+            "description": "model [0008-1090]"
+        },
+        {
+            "command-line-flag": "----seriesNumber",
+            "name": "seriesNumber",
+            "default-value": "123456",
+            "required": true,
+            "type": "string",
+            "description": "The series number [0020-0011]"
+        },
+        {
+            "command-line-flag": "----seriesDescription",
+            "name": "seriesDescription",
+            "default-value": "None",
+            "required": true,
+            "type": "string",
+            "description": "Series description [0008-103E]"
+        },
+        {
+            "command-line-flag": "----rescaleIntercept",
+            "name": "rescaleIntercept",
+            "default-value": "0.0000",
+            "required": true,
+            "type": "number",
+            "description": "Rescale interscept [0028-1052]. Converts pixel values on disk to pixel values in memory. (Pixel value in memory) = (Pixel value on disk) * rescaleSlope + rescaleIntercept.  Default is 0.0. Data values are converted on write (the data is scaled and shifted so that the slope and interscept will bring it back to the current intensity range)."
+        },
+        {
+            "command-line-flag": "----rescaleSlope",
+            "name": "rescaleSlope",
+            "default-value": "1.0000",
+            "required": true,
+            "type": "number",
+            "description": "Rescale slope [0028-1053]. Converts pixel values on disk to pixel values in memory. (Pixel value in memory) = (Pixel value on disk) * rescaleSlope + rescaleInterscept.  Default is 1.0. Data values are converted on write (the data is scaled and shifted so that the slope and interscept will bring it back to the current intensity range)."
+        },
+        {
+            "command-line-flag": "----dicomDirectory",
+            "name": "dicomDirectory",
+            "default-value": "./",
+            "required": true,
+            "type": "string",
+            "description": "The directory to contain the DICOM series."
+        },
+        {
+            "command-line-flag": "----dicomPrefix",
+            "name": "dicomPrefix",
+            "default-value": "IMG",
+            "required": true,
+            "type": "string",
+            "description": "The prefix of the DICOM filename."
+        },
+        {
+            "command-line-flag": "----dicomNumberFormat",
+            "name": "dicomNumberFormat",
+            "default-value": "%04d",
+            "required": true,
+            "type": "string",
+            "description": "The printf-style format to be used when creating the per-slice DICOM filename."
+        },
+        {
+            "name": "reverseImages",
+            "true-value": "--reverseImages",
+            "required": true,
+            "default-value": "false",
+            "type": "boolean",
+            "description": "Reverse the slices."
+        },
+        {
+            "name": "useCompression",
+            "true-value": "--useCompression",
+            "required": true,
+            "default-value": "false",
+            "type": "boolean",
+            "description": "Compress the output pixel data."
+        },
+        {
+            "command-line-flag": "----type",
+            "name": "Type",
+            "default-value": "Short",
+            "required": true,
+            "type": "string",
+            "description": "Type for the new output volume."
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "inputVolume",
+            "default-value": "",
+            "description": "Input volume to be resampled"
+        }
+    ],
+    "description": "Create a DICOM Series from a Slicer volume. User can specify values for selected DICOM tags in the UI. Given the number of tags DICOM series have, it is impossible to expose all tags in UI. So only important tags can be set by the user.",
+    "image": "quay.io/fedorov/slicerdockers:4.8.1",
+    "info-url": "https://www.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/CreateDICOMSeries",
+    "name": "Create a DICOM Series",
+    "command-line": "/opt/slicer/Slicer --launch CreateDICOMSeries #patientName# #patientID# #patientComments# #studyID# #studyDate# #studyComments# #studyDescription# #modality# #manufacturer# #model# #seriesNumber# #seriesDescription# #rescaleIntercept# #rescaleSlope# #dicomDirectory# #dicomPrefix# #dicomNumberFormat# #reverseImages# #useCompression# #Type# -- #inputVolume#",
+    "xnat": [],
+    "label": "Create a DICOM Series",
+    "version": "0.1.0.$Revision: 25251 $(alpha)",
+    "schema-version": "1.0",
+    "type": "docker"
+}

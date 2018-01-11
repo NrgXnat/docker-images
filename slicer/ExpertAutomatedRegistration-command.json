@@ -1,0 +1,236 @@
+{
+    "inputs": [
+        {
+            "command-line-flag": "--resampledImage",
+            "name": "resampledImage",
+            "default-value": null,
+            "required": true,
+            "type": "string",
+            "description": "Registration results"
+        },
+        {
+            "command-line-flag": "--loadTransform",
+            "name": "loadTransform",
+            "default-value": null,
+            "required": true,
+            "type": "string",
+            "description": "Load a transform that is immediately applied to the moving image"
+        },
+        {
+            "command-line-flag": "--saveTransform",
+            "name": "saveTransform",
+            "default-value": null,
+            "required": true,
+            "type": "string",
+            "description": "Save the transform that results from registration"
+        },
+        {
+            "command-line-flag": "--initialization",
+            "name": "initialization",
+            "default-value": "CentersOfMass",
+            "required": true,
+            "type": "string",
+            "description": "Method to prime the registration process"
+        },
+        {
+            "command-line-flag": "--registration",
+            "name": "registration",
+            "default-value": "PipelineAffine",
+            "required": true,
+            "type": "string",
+            "description": "Method for the registration process"
+        },
+        {
+            "command-line-flag": "--metric",
+            "name": "metric",
+            "default-value": "MattesMI",
+            "required": true,
+            "type": "string",
+            "description": "Method to quantify image match"
+        },
+        {
+            "command-line-flag": "--expectedOffset",
+            "name": "expectedOffset",
+            "default-value": "10",
+            "required": true,
+            "type": "number",
+            "description": "Expected misalignment after initialization"
+        },
+        {
+            "command-line-flag": "--expectedRotation",
+            "name": "expectedRotation",
+            "default-value": "0.1",
+            "required": true,
+            "type": "number",
+            "description": "Expected misalignment after initialization"
+        },
+        {
+            "command-line-flag": "--expectedScale",
+            "name": "expectedScale",
+            "default-value": "0.05",
+            "required": true,
+            "type": "number",
+            "description": "Expected misalignment after initialization"
+        },
+        {
+            "command-line-flag": "--expectedSkew",
+            "name": "expectedSkew",
+            "default-value": "0.01",
+            "required": true,
+            "type": "number",
+            "description": "Expected misalignment after initialization"
+        },
+        {
+            "command-line-flag": "--verbosityLevel",
+            "name": "verbosityLevel",
+            "default-value": "Standard",
+            "required": true,
+            "type": "string",
+            "description": "Level of detail of reporting progress"
+        },
+        {
+            "name": "sampleFromOverlap",
+            "true-value": "sampleFromOverlap",
+            "required": true,
+            "default-value": "false",
+            "type": "boolean",
+            "description": "Limit metric evaluation to the fixed image region overlapped by the moving image"
+        },
+        {
+            "command-line-flag": "--fixedImageMask",
+            "name": "fixedImageMask",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Image which defines a mask for the fixed image"
+        },
+        {
+            "command-line-flag": "--randomNumberSeed",
+            "name": "randomNumberSeed",
+            "default-value": "0",
+            "required": true,
+            "type": "number",
+            "description": "Seed to generate a consistent random number sequence"
+        },
+        {
+            "command-line-flag": "--numberOfThreads",
+            "name": "numberOfThreads",
+            "default-value": "0",
+            "required": true,
+            "type": "number",
+            "description": "Number of CPU threads to use"
+        },
+        {
+            "name": "minimizeMemory",
+            "true-value": "minimizeMemory",
+            "required": true,
+            "default-value": "false",
+            "type": "boolean",
+            "description": "Reduce the amount of memory required at the cost of increased computation time"
+        },
+        {
+            "command-line-flag": "--interpolation",
+            "name": "interpolation",
+            "default-value": "Linear",
+            "required": true,
+            "type": "string",
+            "description": "Method for interpolation within the optimization process"
+        },
+        {
+            "command-line-flag": "--fixedLandmarks",
+            "name": "fixedLandmarks",
+            "default-value": null,
+            "required": true,
+            "type": "string",
+            "description": "Ordered list of landmarks in the fixed image"
+        },
+        {
+            "command-line-flag": "--movingLandmarks",
+            "name": "movingLandmarks",
+            "default-value": null,
+            "required": true,
+            "type": "string",
+            "description": "Ordered list of landmarks in the moving image"
+        },
+        {
+            "command-line-flag": "--rigidMaxIterations",
+            "name": "rigidMaxIterations",
+            "default-value": "100",
+            "required": true,
+            "type": "number",
+            "description": "Maximum number of rigid optimization iterations"
+        },
+        {
+            "command-line-flag": "--rigidSamplingRatio",
+            "name": "rigidSamplingRatio",
+            "default-value": "0.01",
+            "required": true,
+            "type": "number",
+            "description": "Portion of the image to use in computing the metric during rigid registration"
+        },
+        {
+            "command-line-flag": "--affineMaxIterations",
+            "name": "affineMaxIterations",
+            "default-value": "50",
+            "required": true,
+            "type": "number",
+            "description": "Maximum number of affine optimization iterations"
+        },
+        {
+            "command-line-flag": "--affineSamplingRatio",
+            "name": "affineSamplingRatio",
+            "default-value": "0.02",
+            "required": true,
+            "type": "number",
+            "description": "Portion of the image to use in computing the metric during affine registration"
+        },
+        {
+            "command-line-flag": "--bsplineMaxIterations",
+            "name": "bsplineMaxIterations",
+            "default-value": "20",
+            "required": true,
+            "type": "number",
+            "description": "Maximum number of bspline optimization iterations"
+        },
+        {
+            "command-line-flag": "--bsplineSamplingRatio",
+            "name": "bsplineSamplingRatio",
+            "default-value": "0.10",
+            "required": true,
+            "type": "number",
+            "description": "Portion of the image to use in computing the metric during BSpline registration"
+        },
+        {
+            "command-line-flag": "--controlPointSpacing",
+            "name": "controlPointSpacing",
+            "default-value": "40",
+            "required": true,
+            "type": "number",
+            "description": "Number of pixels between control points"
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "fixedImage",
+            "default-value": "",
+            "description": "Image which defines the space into which the moving image is registered"
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "movingImage",
+            "default-value": "",
+            "description": "The transform goes from the fixed image's space into the moving image's space"
+        }
+    ],
+    "description": "Provides rigid, affine, and BSpline registration methods via a simple GUI",
+    "image": "quay.io/fedorov/slicerdockers:4.8.1",
+    "info-url": "http://www.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/ExpertAutomatedRegistration",
+    "name": "Expert Automated Registration",
+    "command-line": "/opt/slicer/Slicer --launch ExpertAutomatedRegistration #resampledImage# #loadTransform# #saveTransform# #initialization# #registration# #metric# #expectedOffset# #expectedRotation# #expectedScale# #expectedSkew# #verbosityLevel# #sampleFromOverlap# #fixedImageMask# #randomNumberSeed# #numberOfThreads# #minimizeMemory# #interpolation# #fixedLandmarks# #movingLandmarks# #rigidMaxIterations# #rigidSamplingRatio# #affineMaxIterations# #affineSamplingRatio# #bsplineMaxIterations# #bsplineSamplingRatio# #controlPointSpacing# -- #fixedImage# #movingImage#",
+    "xnat": [],
+    "label": "Expert Automated Registration",
+    "version": "0.1.0.$Revision: 2104 $(alpha)",
+    "schema-version": "1.0",
+    "type": "docker"
+}

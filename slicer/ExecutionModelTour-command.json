@@ -1,0 +1,230 @@
+{
+    "inputs": [
+        {
+            "command-line-flag": "----integer",
+            "name": "integerVariable",
+            "default-value": "30",
+            "required": true,
+            "type": "number",
+            "description": "An integer without constraints"
+        },
+        {
+            "command-line-flag": "----double",
+            "name": "doubleVariable",
+            "default-value": "30",
+            "required": true,
+            "type": "number",
+            "description": "A double with constraints"
+        },
+        {
+            "command-line-flag": "-f",
+            "name": "floatVector",
+            "default-value": "1.3,2,-14",
+            "required": true,
+            "type": "number",
+            "description": "A vector of floats"
+        },
+        {
+            "command-line-flag": "--string_vector",
+            "name": "stringVector",
+            "default-value": "foo,bar,foobar",
+            "required": true,
+            "type": "string",
+            "description": "A vector of strings"
+        },
+        {
+            "command-line-flag": "--enumeration",
+            "name": "stringChoice",
+            "default-value": "Bill",
+            "required": true,
+            "type": "string",
+            "description": "An enumeration of strings"
+        },
+        {
+            "name": "boolean1",
+            "true-value": "boolean1",
+            "required": true,
+            "default-value": "true",
+            "type": "boolean",
+            "description": "A boolean default true"
+        },
+        {
+            "name": "boolean2",
+            "true-value": "boolean2",
+            "required": true,
+            "default-value": "false",
+            "type": "boolean",
+            "description": "A boolean default false"
+        },
+        {
+            "name": "boolean3",
+            "true-value": "boolean3",
+            "required": true,
+            "default-value": "",
+            "type": "boolean",
+            "description": "A boolean with no default, should be defaulting to false"
+        },
+        {
+            "command-line-flag": "----seed",
+            "name": "seed",
+            "default-value": "0,0,0",
+            "required": true,
+            "type": "string",
+            "description": "Lists of points in the CLI correspond to slicer fiducial lists"
+        },
+        {
+            "command-line-flag": "--seedsFile",
+            "name": "seedsFile",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Test file of input fiducials, compared to seeds"
+        },
+        {
+            "command-line-flag": "--seedsOutFile",
+            "name": "seedsOutFile",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Output file to read back in, compare to seeds with flipped settings on first fiducial"
+        },
+        {
+            "command-line-flag": "--inputModel",
+            "name": "InputModel",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Input model"
+        },
+        {
+            "command-line-flag": "--outputModel",
+            "name": "OutputModel",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Output model"
+        },
+        {
+            "command-line-flag": "--modelSceneFile",
+            "name": "ModelSceneFile",
+            "default-value": "models.mrml",
+            "required": true,
+            "type": "string",
+            "description": "Generated models, under a model hierarchy node. Models are imported into Slicer under a model hierarchy node. The model hierarchy node must be created before running the model maker, by selecting Create New ModelHierarchy from the Models drop down menu."
+        },
+        {
+            "command-line-flag": "--region",
+            "name": "regions",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "List of regions to process"
+        },
+        {
+            "command-line-flag": "--inputFA",
+            "name": "inputFA",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Array of FA values to process"
+        },
+        {
+            "command-line-flag": "--outputFA",
+            "name": "outputFA",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Array of processed (output) FA values"
+        },
+        {
+            "command-line-flag": "--inputDT",
+            "name": "inputDT",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Array of Table values to process"
+        },
+        {
+            "command-line-flag": "--outputDT",
+            "name": "outputDT",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Array of processed (output) Table values"
+        },
+        {
+            "required": true,
+            "type": "number",
+            "name": "anintegerreturn",
+            "default-value": "5",
+            "description": "An example of an integer return type"
+        },
+        {
+            "name": "abooleanreturn",
+            "true-value": "",
+            "required": true,
+            "default-value": "false",
+            "type": "boolean",
+            "description": "An example of a boolean return type"
+        },
+        {
+            "required": true,
+            "type": "number",
+            "name": "afloatreturn",
+            "default-value": "7.0",
+            "description": "An example of a float return type"
+        },
+        {
+            "required": true,
+            "type": "number",
+            "name": "adoublereturn",
+            "default-value": "14.0",
+            "description": "An example of a double return type"
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "astringreturn",
+            "default-value": "Hello",
+            "description": "An example of a string return type"
+        },
+        {
+            "required": true,
+            "type": "number",
+            "name": "anintegervectorreturn",
+            "default-value": "1,2,3",
+            "description": "An example of an integer vector return type"
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "astringchoicereturn",
+            "default-value": "Bill",
+            "description": "An enumeration of strings as a return type"
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "arg0",
+            "default-value": "",
+            "description": "First index argument is an image"
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "arg1",
+            "default-value": "",
+            "description": "Second index argument is an image"
+        }
+    ],
+    "description": "Shows one of each type of parameter.",
+    "image": "quay.io/fedorov/slicerdockers:4.8.1",
+    "info-url": "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/ExecutionModelTour",
+    "name": "Execution Model Tour",
+    "command-line": "/opt/slicer/Slicer --launch ExecutionModelTour #integerVariable# #doubleVariable# #floatVector# #stringVector# #stringChoice# #boolean1# #boolean2# #boolean3# #seed# #seedsFile# #seedsOutFile# #InputModel# #OutputModel# #ModelSceneFile# #regions# #inputFA# #outputFA# #inputDT# #outputDT# #anintegerreturn# #abooleanreturn# #afloatreturn# #adoublereturn# #astringreturn# #anintegervectorreturn# #astringchoicereturn# -- #arg0# #arg1#",
+    "xnat": [],
+    "label": "Execution Model Tour",
+    "version": "0.1.0.$Revision: 25330 $(alpha)",
+    "schema-version": "1.0",
+    "type": "docker"
+}

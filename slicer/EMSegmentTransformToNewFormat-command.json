@@ -1,0 +1,38 @@
+{
+    "inputs": [
+        {
+            "command-line-flag": "--inputMRMLFileName",
+            "name": "inputMRMLFileName",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Active MRML scene that contains EMSegment algorithm parameters in the format before 3.6.3 - please include absolute  file name in path."
+        },
+        {
+            "command-line-flag": "--outputMRMLFileName",
+            "name": "outputMRMLFileName",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Write out the MRML scene after transformation to format 3.6.3 has been made. - has to be in the same directory as the input MRML file due to Slicer Core bug  - please include absolute  file name in path "
+        },
+        {
+            "name": "templateFlag",
+            "true-value": "templateFlag",
+            "required": true,
+            "default-value": "false",
+            "type": "boolean",
+            "description": "Set to true if the transformed mrml file should be used as template file "
+        }
+    ],
+    "description": "\n  Transform MRML Files to New EMSegmenter Standard\n  ",
+    "image": "quay.io/fedorov/slicerdockers:4.8.1",
+    "info-url": "",
+    "name": "\n  Transform MRML Files to New EMSegmenter Standard\n  ",
+    "command-line": "/opt/slicer/Slicer --launch EMSegmentTransformToNewFormat #inputMRMLFileName# #outputMRMLFileName# #templateFlag#",
+    "xnat": [],
+    "label": "\n  Transform MRML Files to New EMSegmenter Standard\n  ",
+    "version": "",
+    "schema-version": "1.0",
+    "type": "docker"
+}

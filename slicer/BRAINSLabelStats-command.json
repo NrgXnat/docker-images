@@ -1,0 +1,94 @@
+{
+    "inputs": [
+        {
+            "command-line-flag": "----imageVolume",
+            "name": "imageVolume",
+            "default-value": null,
+            "required": true,
+            "type": "string",
+            "description": "Image Volume"
+        },
+        {
+            "command-line-flag": "----labelVolume",
+            "name": "labelVolume",
+            "default-value": null,
+            "required": true,
+            "type": "string",
+            "description": "Label Volume"
+        },
+        {
+            "command-line-flag": "----labelNameFile",
+            "name": "labelNameFile",
+            "default-value": null,
+            "required": true,
+            "type": "string",
+            "description": "Label Name File"
+        },
+        {
+            "command-line-flag": "----outputPrefixColumnNames",
+            "name": "outputPrefixColumnNames",
+            "default-value": null,
+            "required": true,
+            "type": "string",
+            "description": "Prefix Column Name(s)"
+        },
+        {
+            "command-line-flag": "----outputPrefixColumnValues",
+            "name": "outputPrefixColumnValues",
+            "default-value": null,
+            "required": true,
+            "type": "string",
+            "description": "Prefix Column Value(s)"
+        },
+        {
+            "command-line-flag": "----labelFileType",
+            "name": "labelFileType",
+            "default-value": "unknown",
+            "required": true,
+            "type": "string",
+            "description": "Label File Type"
+        },
+        {
+            "command-line-flag": "----numberOfHistogramBins",
+            "name": "numberOfHistogramBins",
+            "default-value": "100000",
+            "required": true,
+            "type": "number",
+            "description": "Number Of Histogram Bins"
+        },
+        {
+            "command-line-flag": "----minMaxType",
+            "name": "minMaxType",
+            "default-value": "image",
+            "required": true,
+            "type": "string",
+            "description": "Define minimim and maximum values based upon the image, label, or via command line"
+        },
+        {
+            "command-line-flag": "----userDefineMinimum",
+            "name": "userDefineMinimum",
+            "default-value": "0.0",
+            "required": true,
+            "type": "number",
+            "description": "User define minimum value"
+        },
+        {
+            "command-line-flag": "----userDefineMaximum",
+            "name": "userDefineMaximum",
+            "default-value": "4095.0",
+            "required": true,
+            "type": "number",
+            "description": "User define maximum value"
+        }
+    ],
+    "description": "Compute image statistics within each label of a label map. ",
+    "image": "quay.io/fedorov/slicerdockers:4.8.1",
+    "info-url": "http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSClassify",
+    "name": "Label Statistics (BRAINS)",
+    "command-line": "/opt/slicer/Slicer --launch BRAINSLabelStats #imageVolume# #labelVolume# #labelNameFile# #outputPrefixColumnNames# #outputPrefixColumnValues# #labelFileType# #numberOfHistogramBins# #minMaxType# #userDefineMinimum# #userDefineMaximum#",
+    "xnat": [],
+    "label": "Label Statistics (BRAINS)",
+    "version": "4.8.0",
+    "schema-version": "1.0",
+    "type": "docker"
+}

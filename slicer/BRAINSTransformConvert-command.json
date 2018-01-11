@@ -1,0 +1,62 @@
+{
+    "inputs": [
+        {
+            "command-line-flag": "----inputTransform",
+            "name": "inputTransform",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": null
+        },
+        {
+            "command-line-flag": "----referenceVolume",
+            "name": "referenceVolume",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": ""
+        },
+        {
+            "command-line-flag": "----outputTransformType",
+            "name": "outputTransformType",
+            "default-value": "Affine",
+            "required": true,
+            "type": "string",
+            "description": "The target transformation type. Must be conversion-compatible with the input transform type"
+        },
+        {
+            "command-line-flag": "----outputPrecisionType",
+            "name": "outputPrecisionType",
+            "default-value": "double",
+            "required": true,
+            "type": "string",
+            "description": "Precision type of the output transform. It can be either single precision or double precision"
+        },
+        {
+            "command-line-flag": "----displacementVolume",
+            "name": "displacementVolume",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": ""
+        },
+        {
+            "command-line-flag": "----outputTransform",
+            "name": "outputTransform",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": null
+        }
+    ],
+    "description": "Convert ITK transforms to higher order transforms",
+    "image": "quay.io/fedorov/slicerdockers:4.8.1",
+    "info-url": "A utility to convert between transform file formats.",
+    "name": "BRAINS Transform Convert",
+    "command-line": "/opt/slicer/Slicer --launch BRAINSTransformConvert #inputTransform# #referenceVolume# #outputTransformType# #outputPrecisionType# #displacementVolume# #outputTransform#",
+    "xnat": [],
+    "label": "BRAINS Transform Convert",
+    "version": "4.8.0",
+    "schema-version": "1.0",
+    "type": "docker"
+}

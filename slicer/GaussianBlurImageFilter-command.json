@@ -1,0 +1,36 @@
+{
+    "inputs": [
+        {
+            "command-line-flag": "--sigma",
+            "name": "sigma",
+            "default-value": "1.0",
+            "required": true,
+            "type": "number",
+            "description": "Sigma value in physical units (e.g., mm) of the Gaussian kernel"
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "inputVolume",
+            "default-value": "",
+            "description": "Input volume"
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "outputVolume",
+            "default-value": "",
+            "description": "Blurred Volume"
+        }
+    ],
+    "description": "Apply a gaussian blurr to an image",
+    "image": "quay.io/fedorov/slicerdockers:4.8.1",
+    "info-url": "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/GaussianBlurImageFilter",
+    "name": "Gaussian Blur Image Filter",
+    "command-line": "/opt/slicer/Slicer --launch GaussianBlurImageFilter #sigma# -- #inputVolume# #outputVolume#",
+    "xnat": [],
+    "label": "Gaussian Blur Image Filter",
+    "version": "0.1.0.$Revision: 1.1 $(alpha)",
+    "schema-version": "1.0",
+    "type": "docker"
+}

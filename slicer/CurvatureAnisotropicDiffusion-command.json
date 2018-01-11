@@ -1,0 +1,52 @@
+{
+    "inputs": [
+        {
+            "command-line-flag": "----conductance",
+            "name": "conductance",
+            "default-value": "1",
+            "required": true,
+            "type": "number",
+            "description": "Conductance controls the sensitivity of the conductance term. As a general rule, the lower the value, the more strongly the filter preserves edges. A high value will cause diffusion (smoothing) across edges. Note that the number of iterations controls how much smoothing is done within regions bounded by edges."
+        },
+        {
+            "command-line-flag": "----iterations",
+            "name": "numberOfIterations",
+            "default-value": "1",
+            "required": true,
+            "type": "number",
+            "description": "The more iterations, the more smoothing. Each iteration takes the same amount of time. If it takes 10 seconds for one iteration, then it will take 100 seconds for 10 iterations. Note that the conductance controls how much each iteration smooths across edges."
+        },
+        {
+            "command-line-flag": "----timeStep",
+            "name": "timeStep",
+            "default-value": "0.0625",
+            "required": true,
+            "type": "number",
+            "description": "The time step depends on the dimensionality of the image. In Slicer the images are 3D and the default (.0625) time step will provide a stable solution."
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "inputVolume",
+            "default-value": "",
+            "description": "Input volume to be filtered"
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "outputVolume",
+            "default-value": "",
+            "description": "Output filtered"
+        }
+    ],
+    "description": "Performs anisotropic diffusion on an image using a modified curvature diffusion equation (MCDE).\n\nMCDE does not exhibit the edge enhancing properties of classic anisotropic diffusion, which can under certain conditions undergo a 'negative' diffusion, which enhances the contrast of edges.  Equations of the form of MCDE always undergo positive diffusion, with the conductance term only varying the strength of that diffusion. \n\n Qualitatively, MCDE compares well with other non-linear diffusion techniques.  It is less sensitive to contrast than classic Perona-Malik style diffusion, and preserves finer detailed structures in images.  There is a potential speed trade-off for using this function in place of Gradient Anisotropic Diffusion.  Each iteration of the solution takes roughly twice as long.  Fewer iterations, however, may be required to reach an acceptable solution.",
+    "image": "quay.io/fedorov/slicerdockers:4.8.1",
+    "info-url": "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/CurvatureAnisotropicDiffusion",
+    "name": "Curvature Anisotropic Diffusion",
+    "command-line": "/opt/slicer/Slicer --launch CurvatureAnisotropicDiffusion #conductance# #numberOfIterations# #timeStep# -- #inputVolume# #outputVolume#",
+    "xnat": [],
+    "label": "Curvature Anisotropic Diffusion",
+    "version": "0.1.0.$Revision: 24800 $(alpha)",
+    "schema-version": "1.0",
+    "type": "docker"
+}

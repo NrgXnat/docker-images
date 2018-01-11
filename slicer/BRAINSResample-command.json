@@ -1,0 +1,102 @@
+{
+    "inputs": [
+        {
+            "command-line-flag": "--inputVolume",
+            "name": "inputVolume",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Image To Warp"
+        },
+        {
+            "command-line-flag": "--referenceVolume",
+            "name": "referenceVolume",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Reference image used only to define the output space. If not specified, the warping is done in the same space as the image to warp."
+        },
+        {
+            "command-line-flag": "--outputVolume",
+            "name": "outputVolume",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Resulting deformed image"
+        },
+        {
+            "command-line-flag": "--pixelType",
+            "name": "pixelType",
+            "default-value": "float",
+            "required": true,
+            "type": "string",
+            "description": "Specifies the pixel type for the input/output images.  The \"binary\" pixel type uses a modified algorithm whereby the image is read in as unsigned char, a signed distance map is created, signed distance map is resampled, and then a thresholded image of type unsigned char is written to disk."
+        },
+        {
+            "command-line-flag": "--deformationVolume",
+            "name": "deformationVolume",
+            "default-value": null,
+            "required": true,
+            "type": "string",
+            "description": "Displacement Field to be used to warp the image (ITKv3 or earlier)"
+        },
+        {
+            "command-line-flag": "--warpTransform",
+            "name": "warpTransform",
+            "default-value": null,
+            "required": true,
+            "type": "string",
+            "description": "Filename for the BRAINSFit transform (ITKv3 or earlier) or composite transform file (ITKv4)"
+        },
+        {
+            "command-line-flag": "--interpolationMode",
+            "name": "interpolationMode",
+            "default-value": "Linear",
+            "required": true,
+            "type": "string",
+            "description": "Type of interpolation to be used when applying transform to moving volume.  Options are Linear, ResampleInPlace, NearestNeighbor, BSpline, or WindowedSinc"
+        },
+        {
+            "name": "inverseTransform",
+            "true-value": "inverseTransform",
+            "required": true,
+            "default-value": "false",
+            "type": "boolean",
+            "description": "True/False is to compute inverse of given transformation. Default is false"
+        },
+        {
+            "command-line-flag": "--defaultValue",
+            "name": "defaultValue",
+            "default-value": "0.0",
+            "required": true,
+            "type": "number",
+            "description": "Default voxel value"
+        },
+        {
+            "command-line-flag": "--gridSpacing",
+            "name": "gridSpacing",
+            "default-value": null,
+            "required": true,
+            "type": "number",
+            "description": "Add warped grid to output image to help show the deformation that occured with specified spacing.   A spacing of 0 in a dimension indicates that grid lines should be rendered to fall exactly (i.e. do not allow displacements off that plane).  This is useful for makeing a 2D image of grid lines from the 3D space"
+        },
+        {
+            "command-line-flag": "--numberOfThreads",
+            "name": "numberOfThreads",
+            "default-value": "-1",
+            "required": true,
+            "type": "number",
+            "description": "Explicitly specify the maximum number of threads to use."
+        }
+    ],
+    "description": "\n    This program collects together three common image processing tasks that all involve resampling an image volume: Resampling to a new resolution and spacing, applying a transformation (using an ITK transform IO mechanisms) and Warping (using a vector image deformation field).  Full documentation available here: http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.1/Modules/BRAINSResample.\n  ",
+    "image": "quay.io/fedorov/slicerdockers:4.8.1",
+    "info-url": "http://www.slicer.org/slicerWiki/index.php/Documentation/4.1/Modules/BRAINSResample",
+    "name": "Resample Image (BRAINS)",
+    "command-line": "/opt/slicer/Slicer --launch BRAINSResample #inputVolume# #referenceVolume# #outputVolume# #pixelType# #deformationVolume# #warpTransform# #interpolationMode# #inverseTransform# #defaultValue# #gridSpacing# #numberOfThreads#",
+    "xnat": [],
+    "label": "Resample Image (BRAINS)",
+    "version": "4.8.0",
+    "schema-version": "1.0",
+    "type": "docker"
+}

@@ -1,0 +1,36 @@
+{
+    "inputs": [
+        {
+            "command-line-flag": "--orientation",
+            "name": "orientation",
+            "default-value": "LPS",
+            "required": true,
+            "type": "string",
+            "description": "Orientation choices"
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "inputVolume1",
+            "default-value": "",
+            "description": "Input volume 1"
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "outputVolume",
+            "default-value": "",
+            "description": "The oriented volume"
+        }
+    ],
+    "description": "Orients an output volume. Rearranges the slices in a volume according to the selected orientation. The slices are not interpolated. They are just reordered and/or permuted. The resulting volume will cover the original volume. NOTE: since Slicer takes into account the orientation of a volume, the re-oriented volume will not show any difference from the original volume, To see the difference, save the volume and display it with a system that either ignores the orientation of the image (e.g. Paraview) or displays individual images.",
+    "image": "quay.io/fedorov/slicerdockers:4.8.1",
+    "info-url": "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/OrientImage",
+    "name": "Orient Scalar Volume",
+    "command-line": "/opt/slicer/Slicer --launch OrientScalarVolume #orientation# -- #inputVolume1# #outputVolume#",
+    "xnat": [],
+    "label": "Orient Scalar Volume",
+    "version": "0.1.0.$Revision: 24799 $(alpha)",
+    "schema-version": "1.0",
+    "type": "docker"
+}

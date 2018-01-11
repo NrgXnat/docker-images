@@ -1,0 +1,60 @@
+{
+    "inputs": [
+        {
+            "command-line-flag": "----labelToSmooth",
+            "name": "labelToSmooth",
+            "default-value": "-1",
+            "required": true,
+            "type": "number",
+            "description": "The label to smooth.  All others will be ignored.  If no label is selected by the user, the maximum label in the image is chosen by default."
+        },
+        {
+            "command-line-flag": "----numberOfIterations",
+            "name": "numberOfIterations",
+            "default-value": "50",
+            "required": true,
+            "type": "number",
+            "description": "The number of iterations of the level set AntiAliasing algorithm"
+        },
+        {
+            "command-line-flag": "----maxRMSError",
+            "name": "maxRMSError",
+            "default-value": "0.01",
+            "required": true,
+            "type": "number",
+            "description": "The maximum RMS error."
+        },
+        {
+            "command-line-flag": "----gaussianSigma",
+            "name": "gaussianSigma",
+            "default-value": "0.2",
+            "required": true,
+            "type": "number",
+            "description": "The standard deviation of the Gaussian kernel"
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "inputVolume",
+            "default-value": "",
+            "description": "Input label map to smooth"
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "outputVolume",
+            "default-value": "",
+            "description": "Smoothed label map"
+        }
+    ],
+    "description": "This filter smoothes a binary label map.  With a label map as input, this filter runs an anti-alising algorithm followed by a Gaussian smoothing algorithm.  The output is a smoothed label map.",
+    "image": "quay.io/fedorov/slicerdockers:4.8.1",
+    "info-url": "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/LabelMapSmoothing",
+    "name": "Label Map Smoothing",
+    "command-line": "/opt/slicer/Slicer --launch LabelMapSmoothing #labelToSmooth# #numberOfIterations# #maxRMSError# #gaussianSigma# -- #inputVolume# #outputVolume#",
+    "xnat": [],
+    "label": "Label Map Smoothing",
+    "version": "1.0",
+    "schema-version": "1.0",
+    "type": "docker"
+}

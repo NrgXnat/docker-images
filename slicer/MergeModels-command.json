@@ -1,0 +1,35 @@
+{
+    "inputs": [
+        {
+            "required": true,
+            "type": "string",
+            "name": "Model1",
+            "default-value": "",
+            "description": "Input model 1"
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "Model2",
+            "default-value": "",
+            "description": "Input model 2"
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "ModelOutput",
+            "default-value": "",
+            "description": "Output model"
+        }
+    ],
+    "description": "Merge the polydata from two input models and output a new model with the combined polydata. Uses the vtkAppendPolyData filter. Works on .vtp and .vtk surface files.",
+    "image": "quay.io/fedorov/slicerdockers:4.8.1",
+    "info-url": "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/MergeModels",
+    "name": "Merge Models",
+    "command-line": "/opt/slicer/Slicer --launch MergeModels -- #Model1# #Model2# #ModelOutput#",
+    "xnat": [],
+    "label": "Merge Models",
+    "version": "$Revision$",
+    "schema-version": "1.0",
+    "type": "docker"
+}

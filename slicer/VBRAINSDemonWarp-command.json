@@ -1,0 +1,342 @@
+{
+    "inputs": [
+        {
+            "command-line-flag": "--movingVolume",
+            "name": "movingVolume",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Required: input moving image"
+        },
+        {
+            "command-line-flag": "--fixedVolume",
+            "name": "fixedVolume",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Required: input fixed (target) image"
+        },
+        {
+            "command-line-flag": "--inputPixelType",
+            "name": "inputPixelType",
+            "default-value": "float",
+            "required": true,
+            "type": "string",
+            "description": "Input volumes will be typecast to this format: float|short|ushort|int|uchar"
+        },
+        {
+            "command-line-flag": "--outputVolume",
+            "name": "outputVolume",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Required: output resampled moving image (will have the same physical space as the fixedVolume)."
+        },
+        {
+            "command-line-flag": "--outputDisplacementFieldVolume",
+            "name": "outputDisplacementFieldVolume",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Output deformation field vector image (will have the same physical space as the fixedVolume)."
+        },
+        {
+            "command-line-flag": "--outputPixelType",
+            "name": "outputPixelType",
+            "default-value": "float",
+            "required": true,
+            "type": "string",
+            "description": "outputVolume will be typecast to this format: float|short|ushort|int|uchar"
+        },
+        {
+            "command-line-flag": "--interpolationMode",
+            "name": "interpolationMode",
+            "default-value": "Linear",
+            "required": true,
+            "type": "string",
+            "description": "Type of interpolation to be used when applying transform to moving volume.  Options are Linear, ResampleInPlace, NearestNeighbor, BSpline, or WindowedSinc"
+        },
+        {
+            "command-line-flag": "--registrationFilterType",
+            "name": "registrationFilterType",
+            "default-value": "Diffeomorphic",
+            "required": true,
+            "type": "string",
+            "description": "Registration Filter Type: Demons|FastSymmetricForces|Diffeomorphic|LogDemons|SymmetricLogDemons"
+        },
+        {
+            "command-line-flag": "--smoothDisplacementFieldSigma",
+            "name": "smoothDisplacementFieldSigma",
+            "default-value": "1.0",
+            "required": true,
+            "type": "number",
+            "description": "A gaussian smoothing value to be applied to the deformation feild at each iteration."
+        },
+        {
+            "command-line-flag": "--numberOfPyramidLevels",
+            "name": "numberOfPyramidLevels",
+            "default-value": "5",
+            "required": true,
+            "type": "number",
+            "description": "Number of image pyramid levels to use in the multi-resolution registration."
+        },
+        {
+            "command-line-flag": "--minimumFixedPyramid",
+            "name": "minimumFixedPyramid",
+            "default-value": "16,16,16",
+            "required": true,
+            "type": "number",
+            "description": "The shrink factor for the first level of the fixed image pyramid. (i.e. start at 1/16 scale, then 1/8, then 1/4, then 1/2, and finally full scale)"
+        },
+        {
+            "command-line-flag": "--minimumMovingPyramid",
+            "name": "minimumMovingPyramid",
+            "default-value": "16,16,16",
+            "required": true,
+            "type": "number",
+            "description": "The shrink factor for the first level of the moving image pyramid. (i.e. start at 1/16 scale, then 1/8, then 1/4, then 1/2, and finally full scale)"
+        },
+        {
+            "command-line-flag": "--arrayOfPyramidLevelIterations",
+            "name": "arrayOfPyramidLevelIterations",
+            "default-value": "100,100,100",
+            "required": true,
+            "type": "number",
+            "description": "The number of iterations for each pyramid level"
+        },
+        {
+            "name": "histogramMatch",
+            "true-value": "histogramMatch",
+            "required": true,
+            "default-value": "false",
+            "type": "boolean",
+            "description": "Histogram Match the input images.  This is suitable for images of the same modality that may have different absolute scales, but the same overall intensity profile."
+        },
+        {
+            "command-line-flag": "--numberOfHistogramBins",
+            "name": "numberOfHistogramBins",
+            "default-value": "256",
+            "required": true,
+            "type": "number",
+            "description": "The number of histogram levels"
+        },
+        {
+            "command-line-flag": "--numberOfMatchPoints",
+            "name": "numberOfMatchPoints",
+            "default-value": "2",
+            "required": true,
+            "type": "number",
+            "description": "The number of match points for histrogramMatch"
+        },
+        {
+            "command-line-flag": "--medianFilterSize",
+            "name": "medianFilterSize",
+            "default-value": "0,0,0",
+            "required": true,
+            "type": "number",
+            "description": "Median filter radius in all 3 directions.  When images have a lot of salt and pepper noise, this step can improve the registration."
+        },
+        {
+            "command-line-flag": "--initializeWithDisplacementField",
+            "name": "initializeWithDisplacementField",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Initial deformation field vector image file name"
+        },
+        {
+            "command-line-flag": "--initializeWithTransform",
+            "name": "initializeWithTransform",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Initial Transform filename"
+        },
+        {
+            "name": "makeBOBF",
+            "true-value": "makeBOBF",
+            "required": true,
+            "default-value": "0",
+            "type": "boolean",
+            "description": "Flag to make Brain-Only Background-Filled versions of the input and target volumes."
+        },
+        {
+            "command-line-flag": "--fixedBinaryVolume",
+            "name": "fixedBinaryVolume",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Mask filename for desired region of interest in the Fixed image."
+        },
+        {
+            "command-line-flag": "--movingBinaryVolume",
+            "name": "movingBinaryVolume",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Mask filename for desired region of interest in the Moving image."
+        },
+        {
+            "command-line-flag": "--lowerThresholdForBOBF",
+            "name": "lowerThresholdForBOBF",
+            "default-value": "0",
+            "required": true,
+            "type": "number",
+            "description": "Lower threshold for performing BOBF"
+        },
+        {
+            "command-line-flag": "--upperThresholdForBOBF",
+            "name": "upperThresholdForBOBF",
+            "default-value": "70",
+            "required": true,
+            "type": "number",
+            "description": "Upper threshold for performing BOBF"
+        },
+        {
+            "command-line-flag": "--backgroundFillValue",
+            "name": "backgroundFillValue",
+            "default-value": "0",
+            "required": true,
+            "type": "number",
+            "description": "Replacement value to overwrite background when performing BOBF"
+        },
+        {
+            "command-line-flag": "--seedForBOBF",
+            "name": "seedForBOBF",
+            "default-value": "0,0,0",
+            "required": true,
+            "type": "number",
+            "description": "coordinates in all 3 directions for Seed when performing BOBF"
+        },
+        {
+            "command-line-flag": "--neighborhoodForBOBF",
+            "name": "neighborhoodForBOBF",
+            "default-value": "1,1,1",
+            "required": true,
+            "type": "number",
+            "description": "neighborhood in all 3 directions to be included when performing BOBF"
+        },
+        {
+            "command-line-flag": "--outputDisplacementFieldPrefix",
+            "name": "outputDisplacementFieldPrefix",
+            "default-value": "none",
+            "required": true,
+            "type": "string",
+            "description": "Displacement field filename prefix for writing separate x, y, and z component images"
+        },
+        {
+            "command-line-flag": "--outputCheckerboardVolume",
+            "name": "outputCheckerboardVolume",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Genete a checkerboard image volume between the fixedVolume and the deformed movingVolume."
+        },
+        {
+            "command-line-flag": "--checkerboardPatternSubdivisions",
+            "name": "checkerboardPatternSubdivisions",
+            "default-value": "4,4,4",
+            "required": true,
+            "type": "number",
+            "description": "Number of Checkerboard subdivisions in all 3 directions"
+        },
+        {
+            "name": "outputNormalized",
+            "true-value": "outputNormalized",
+            "required": true,
+            "default-value": "1",
+            "type": "boolean",
+            "description": "Flag to warp and write the normalized images to output.  In normalized images the image values are fit-scaled to be between 0 and the maximum storage type value."
+        },
+        {
+            "name": "outputDebug",
+            "true-value": "outputDebug",
+            "required": true,
+            "default-value": "0",
+            "type": "boolean",
+            "description": "Flag to write debugging images after each step."
+        },
+        {
+            "command-line-flag": "--weightFactors",
+            "name": "weightFactors",
+            "default-value": "0.5,0.5",
+            "required": true,
+            "type": "number",
+            "description": "Weight fatctors for each input images"
+        },
+        {
+            "command-line-flag": "--gradient_type",
+            "name": "gradientType",
+            "default-value": "0",
+            "required": true,
+            "type": "number",
+            "description": "Type of gradient used for computing the demons force (0 is symmetrized, 1 is fixed image, 2 is moving image)"
+        },
+        {
+            "command-line-flag": "--upFieldSmoothing",
+            "name": "smoothingUp",
+            "default-value": "0.0",
+            "required": true,
+            "type": "number",
+            "description": "Smoothing sigma for the update field at each iteration"
+        },
+        {
+            "command-line-flag": "--max_step_length",
+            "name": "maxStepLength",
+            "default-value": "2.0",
+            "required": true,
+            "type": "number",
+            "description": "Maximum length of an update vector (0: no restriction)"
+        },
+        {
+            "name": "turnOffDiffeomorph",
+            "true-value": "use_vanilla_dem",
+            "required": true,
+            "default-value": "false",
+            "type": "boolean",
+            "description": "Run vanilla demons algorithm"
+        },
+        {
+            "name": "UseDebugImageViewer",
+            "true-value": "gui",
+            "required": true,
+            "default-value": "false",
+            "type": "boolean",
+            "description": "Display intermediate image volumes for debugging"
+        },
+        {
+            "name": "PromptAfterImageSend",
+            "true-value": "promptUser",
+            "required": true,
+            "default-value": "false",
+            "type": "boolean",
+            "description": "Prompt the user to hit enter each time an image is sent to the DebugImageViewer"
+        },
+        {
+            "command-line-flag": "--numberOfBCHApproximationTerms",
+            "name": "numberOfBCHApproximationTerms",
+            "default-value": "2",
+            "required": true,
+            "type": "number",
+            "description": "Number of terms in the BCH expansion"
+        },
+        {
+            "command-line-flag": "--numberOfThreads",
+            "name": "numberOfThreads",
+            "default-value": "-1",
+            "required": true,
+            "type": "number",
+            "description": "Explicitly specify the maximum number of threads to use."
+        }
+    ],
+    "description": "\n    This program finds a deformation field to warp a moving image onto a fixed image.  The images must be of the same signal kind, and contain an image of the same kind of object.  This program uses the Thirion Demons warp software in ITK, the Insight Toolkit.  Additional information is available at: http://www.nitrc.org/projects/brainsdemonwarp.\n\n  ",
+    "image": "quay.io/fedorov/slicerdockers:4.8.1",
+    "info-url": "http://www.slicer.org/slicerWiki/index.php/Documentation/4.1/Modules/BRAINSDemonWarp",
+    "name": "Vector Demon Registration (BRAINS)",
+    "command-line": "/opt/slicer/Slicer --launch VBRAINSDemonWarp #movingVolume# #fixedVolume# #inputPixelType# #outputVolume# #outputDisplacementFieldVolume# #outputPixelType# #interpolationMode# #registrationFilterType# #smoothDisplacementFieldSigma# #numberOfPyramidLevels# #minimumFixedPyramid# #minimumMovingPyramid# #arrayOfPyramidLevelIterations# #histogramMatch# #numberOfHistogramBins# #numberOfMatchPoints# #medianFilterSize# #initializeWithDisplacementField# #initializeWithTransform# #makeBOBF# #fixedBinaryVolume# #movingBinaryVolume# #lowerThresholdForBOBF# #upperThresholdForBOBF# #backgroundFillValue# #seedForBOBF# #neighborhoodForBOBF# #outputDisplacementFieldPrefix# #outputCheckerboardVolume# #checkerboardPatternSubdivisions# #outputNormalized# #outputDebug# #weightFactors# #gradientType# #smoothingUp# #maxStepLength# #turnOffDiffeomorph# #UseDebugImageViewer# #PromptAfterImageSend# #numberOfBCHApproximationTerms# #numberOfThreads#",
+    "xnat": [],
+    "label": "Vector Demon Registration (BRAINS)",
+    "version": "4.8.0",
+    "schema-version": "1.0",
+    "type": "docker"
+}

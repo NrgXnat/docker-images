@@ -1,0 +1,204 @@
+{
+    "inputs": [
+        {
+            "command-line-flag": "----Reference",
+            "name": "referenceVolume",
+            "default-value": null,
+            "required": true,
+            "type": "string",
+            "description": "Reference Volume (spacing,size,orientation,origin)"
+        },
+        {
+            "command-line-flag": "----transformationFile",
+            "name": "transformationFile",
+            "default-value": null,
+            "required": true,
+            "type": "string",
+            "description": ""
+        },
+        {
+            "command-line-flag": "----defField",
+            "name": "deffield",
+            "default-value": null,
+            "required": true,
+            "type": "string",
+            "description": "File containing the deformation field (3D vector image containing vectors with 3 components)"
+        },
+        {
+            "command-line-flag": "----hfieldtype",
+            "name": "typeOfField",
+            "default-value": "h-Field",
+            "required": true,
+            "type": "string",
+            "description": "Set if the deformation field is an h-Field"
+        },
+        {
+            "command-line-flag": "----interpolation",
+            "name": "interpolationType",
+            "default-value": "linear",
+            "required": true,
+            "type": "string",
+            "description": "Sampling algorithm (linear or nn (nearest neighborhoor), ws (WindowedSinc), bs (BSpline) )"
+        },
+        {
+            "command-line-flag": "----transform_order",
+            "name": "transformsOrder",
+            "default-value": "output-to-input",
+            "required": true,
+            "type": "string",
+            "description": "Select in what order the transforms are read"
+        },
+        {
+            "name": "notbulk",
+            "true-value": "--notbulk",
+            "required": true,
+            "default-value": "false",
+            "type": "boolean",
+            "description": "The transform following the BSpline transform is not set as a bulk transform for the BSpline transform"
+        },
+        {
+            "name": "space",
+            "true-value": "--spaceChange",
+            "required": true,
+            "default-value": "false",
+            "type": "boolean",
+            "description": "Space Orientation between transform and image is different (RAS/LPS) (warning: if the transform is a Transform Node in Slicer3, do not select)"
+        },
+        {
+            "command-line-flag": "----rotation_point",
+            "name": "rotationPoint",
+            "default-value": "0,0,0",
+            "required": true,
+            "type": "string",
+            "description": "Rotation Point in case of rotation around a point (otherwise useless)"
+        },
+        {
+            "name": "centeredTransform",
+            "true-value": "--centered_transform",
+            "required": true,
+            "default-value": "false",
+            "type": "boolean",
+            "description": "Set the center of the transformation to the center of the input image"
+        },
+        {
+            "command-line-flag": "----image_center",
+            "name": "imageCenter",
+            "default-value": "input",
+            "required": true,
+            "type": "string",
+            "description": "Image to use to center the transform (used only if \"Centered Transform\" is selected)"
+        },
+        {
+            "name": "inverseITKTransformation",
+            "true-value": "--Inverse_ITK_Transformation",
+            "required": true,
+            "default-value": "false",
+            "type": "boolean",
+            "description": "Inverse the transformation before applying it from output image to input image"
+        },
+        {
+            "command-line-flag": "----spacing",
+            "name": "outputImageSpacing",
+            "default-value": "0,0,0",
+            "required": true,
+            "type": "number",
+            "description": "Spacing along each dimension (0 means use input spacing)"
+        },
+        {
+            "command-line-flag": "----size",
+            "name": "outputImageSize",
+            "default-value": "0,0,0",
+            "required": true,
+            "type": "number",
+            "description": "Size along each dimension (0 means use input size)"
+        },
+        {
+            "command-line-flag": "----origin",
+            "name": "outputImageOrigin",
+            "default-value": null,
+            "required": true,
+            "type": "string",
+            "description": "Origin of the output Image"
+        },
+        {
+            "command-line-flag": "----direction_matrix",
+            "name": "directionMatrix",
+            "default-value": "0,0,0,0,0,0,0,0,0",
+            "required": true,
+            "type": "number",
+            "description": "9 parameters of the direction matrix by rows (ijk to LPS if LPS transform, ijk to RAS if RAS transform)"
+        },
+        {
+            "command-line-flag": "----number_of_thread",
+            "name": "numberOfThread",
+            "default-value": "0",
+            "required": true,
+            "type": "number",
+            "description": "Number of thread used to compute the output image"
+        },
+        {
+            "command-line-flag": "----default_pixel_value",
+            "name": "defaultPixelValue",
+            "default-value": "0",
+            "required": true,
+            "type": "number",
+            "description": "Default pixel value for samples falling outside of the input region"
+        },
+        {
+            "command-line-flag": "----window_function",
+            "name": "windowFunction",
+            "default-value": "c",
+            "required": true,
+            "type": "string",
+            "description": "Window Function \nh = Hamming \nc = Cosine \nw = Welch \nl = Lanczos \nb = Blackman"
+        },
+        {
+            "command-line-flag": "----spline_order",
+            "name": "splineOrder",
+            "default-value": "3",
+            "required": true,
+            "type": "number",
+            "description": "Spline Order"
+        },
+        {
+            "command-line-flag": "----transform_matrix",
+            "name": "transformMatrix",
+            "default-value": "1,0,0,0,1,0,0,0,1,0,0,0",
+            "required": true,
+            "type": "number",
+            "description": "12 parameters of the transform matrix by rows ( --last 3 being translation-- )"
+        },
+        {
+            "command-line-flag": "----transform",
+            "name": "transformType",
+            "default-value": "a",
+            "required": true,
+            "type": "string",
+            "description": "Transform algorithm\nrt = Rigid Transform\na = Affine Transform"
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "inputVolume",
+            "default-value": "",
+            "description": "Input Volume to be resampled"
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "outputVolume",
+            "default-value": "",
+            "description": "Resampled Volume"
+        }
+    ],
+    "description": "This module implements image and vector-image resampling through  the use of itk Transforms.It can also handle diffusion weighted MRI image resampling. \"Resampling\" is performed in space coordinates, not pixel/grid coordinates. It is quite important to ensure that image spacing is properly set on the images involved. The interpolator is required since the mapping from one space to the other will often require evaluation of the intensity of the image at non-grid positions. \n\nWarning: To resample DWMR Images, use nrrd input and output files. \n\nWarning: Do not use to resample Diffusion Tensor Images, tensors would  not be reoriented",
+    "image": "quay.io/fedorov/slicerdockers:4.8.1",
+    "info-url": "http://www.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/ResampleScalarVectorDWIVolume",
+    "name": "Resample Scalar/Vector/DWI Volume",
+    "command-line": "/opt/slicer/Slicer --launch ResampleScalarVectorDWIVolume #referenceVolume# #transformationFile# #deffield# #typeOfField# #interpolationType# #transformsOrder# #notbulk# #space# #rotationPoint# #centeredTransform# #imageCenter# #inverseITKTransformation# #outputImageSpacing# #outputImageSize# #outputImageOrigin# #directionMatrix# #numberOfThread# #defaultPixelValue# #windowFunction# #splineOrder# #transformMatrix# #transformType# -- #inputVolume# #outputVolume#",
+    "xnat": [],
+    "label": "Resample Scalar/Vector/DWI Volume",
+    "version": "0.1",
+    "schema-version": "1.0",
+    "type": "docker"
+}

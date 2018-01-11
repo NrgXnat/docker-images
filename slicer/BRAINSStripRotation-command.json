@@ -1,0 +1,38 @@
+{
+    "inputs": [
+        {
+            "command-line-flag": "--inputVolume",
+            "name": "inputVolume",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Image To Warp"
+        },
+        {
+            "command-line-flag": "--outputVolume",
+            "name": "outputVolume",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Resulting deformed image"
+        },
+        {
+            "command-line-flag": "--transform",
+            "name": "transform",
+            "default-value": null,
+            "required": true,
+            "type": "string",
+            "description": "Filename for the transform file"
+        }
+    ],
+    "description": "Read an Image, write out same image with identity rotation matrix plus an ITK transform file",
+    "image": "quay.io/fedorov/slicerdockers:4.8.1",
+    "info-url": null,
+    "name": "BRAINS Strip Rotation",
+    "command-line": "/opt/slicer/Slicer --launch BRAINSStripRotation #inputVolume# #outputVolume# #transform#",
+    "xnat": [],
+    "label": "BRAINS Strip Rotation",
+    "version": "4.8.0",
+    "schema-version": "1.0",
+    "type": "docker"
+}

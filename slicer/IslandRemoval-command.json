@@ -1,0 +1,44 @@
+{
+    "inputs": [
+        {
+            "command-line-flag": "----min",
+            "name": "MinIslandSize",
+            "default-value": "10",
+            "required": true,
+            "type": "number",
+            "description": "Islands smaller than this size will be removed."
+        },
+        {
+            "name": "Neighborhood2D",
+            "true-value": "--neighborhood2D",
+            "required": true,
+            "default-value": "true",
+            "type": "boolean",
+            "description": "If set then uses 2D instead of 3D neighborhood to define connectivity."
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "InputVolume",
+            "default-value": "",
+            "description": "Volume containing the input label map."
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "OutputVolume",
+            "default-value": "",
+            "description": "Label map with islands removed."
+        }
+    ],
+    "description": "Removes island smaller than threshold by assigning them to the label associated with the majority of neighboring voxels.",
+    "image": "quay.io/fedorov/slicerdockers:4.8.1",
+    "info-url": "http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.4/Modules/IslandRemoval",
+    "name": "Island Removal Filter",
+    "command-line": "/opt/slicer/Slicer --launch IslandRemoval #MinIslandSize# #Neighborhood2D# -- #InputVolume# #OutputVolume#",
+    "xnat": [],
+    "label": "Island Removal Filter",
+    "version": "1.0",
+    "schema-version": "1.0",
+    "type": "docker"
+}

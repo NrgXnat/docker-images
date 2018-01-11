@@ -1,0 +1,35 @@
+{
+    "inputs": [
+        {
+            "required": true,
+            "type": "string",
+            "name": "InputVolume",
+            "default-value": "",
+            "description": "Volume to use to \"paint\" the model"
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "InputModel",
+            "default-value": "",
+            "description": "Input model"
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "OutputModel",
+            "default-value": "",
+            "description": "Output \"painted\" model"
+        }
+    ],
+    "description": "Paint a model by a volume (using vtkProbeFilter).",
+    "image": "quay.io/fedorov/slicerdockers:4.8.1",
+    "info-url": "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/ProbeVolumeWithModel",
+    "name": "Probe Volume With Model",
+    "command-line": "/opt/slicer/Slicer --launch ProbeVolumeWithModel -- #InputVolume# #InputModel# #OutputModel#",
+    "xnat": [],
+    "label": "Probe Volume With Model",
+    "version": "0.1.0.$Revision: 1892 $(alpha)",
+    "schema-version": "1.0",
+    "type": "docker"
+}

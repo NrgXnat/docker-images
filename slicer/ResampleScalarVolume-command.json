@@ -1,0 +1,44 @@
+{
+    "inputs": [
+        {
+            "command-line-flag": "----spacing",
+            "name": "outputPixelSpacing",
+            "default-value": "0,0,0",
+            "required": true,
+            "type": "number",
+            "description": "Spacing along each dimension (0 means use input spacing)"
+        },
+        {
+            "command-line-flag": "----interpolation",
+            "name": "interpolationType",
+            "default-value": "linear",
+            "required": true,
+            "type": "string",
+            "description": "Sampling algorithm (linear, nearest neighbor, bspline(cubic)  or windowed sinc). There are several sinc algorithms available as described in the following publication: Erik H. W. Meijering, Wiro J. Niessen, Josien P. W. Pluim, Max A. Viergever: Quantitative Comparison of Sinc-Approximating Kernels for Medical Image Interpolation. MICCAI 1999, pp. 210-217. Each window has a radius of 3;"
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "InputVolume",
+            "default-value": "",
+            "description": "Input volume to be resampled"
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "OutputVolume",
+            "default-value": "",
+            "description": "Resampled Volume"
+        }
+    ],
+    "description": "Resampling an image is an important task in image analysis. It is especially important in the frame of image registration. This module implements image resampling through the use of itk Transforms. This module uses an Identity Transform. The resampling is controlled by the Output Spacing. \"Resampling\" is performed in space coordinates, not pixel/grid coordinates. It is quite important to ensure that image spacing is properly set on the images involved. The interpolator is required since the mapping from one space to the other will often require evaluation of the intensity of the image at non-grid positions. Several interpolators are available: linear, nearest neighbor, bspline and five flavors of sinc. The sinc interpolators, although more precise, are much slower than the linear and nearest neighbor interpolator. To resample label volumnes, nearest neighbor interpolation should be used exclusively.",
+    "image": "quay.io/fedorov/slicerdockers:4.8.1",
+    "info-url": "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/ResampleVolume",
+    "name": "Resample Scalar Volume",
+    "command-line": "/opt/slicer/Slicer --launch ResampleScalarVolume #outputPixelSpacing# #interpolationType# -- #InputVolume# #OutputVolume#",
+    "xnat": [],
+    "label": "Resample Scalar Volume",
+    "version": "0.1.0.$Revision: 24799 $(alpha)",
+    "schema-version": "1.0",
+    "type": "docker"
+}

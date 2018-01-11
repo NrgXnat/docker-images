@@ -1,0 +1,166 @@
+{
+    "inputs": [
+        {
+            "command-line-flag": "----conversionMode",
+            "name": "conversionMode",
+            "default-value": "DicomToNrrd",
+            "required": true,
+            "type": "string",
+            "description": "Determine which conversion to perform. DicomToNrrd (default): Convert DICOM series to NRRD DicomToFSL: Convert DICOM series to NIfTI File + gradient/bvalue text files NrrdToFSL: Convert DWI NRRD file to NIfTI File + gradient/bvalue text files FSLToNrrd: Convert NIfTI File + gradient/bvalue text files to NRRD file."
+        },
+        {
+            "command-line-flag": "----inputVolume",
+            "name": "inputVolume",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Input DWI volume -- not used for DicomToNrrd mode.\n      "
+        },
+        {
+            "command-line-flag": "----outputVolume",
+            "name": "outputVolume",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Output filename (.nhdr or .nrrd)"
+        },
+        {
+            "command-line-flag": "----inputDicomDirectory",
+            "name": "inputDicomDirectory",
+            "default-value": null,
+            "required": true,
+            "type": "string",
+            "description": "Directory holding Dicom series"
+        },
+        {
+            "command-line-flag": "----fslNIFTIFile",
+            "name": "fslNIFTIFile",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "4D NIfTI file containing gradient volumes"
+        },
+        {
+            "command-line-flag": "----inputBValues",
+            "name": "inputBValues",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "The B Values are stored in FSL .bval text file format"
+        },
+        {
+            "command-line-flag": "----inputBVectors",
+            "name": "inputBVectors",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "The Gradient Vectors are stored in FSL .bvec text file format"
+        },
+        {
+            "command-line-flag": "----outputNiftiFile",
+            "name": "outputNiftiFile",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Nifti output filename (for Slicer GUI use)."
+        },
+        {
+            "command-line-flag": "----outputBValues",
+            "name": "outputBValues",
+            "default-value": null,
+            "required": true,
+            "type": "string",
+            "description": "The B Values are stored in FSL .bval text file format (defaults to <outputVolume>.bval)"
+        },
+        {
+            "command-line-flag": "----outputBVectors",
+            "name": "outputBVectors",
+            "default-value": null,
+            "required": true,
+            "type": "string",
+            "description": "The Gradient Vectors are stored in FSL .bvec text file format (defaults to <outputVolume>.bvec)"
+        },
+        {
+            "name": "writeProtocolGradientsFile",
+            "true-value": "--writeProtocolGradientsFile",
+            "required": true,
+            "default-value": "false",
+            "type": "boolean",
+            "description": "Write the protocol gradients to a file suffixed by \".txt\" as they were specified in the procol by multiplying each diffusion gradient direction by the measurement frame.  This file is for debugging purposes only, the format is not fixed, and will likely change as debugging of new dicom formats is necessary."
+        },
+        {
+            "name": "useIdentityMeaseurementFrame",
+            "true-value": "--useIdentityMeaseurementFrame",
+            "required": true,
+            "default-value": "false",
+            "type": "boolean",
+            "description": "Adjust all the gradients so that the measurement frame is an identity matrix."
+        },
+        {
+            "name": "useBMatrixGradientDirections",
+            "true-value": "--useBMatrixGradientDirections",
+            "required": true,
+            "default-value": "false",
+            "type": "boolean",
+            "description": "Fill the nhdr header with the gradient directions and bvalues computed out of the BMatrix. Only changes behavior for Siemens data.  In some cases the standard public gradients are not properly computed.  The gradients can emperically computed from the private BMatrix fields.  In some cases the private BMatrix is consistent with the public grandients, but not in all cases, when it exists BMatrix is usually most robust."
+        },
+        {
+            "command-line-flag": "----outputDirectory",
+            "name": "outputDirectory",
+            "default-value": ".",
+            "required": true,
+            "type": "string",
+            "description": "Directory holding the output NRRD file"
+        },
+        {
+            "command-line-flag": "----smallGradientThreshold",
+            "name": "smallGradientThreshold",
+            "default-value": "0.2",
+            "required": true,
+            "type": "number",
+            "description": "If a gradient magnitude is greater than 0 and less than smallGradientThreshold, then DWIConvert will display an error message and quit, unless the useBMatrixGradientDirections option is set."
+        },
+        {
+            "name": "transpose",
+            "true-value": "transposeInputBVectors",
+            "required": true,
+            "default-value": "true",
+            "type": "boolean",
+            "description": "FSL input BVectors are expected to be encoded in the input file as one vector per line. If it is not the case, use this option to transpose the file as it is read"
+        },
+        {
+            "name": "allowLossyConversion",
+            "true-value": "allowLossyConversion",
+            "required": true,
+            "default-value": "false",
+            "type": "boolean",
+            "description": "The only supported output type is 'short'. Conversion from images of a different type may cause data loss due to rounding or truncation. Use with caution!\""
+        },
+        {
+            "command-line-flag": "----gradientVectorFile",
+            "name": "gradientVectorFile",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "DEPRECATED:  Use --inputBVector --inputBValue files Text file giving gradient vectors"
+        },
+        {
+            "name": "fMRIOutput",
+            "true-value": "--fMRI",
+            "required": true,
+            "default-value": "",
+            "type": "boolean",
+            "description": "DEPRECATED:  No support or testing.  Output a NRRD file, but without gradients"
+        }
+    ],
+    "description": "Converts diffusion weighted MR images in DICOM series into NRRD format for analysis in Slicer. This program has been tested on only a limited subset of DTI DICOM formats available from Siemens, GE, and Philips scanners. Work in progress to support DICOM multi-frame data. The program parses DICOM header to extract necessary information about measurement frame, diffusion weighting directions, b-values, etc, and write out a NRRD image. For non-diffusion weighted DICOM images, it loads in an entire DICOM series and writes out a single dicom volume in a .nhdr/.raw pair.",
+    "image": "quay.io/fedorov/slicerdockers:4.8.1",
+    "info-url": "http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.5/Modules/DWIConverter",
+    "name": "Diffusion-weighted DICOM Import (DWIConvert)",
+    "command-line": "/opt/slicer/Slicer --launch DWIConvert #conversionMode# #inputVolume# #outputVolume# #inputDicomDirectory# #fslNIFTIFile# #inputBValues# #inputBVectors# #outputNiftiFile# #outputBValues# #outputBVectors# #writeProtocolGradientsFile# #useIdentityMeaseurementFrame# #useBMatrixGradientDirections# #outputDirectory# #smallGradientThreshold# #transpose# #allowLossyConversion# #gradientVectorFile# #fMRIOutput#",
+    "xnat": [],
+    "label": "Diffusion-weighted DICOM Import (DWIConvert)",
+    "version": "4.8.0",
+    "schema-version": "1.0",
+    "type": "docker"
+}

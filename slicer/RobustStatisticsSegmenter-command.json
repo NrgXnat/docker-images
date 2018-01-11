@@ -62,13 +62,14 @@
             "description": "Segmented image"
         }
     ],
-    "version": "1.0",
+    "description": "Active contour segmentation using robust statistic.",
+    "image": "quay.io/fedorov/slicerdockers:4.8.1",
     "info-url": "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/RobustStatisticsSegmenter",
     "name": "Robust Statistics Segmenter",
-    "command-line": "is there some prefix here? RobustStatisticsSegmenter #expectedVolume# #intensityHomogeneity# #curvatureWeight# #labelValue# #maxRunningTime# -- #originalImageFileName# #labelImageFileName# #segmentedImageFileName#",
+    "command-line": "/opt/slicer/Slicer --launch RobustStatisticsSegmenter #expectedVolume# #intensityHomogeneity# #curvatureWeight# #labelValue# #maxRunningTime# -- #originalImageFileName# #labelImageFileName# #segmentedImageFileName#",
+    "xnat": [],
+    "label": "Robust Statistics Segmenter",
+    "version": "1.0",
     "schema-version": "1.0",
-    "description": "Active contour segmentation using robust statistic.",
-    "type": "docker",
-    "image": "slicer",
-    "label": "Robust Statistics Segmenter"
+    "type": "docker"
 }

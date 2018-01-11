@@ -1,0 +1,60 @@
+{
+    "inputs": [
+        {
+            "command-line-flag": "----conductance",
+            "name": "conductance",
+            "default-value": "1",
+            "required": true,
+            "type": "number",
+            "description": "Conductance controls the sensitivity of the conductance term. As a general rule, the lower the value, the more strongly the filter preserves edges. A high value will cause diffusion (smoothing) across edges. Note that the number of iterations controls how much smoothing is done within regions bounded by edges."
+        },
+        {
+            "command-line-flag": "----iterations",
+            "name": "numberOfIterations",
+            "default-value": "5",
+            "required": true,
+            "type": "number",
+            "description": "The more iterations, the more smoothing. Each iteration takes the same amount of time. If it takes 10 seconds for one iteration, then it will take 100 seconds for 10 iterations. Note that the conductance controls how much each iteration smooths across edges."
+        },
+        {
+            "command-line-flag": "----timeStep",
+            "name": "timeStep",
+            "default-value": "0.0625",
+            "required": true,
+            "type": "number",
+            "description": "The time step depends on the dimensionality of the image. In Slicer the images are 3D and the default (.0625) time step will provide a stable solution."
+        },
+        {
+            "name": "useImageSpacing",
+            "true-value": "--useImageSpacing",
+            "required": true,
+            "default-value": "true",
+            "type": "boolean",
+            "description": "![CDATA[Take into account image spacing in the computation.  It is advisable to turn this option on, especially when the pixel size is different in different dimensions. However, to produce results consistent with Slicer4.2 and earlier, this option should be turned off.]]"
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "inputVolume",
+            "default-value": "",
+            "description": "Input volume to be filtered"
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "outputVolume",
+            "default-value": "",
+            "description": "Output filtered"
+        }
+    ],
+    "description": "Runs gradient anisotropic diffusion on a volume.\n\nAnisotropic diffusion methods reduce noise (or unwanted detail) in images while preserving specific image features, like edges.  For many applications, there is an assumption that light-dark transitions (edges) are interesting.  Standard isotropic diffusion methods move and blur light-dark boundaries.  Anisotropic diffusion methods are formulated to specifically preserve edges. The conductance term for this implementation is a function of the gradient magnitude of the image at each point, reducing the strength of diffusion at edges. The numerical implementation of this equation is similar to that described in the Perona-Malik paper, but uses a more robust technique for gradient magnitude estimation and has been generalized to N-dimensions.",
+    "image": "quay.io/fedorov/slicerdockers:4.8.1",
+    "info-url": "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/GradientAnisotropicDiffusion",
+    "name": "Gradient Anisotropic Diffusion",
+    "command-line": "/opt/slicer/Slicer --launch GradientAnisotropicDiffusion #conductance# #numberOfIterations# #timeStep# #useImageSpacing# -- #inputVolume# #outputVolume#",
+    "xnat": [],
+    "label": "Gradient Anisotropic Diffusion",
+    "version": "0.1.0.$Revision: 24799 $(alpha)",
+    "schema-version": "1.0",
+    "type": "docker"
+}

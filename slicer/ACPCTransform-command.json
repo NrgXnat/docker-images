@@ -1,0 +1,46 @@
+{
+    "inputs": [
+        {
+            "command-line-flag": "----acpc",
+            "name": "ACPC",
+            "default-value": "0,0,0",
+            "required": true,
+            "type": "string",
+            "description": "ACPC line, a list of two fiducial points, one at the anterior commissure and one at the posterior commissure."
+        },
+        {
+            "command-line-flag": "----midline",
+            "name": "Midline",
+            "default-value": "0,0,0",
+            "required": true,
+            "type": "string",
+            "description": "The midline is a series of points defining the division between the hemispheres of the brain (the mid sagittal plane)."
+        },
+        {
+            "command-line-flag": "----outputTransform",
+            "name": "OutputTransform",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "A transform filled in from the ACPC and Midline registration calculation."
+        },
+        {
+            "name": "debugSwitch",
+            "true-value": "",
+            "required": true,
+            "default-value": "false",
+            "type": "boolean",
+            "description": "Click this checkbox to see debugging output."
+        }
+    ],
+    "description": "<p>Calculate a transformation from two lists of fiducial points.</p><p>The ACPC line extends between two points, one at the anterior commissure and one at the posterior commissure. The resulting transform will bring the line connecting the two points horizontal to the AP axis.</p><p>The midline is a series of points defining the division between the hemispheres of the brain (the mid sagittal plane). The resulting transform will result in the output volume having the mid sagittal plane lined up with the AS plane.</p><p>Use the Filtering module <b>Resample Scalar/Vector/DWI Volume</b> to apply the transformation to a volume.</p>",
+    "image": "quay.io/fedorov/slicerdockers:4.8.1",
+    "info-url": "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/ACPCTransform",
+    "name": "ACPC Transform",
+    "command-line": "/opt/slicer/Slicer --launch ACPCTransform #ACPC# #Midline# #OutputTransform# #debugSwitch#",
+    "xnat": [],
+    "label": "ACPC Transform",
+    "version": "1.0",
+    "schema-version": "1.0",
+    "type": "docker"
+}

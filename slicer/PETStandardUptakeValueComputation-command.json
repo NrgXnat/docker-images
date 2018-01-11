@@ -1,0 +1,89 @@
+{
+    "inputs": [
+        {
+            "command-line-flag": "----petDICOMPath",
+            "name": "PETDICOMPath",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Input path to a directory containing a PET volume containing DICOM header information for SUV computation"
+        },
+        {
+            "command-line-flag": "----petVolume",
+            "name": "PETVolume",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Input PET volume for SUVbw computation (must be the same volume as pointed to by the DICOM path!)."
+        },
+        {
+            "command-line-flag": "----labelMap",
+            "name": "VOIVolume",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Input label volume containing the volumes of interest"
+        },
+        {
+            "command-line-flag": "----color",
+            "name": "ColorTable",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "Color table to to map labels to colors and names"
+        },
+        {
+            "command-line-flag": "----csvFile",
+            "name": "OutputCSV",
+            "default-value": "",
+            "required": true,
+            "type": "string",
+            "description": "A table holding the output SUV values in comma separated lines, one per label. Optional."
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "OutputLabel",
+            "default-value": "",
+            "description": "List of labels for which SUV values were computed"
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "OutputLabelValue",
+            "default-value": "",
+            "description": "List of label values for which SUV values were computed"
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "SUVMax",
+            "default-value": "",
+            "description": "SUV max for each label"
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "SUVMean",
+            "default-value": "",
+            "description": "SUV mean for each label"
+        },
+        {
+            "required": true,
+            "type": "string",
+            "name": "SUVMin",
+            "default-value": "",
+            "description": "SUV minimum for each label"
+        }
+    ],
+    "description": "Computes the standardized uptake value based on body weight. Takes an input PET image in DICOM and NRRD format (DICOM header must contain Radiopharmaceutical parameters). Produces a CSV file that contains patientID, studyDate, dose, labelID, suvmin, suvmax, suvmean, labelName for each volume of interest. It also displays some of the information as output strings in the GUI, the CSV file is optional in that case. The CSV file is appended to on each execution of the CLI.",
+    "image": "quay.io/fedorov/slicerdockers:4.8.1",
+    "info-url": "http://www.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/ComputeSUVBodyWeight",
+    "name": "PET Standard Uptake Value Computation",
+    "command-line": "/opt/slicer/Slicer --launch PETStandardUptakeValueComputation #PETDICOMPath# #PETVolume# #VOIVolume# #ColorTable# #OutputCSV# #OutputLabel# #OutputLabelValue# #SUVMax# #SUVMean# #SUVMin#",
+    "xnat": [],
+    "label": "PET Standard Uptake Value Computation",
+    "version": "0.1.0.$Revision: 8595 $(alpha)",
+    "schema-version": "1.0",
+    "type": "docker"
+}
