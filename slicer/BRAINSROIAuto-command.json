@@ -62,7 +62,7 @@
             "default-value": "9.0",
             "required": true,
             "type": "number",
-            "description": "The Closing Size (in millimeters) for largest connected filled mask.  This value is divided by image spacing and rounded to the next largest voxel number."
+            "description": "The Closing Size (in millimeters) for largest connected filled mask. This value is divided by image spacing and rounded to the next largest voxel number."
         },
         {
             "command-line-flag": "--ROIAutoDilateSize",
@@ -70,7 +70,7 @@
             "default-value": "0.0",
             "required": true,
             "type": "number",
-            "description": "This flag is only relavent when using ROIAUTO mode for initializing masks.  It defines the final dilation size to capture a bit of background outside the tissue region.  At setting of 10mm has been shown to help regularize a BSpline registration type so that there is some background constraints to match the edges of the head better."
+            "description": "This flag is only relavent when using ROIAUTO mode for initializing masks. It defines the final dilation size to capture a bit of background outside the tissue region. At setting of 10mm has been shown to help regularize a BSpline registration type so that there is some background constraints to match the edges of the head better."
         },
         {
             "command-line-flag": "--outputVolumePixelType",
@@ -89,9 +89,9 @@
             "description": "Explicitly specify the maximum number of threads to use."
         }
     ],
-    "description": "This program is used to create a mask over the most prominant forground region in an image.  This is accomplished via a combination of otsu thresholding and a closing operation.  More documentation is available here: http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.1/Modules/ForegroundMasking.\n  ",
+    "description": "This program is used to create a mask over the most prominant forground region in an image. This is accomplished via a combination of otsu thresholding and a closing operation.",
     "image": "quay.io/fedorov/slicerdockers:4.8.1",
-    "info-url": null,
+    "info-url": "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/ForegroundMasking",
     "name": "Foreground masking (BRAINS)",
     "command-line": "/opt/slicer/Slicer --launch BRAINSROIAuto #inputVolume# #outputROIMaskVolume# #outputVolume# #maskOutput# #cropOutput# #otsuPercentileThreshold# #thresholdCorrectionFactor# #closingSize# #ROIAutoDilateSize# #outputVolumePixelType# #numberOfThreads#",
     "xnat": [],
