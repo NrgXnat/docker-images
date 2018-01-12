@@ -190,12 +190,12 @@ Inside `quay.io/federov/slicerdockers:4.8.1` at path `/opt/slicer/lib/Slicer-4.8
 
 ### Good
 
-* AddScalarVolumes - Success, but I couldn't use one of the arguments.
+* AddScalarVolumes - Success
 * BRAINSResize - Fail
 * BRAINSStripRotation - Success
 * GaussianBlurImageFilter - Fail
-* MultiplyScalarVolumes - Success, but I couldn't use one of the arguments.
-* SubtractScalarVolumes - Success, but I couldn't use one of the arguments.
+* MultiplyScalarVolumes - Success
+* SubtractScalarVolumes - Success
 
 ### Maybe
 
@@ -209,21 +209,11 @@ Inside `quay.io/federov/slicerdockers:4.8.1` at path `/opt/slicer/lib/Slicer-4.8
 
 ## Tests
 
-Note: several of these tests have problems if I use the argument format:
-
-    --optional-arg value -- positional-arg
-
-This format, while endorsed by the usage messages, doesn't work. This does, however:
-
-    --optional-arg value positional-arg
-
-I need to go through the auto-generated commands and remove the `--`s.
-
 ### AddScalarVolumes
 
 Command
 
-    docker run -v ~/Downloads/BRAINIX/301/:/input1 -v ~/Downloads/BRAINIX/401:/input2 -v ~/Downloads/slicer-tests/add-scalar-volumes/:/output quay.io/fedorov/slicerdockers:4.8.1 /opt/slicer/Slicer --launch AddScalarVolumes /input1/IM-0001-0001.dcm /input2/IM-0001-0001.dcm /output/output.dcm
+    docker run -v ~/Downloads/BRAINIX/501/:/input1 -v ~/Downloads/BRAINIX/601:/input2 -v ~/Downloads/slicer-tests/add-scalar-volumes/:/output quay.io/fedorov/slicerdockers:4.8.1 /opt/slicer/Slicer --launch AddScalarVolumes --order 1 /input1/IM-0001-0001.dcm /input2/IM-0001-0001.dcm /output/output.dcm
 
 Result
 Seems to have worked. Produced output on stdout, and a file at the specified location. I gave it the `.dcm` file extension, but I don't know if it is actually a dicom file.
@@ -598,20 +588,9 @@ Results: Success. (Initially failed to write transformation. I had not given it 
 ### GaussianBlurImageFilter
 Command
 
-    docker run -v ~/Downloads/BRAINIX/301/:/input -v ~/Downloads/slicer-tests/brains-strip-rotation/:/output quay.io/fedorov/slicerdockers:4.8.1 /opt/slicer/Slicer --launch GaussianBlurImageFilter --sigma 1.0 --  /input/IM-0001-0001.dcm /output/output.dcm
+    docker run -v ~/Downloads/BRAINIX/601/:/input -v ~/Downloads/slicer-tests/brains-strip-rotation/:/output quay.io/fedorov/slicerdockers:4.8.1 /opt/slicer/Slicer --launch GaussianBlurImageFilter --sigma 1.0 /input/IM-0001-0001.dcm /output/output.dcm
 
-Result: Failed. For some reason it thought the sigma value I gave it was a file.
-
-    /opt/slicer/lib/Slicer-4.8/cli-modules/./GaussianBlurImageFilter: exception caught !
-    itk::ImageFileReaderException (0xf5eb00)
-    Location: "unknown"
-    File: /home/kitware/Dashboards/Package/Slicer-481-package/ITKv4/Modules/IO/ImageBase/include/itkImageFileReader.hxx
-    Line: 143
-    Description:  Could not create IO object for reading file 1.0
-    The file doesn't exist.
-    Filename = 1.0
-
-If I try to remove the sigma argument from the command, it still fails. But that could be because of my input images. Not sure.
+Result: Failed. Complains about the number of pixels along one of the dimensions. Could be because of my input images. Not sure.
 
     $ docker run -v ~/Downloads/BRAINIX/301/:/input -v ~/Downloads/slicer-tests/gaussian-blur-image-filter/:/output quay.io/fedorov/slicerdockers:4.8.1 /opt/slicer/Slicer --launch GaussianBlurImageFilter --  /input/IM-0001-0001.dcm /output/output.dcm
     /opt/slicer/lib/Slicer-4.8/cli-modules/./GaussianBlurImageFilter: exception caught !
@@ -624,9 +603,9 @@ If I try to remove the sigma argument from the command, it still fails. But that
 ### MultiplyScalarVolumes
 Command
 
-    docker run -v ~/Downloads/BRAINIX/301/:/input1 -v ~/Downloads/BRAINIX/401/:/input2 -v ~/Downloads/slicer-tests/multiply-scalar-volumes/:/output quay.io/fedorov/slicerdockers:4.8.1 /opt/slicer/Slicer --launch MultiplyScalarVolumes -- /input1/IM-0001-0001.dcm /input2/IM-0001-0001.dcm /output/output.dcm
+    docker run -v ~/Downloads/BRAINIX/501/:/input1 -v ~/Downloads/BRAINIX/601/:/input2 -v ~/Downloads/slicer-tests/multiply-scalar-volumes/:/output quay.io/fedorov/slicerdockers:4.8.1 /opt/slicer/Slicer --launch MultiplyScalarVolumes --order 1 /input1/IM-0001-0001.dcm /input2/IM-0001-0001.dcm /output/output.dcm
 
-Result: Success. But, similar to GaussianBlurImageFilter, I cannot give it a value for the `order` parameter. If I give it anything, it tries to parse it as a file and fails.
+Result: Success.
 
 stdout
 
@@ -945,7 +924,7 @@ stdout
 ### SubtractScalarVolumes
 Command
 
-    docker run -v ~/Downloads/BRAINIX/301/:/input1 -v ~/Downloads/BRAINIX/401/:/input2 -v ~/Downloads/slicer-tests/subtract-scalar-volumes/:/output quay.io/fedorov/slicerdockers:4.8.1 /opt/slicer/Slicer --launch SubtractScalarVolumes -- /input1/IM-0001-0001.dcm /input2/IM-0001-0001.dcm /output/output.dcm
+    docker run -v ~/Downloads/BRAINIX/501/:/input1 -v ~/Downloads/BRAINIX/601:/input2 -v ~/Downloads/slicer-tests/subtract-scalar-volumes/:/output quay.io/fedorov/slicerdockers:4.8.1 /opt/slicer/Slicer --launch SubtractScalarVolumes --order 1 /input1/IM-0001-0001.dcm /input2/IM-0001-0001.dcm /output/output.dcm
 
 Result: Success
 
