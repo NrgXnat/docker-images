@@ -1,7 +1,7 @@
 {
     "inputs": [
         {
-            "command-line-flag": "----spacing",
+            "command-line-flag": "--spacing",
             "name": "outputPixelSpacing",
             "default-value": "0,0,0",
             "required": true,
@@ -9,7 +9,7 @@
             "description": "Spacing along each dimension (0 means use input spacing)"
         },
         {
-            "command-line-flag": "----interpolation",
+            "command-line-flag": "--interpolation",
             "name": "interpolationType",
             "default-value": "linear",
             "required": true,
@@ -35,7 +35,7 @@
     "image": "quay.io/fedorov/slicerdockers:4.8.1",
     "info-url": "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/ResampleVolume",
     "name": "Resample Scalar Volume",
-    "command-line": "/opt/slicer/Slicer --launch ResampleScalarVolume #outputPixelSpacing# #interpolationType# -- #InputVolume# #OutputVolume#",
+    "command-line": "/opt/slicer/Slicer --launch ResampleScalarVolume #outputPixelSpacing# #interpolationType# #InputVolume# #OutputVolume#",
     "xnat": [],
     "label": "Resample Scalar Volume",
     "version": "0.1.0.$Revision: 24799 $(alpha)",

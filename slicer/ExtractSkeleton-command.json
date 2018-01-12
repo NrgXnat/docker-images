@@ -51,7 +51,7 @@
     "image": "quay.io/fedorov/slicerdockers:4.8.1",
     "info-url": "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/ExtractSkeleton",
     "name": "Extract Skeleton",
-    "command-line": "/opt/slicer/Slicer --launch ExtractSkeleton #SkeletonType# #DontPruneBranches# #NumberOfPoints# #OutputPointsFileName# -- #InputImageFileName# #OutputImageFileName#",
+    "command-line": "/opt/slicer/Slicer --launch ExtractSkeleton #SkeletonType# #DontPruneBranches# #NumberOfPoints# #OutputPointsFileName# #InputImageFileName# #OutputImageFileName#",
     "xnat": [],
     "label": "Extract Skeleton",
     "version": "0.1.0.$Revision: 2104 $(alpha)",

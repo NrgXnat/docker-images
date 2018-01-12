@@ -19,7 +19,7 @@
     "image": "quay.io/fedorov/slicerdockers:4.8.1",
     "info-url": "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/GrayscaleGrindPeakImageFilter",
     "name": "Grayscale Grind Peak Image Filter",
-    "command-line": "/opt/slicer/Slicer --launch GrayscaleGrindPeakImageFilter -- #inputVolume# #outputVolume#",
+    "command-line": "/opt/slicer/Slicer --launch GrayscaleGrindPeakImageFilter #inputVolume# #outputVolume#",
     "xnat": [],
     "label": "Grayscale Grind Peak Image Filter",
     "version": "0.1.0.$Revision: 24799 $(alpha)",

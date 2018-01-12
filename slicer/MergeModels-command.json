@@ -26,7 +26,7 @@
     "image": "quay.io/fedorov/slicerdockers:4.8.1",
     "info-url": "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/MergeModels",
     "name": "Merge Models",
-    "command-line": "/opt/slicer/Slicer --launch MergeModels -- #Model1# #Model2# #ModelOutput#",
+    "command-line": "/opt/slicer/Slicer --launch MergeModels #Model1# #Model2# #ModelOutput#",
     "xnat": [],
     "label": "Merge Models",
     "version": "$Revision$",

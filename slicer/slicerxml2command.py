@@ -96,10 +96,16 @@ for param in parameters:
     }
 
     longflag = xpathOrDefault(param, "./longflag")
+    longflagWithDashes = "" if not longflag else \
+                         longflag if longflag[:2] == "--" else \
+                         "--" + longflag
     shortflag = xpathOrDefault(param, "./flag")
-    flag = "--" + longflag if longflag and inputType != "boolean" else \
-            "-" + shortflag if shortflag and inputType != "boolean" else \
-            ""
+    shortflagWithDash = "" if not shortflag else \
+                        shortflag if shortflag[0] == "-" else \
+                        "-" + shortflag
+    flag = longflagWithDashes if longflagWithDashes and inputType != "boolean" else \
+           shortflagWithDash if shortflagWithDash and inputType != "boolean" else \
+           ""
     trueValue = longflag if longflag and inputType == "boolean" else ""
 
     if inputType == "boolean":
@@ -119,7 +125,6 @@ for param in parameters:
 commandLineParts = [slicerPath, "--launch", slicerExecutableName]
 commandLineParts += ["#{}#".format(commandInput["name"]) for commandInput in commandInputs]
 if commandInputsWithIndices:
-    commandLineParts += ["--"]  # Is this necessary? check slicer docs
     commandInputsWithIndices.sort(key=lambda t: t[0])  # Sort in place so it is still sorted when we use it later
     commandLineParts += ["#{}#".format(commandInput["name"]) for index, commandInput in commandInputsWithIndices]
 

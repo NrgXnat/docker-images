@@ -9,7 +9,7 @@
             "description": "Color table to make labels to colors and objects"
         },
         {
-            "command-line-flag": "----modelSceneFile",
+            "command-line-flag": "--modelSceneFile",
             "name": "ModelSceneFile",
             "default-value": "models.mrml",
             "required": true,
@@ -17,7 +17,7 @@
             "description": "Generated models, under a model hierarchy node. Models are imported into Slicer under a model hierarchy node, and their colors are set by the color table associated with the input label map volume. The model hierarchy node must be created before running the model maker, by selecting Create New ModelHierarchy from the Models drop down menu. If you're running from the command line, a model hierarchy node in a new mrml scene will be created for you."
         },
         {
-            "command-line-flag": "----name",
+            "command-line-flag": "--name",
             "name": "Name",
             "default-value": "Model",
             "required": true,
@@ -41,7 +41,7 @@
             "description": "A comma separated list of label values from which to make models. f you specify a list of Labels, it will override any start/end label settings. If you click Generate All Models it will override the list of labels and any start/end label settings."
         },
         {
-            "command-line-flag": "----start",
+            "command-line-flag": "--start",
             "name": "StartLabel",
             "default-value": "-1",
             "required": true,
@@ -49,7 +49,7 @@
             "description": "If you want to specify a continuous range of labels from which to generate models, enter the lower label here. Voxel value from which to start making models. Used instead of the label list to specify a range (make sure the label list is empty or it will over ride this)."
         },
         {
-            "command-line-flag": "----end",
+            "command-line-flag": "--end",
             "name": "EndLabel",
             "default-value": "-1",
             "required": true,
@@ -73,7 +73,7 @@
             "description": "This will ensure that all resulting models fit together smoothly, like jigsaw puzzle pieces. Otherwise the models will be smoothed independently and may overlap."
         },
         {
-            "command-line-flag": "----smooth",
+            "command-line-flag": "--smooth",
             "name": "Smooth",
             "default-value": "10",
             "required": true,
@@ -81,7 +81,7 @@
             "description": "Here you can set the number of smoothing iterations for Laplacian smoothing, or the degree of the polynomial approximating the windowed Sinc function. Use 0 if you wish no smoothing. "
         },
         {
-            "command-line-flag": "----filtertype",
+            "command-line-flag": "--filtertype",
             "name": "FilterType",
             "default-value": "Sinc",
             "required": true,
@@ -89,7 +89,7 @@
             "description": "You can control the type of smoothing done on the models by selecting a filter type of either Sinc or Laplacian."
         },
         {
-            "command-line-flag": "----decimate",
+            "command-line-flag": "--decimate",
             "name": "Decimate",
             "default-value": "0.25",
             "required": true,
@@ -121,7 +121,7 @@
             "description": "Pad the input volume with zero value voxels on all 6 faces in order to ensure the production of closed surfaces. Sets the origin translation and extent translation so that the models still line up with the unpadded input volume."
         },
         {
-            "command-line-flag": "----modelHierarchyFile",
+            "command-line-flag": "--modelHierarchyFile",
             "name": "ModelHierarchyFile",
             "default-value": "",
             "required": true,
@@ -156,7 +156,7 @@
     "image": "quay.io/fedorov/slicerdockers:4.8.1",
     "info-url": "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/ModelMaker",
     "name": "Model Maker",
-    "command-line": "/opt/slicer/Slicer --launch ModelMaker #ColorTable# #ModelSceneFile# #Name# #GenerateAll# #Labels# #StartLabel# #EndLabel# #SkipUnNamed# #JointSmoothing# #Smooth# #FilterType# #Decimate# #SplitNormals# #PointNormals# #Pad# #ModelHierarchyFile# #SaveIntermediateModels# #debug# -- #InputVolume#",
+    "command-line": "/opt/slicer/Slicer --launch ModelMaker #ColorTable# #ModelSceneFile# #Name# #GenerateAll# #Labels# #StartLabel# #EndLabel# #SkipUnNamed# #JointSmoothing# #Smooth# #FilterType# #Decimate# #SplitNormals# #PointNormals# #Pad# #ModelHierarchyFile# #SaveIntermediateModels# #debug# #InputVolume#",
     "xnat": [],
     "label": "Model Maker",
     "version": "4.4",

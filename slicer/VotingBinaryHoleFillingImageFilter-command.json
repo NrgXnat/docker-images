@@ -1,7 +1,7 @@
 {
     "inputs": [
         {
-            "command-line-flag": "----radius",
+            "command-line-flag": "--radius",
             "name": "radius",
             "default-value": "1,1,1",
             "required": true,
@@ -9,7 +9,7 @@
             "description": "The radius of a hole to be filled"
         },
         {
-            "command-line-flag": "----majorityThreshold",
+            "command-line-flag": "--majorityThreshold",
             "name": "majorityThreshold",
             "default-value": "1",
             "required": true,
@@ -17,7 +17,7 @@
             "description": "The number of pixels over 50% that will decide whether an OFF pixel will become ON or not. For example, if the neighborhood of a pixel has 124 pixels (excluding itself), the 50% will be 62, and if you set a Majority threshold of 5, that means that the filter will require 67 or more neighbor pixels to be ON in order to switch the current OFF pixel to ON."
         },
         {
-            "command-line-flag": "----background",
+            "command-line-flag": "--background",
             "name": "background",
             "default-value": "0",
             "required": true,
@@ -25,7 +25,7 @@
             "description": "The value associated with the background (not object)"
         },
         {
-            "command-line-flag": "----foreground",
+            "command-line-flag": "--foreground",
             "name": "foreground",
             "default-value": "255",
             "required": true,
@@ -51,7 +51,7 @@
     "image": "quay.io/fedorov/slicerdockers:4.8.1",
     "info-url": "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/VotingBinaryHoleFillingImageFilter",
     "name": "Voting Binary Hole Filling Image Filter",
-    "command-line": "/opt/slicer/Slicer --launch VotingBinaryHoleFillingImageFilter #radius# #majorityThreshold# #background# #foreground# -- #inputVolume# #outputVolume#",
+    "command-line": "/opt/slicer/Slicer --launch VotingBinaryHoleFillingImageFilter #radius# #majorityThreshold# #background# #foreground# #inputVolume# #outputVolume#",
     "xnat": [],
     "label": "Voting Binary Hole Filling Image Filter",
     "version": "0.1.0.$Revision: 24799 $(alpha)",

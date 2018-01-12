@@ -227,7 +227,7 @@
     "image": "quay.io/fedorov/slicerdockers:4.8.1",
     "info-url": "http://www.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/ExpertAutomatedRegistration",
     "name": "Expert Automated Registration",
-    "command-line": "/opt/slicer/Slicer --launch ExpertAutomatedRegistration #resampledImage# #loadTransform# #saveTransform# #initialization# #registration# #metric# #expectedOffset# #expectedRotation# #expectedScale# #expectedSkew# #verbosityLevel# #sampleFromOverlap# #fixedImageMask# #randomNumberSeed# #numberOfThreads# #minimizeMemory# #interpolation# #fixedLandmarks# #movingLandmarks# #rigidMaxIterations# #rigidSamplingRatio# #affineMaxIterations# #affineSamplingRatio# #bsplineMaxIterations# #bsplineSamplingRatio# #controlPointSpacing# -- #fixedImage# #movingImage#",
+    "command-line": "/opt/slicer/Slicer --launch ExpertAutomatedRegistration #resampledImage# #loadTransform# #saveTransform# #initialization# #registration# #metric# #expectedOffset# #expectedRotation# #expectedScale# #expectedSkew# #verbosityLevel# #sampleFromOverlap# #fixedImageMask# #randomNumberSeed# #numberOfThreads# #minimizeMemory# #interpolation# #fixedLandmarks# #movingLandmarks# #rigidMaxIterations# #rigidSamplingRatio# #affineMaxIterations# #affineSamplingRatio# #bsplineMaxIterations# #bsplineSamplingRatio# #controlPointSpacing# #fixedImage# #movingImage#",
     "xnat": [],
     "label": "Expert Automated Registration",
     "version": "0.1.0.$Revision: 2104 $(alpha)",

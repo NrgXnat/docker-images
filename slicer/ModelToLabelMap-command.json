@@ -42,7 +42,7 @@
     "image": "quay.io/fedorov/slicerdockers:4.8.1",
     "info-url": "http://www.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/ModelToLabelMap",
     "name": "Model To Label Map",
-    "command-line": "/opt/slicer/Slicer --launch ModelToLabelMap #sampleDistance# #labelValue# -- #InputVolume# #surface# #OutputVolume#",
+    "command-line": "/opt/slicer/Slicer --launch ModelToLabelMap #sampleDistance# #labelValue# #InputVolume# #surface# #OutputVolume#",
     "xnat": [],
     "label": "Model To Label Map",
     "version": "$Revision: 8643 $",

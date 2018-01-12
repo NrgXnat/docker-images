@@ -1,7 +1,7 @@
 {
     "inputs": [
         {
-            "command-line-flag": "----integer",
+            "command-line-flag": "--integer",
             "name": "integerVariable",
             "default-value": "30",
             "required": true,
@@ -9,7 +9,7 @@
             "description": "An integer without constraints"
         },
         {
-            "command-line-flag": "----double",
+            "command-line-flag": "--double",
             "name": "doubleVariable",
             "default-value": "30",
             "required": true,
@@ -65,7 +65,7 @@
             "description": "A boolean with no default, should be defaulting to false"
         },
         {
-            "command-line-flag": "----seed",
+            "command-line-flag": "--seed",
             "name": "seed",
             "default-value": "0,0,0",
             "required": true,
@@ -221,7 +221,7 @@
     "image": "quay.io/fedorov/slicerdockers:4.8.1",
     "info-url": "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/ExecutionModelTour",
     "name": "Execution Model Tour",
-    "command-line": "/opt/slicer/Slicer --launch ExecutionModelTour #integerVariable# #doubleVariable# #floatVector# #stringVector# #stringChoice# #boolean1# #boolean2# #boolean3# #seed# #seedsFile# #seedsOutFile# #InputModel# #OutputModel# #ModelSceneFile# #regions# #inputFA# #outputFA# #inputDT# #outputDT# #anintegerreturn# #abooleanreturn# #afloatreturn# #adoublereturn# #astringreturn# #anintegervectorreturn# #astringchoicereturn# -- #arg0# #arg1#",
+    "command-line": "/opt/slicer/Slicer --launch ExecutionModelTour #integerVariable# #doubleVariable# #floatVector# #stringVector# #stringChoice# #boolean1# #boolean2# #boolean3# #seed# #seedsFile# #seedsOutFile# #InputModel# #OutputModel# #ModelSceneFile# #regions# #inputFA# #outputFA# #inputDT# #outputDT# #anintegerreturn# #abooleanreturn# #afloatreturn# #adoublereturn# #astringreturn# #anintegervectorreturn# #astringchoicereturn# #arg0# #arg1#",
     "xnat": [],
     "label": "Execution Model Tour",
     "version": "0.1.0.$Revision: 25330 $(alpha)",

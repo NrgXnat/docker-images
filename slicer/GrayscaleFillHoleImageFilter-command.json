@@ -19,7 +19,7 @@
     "image": "quay.io/fedorov/slicerdockers:4.8.1",
     "info-url": "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/GrayscaleFillHoleImageFilter",
     "name": "Grayscale Fill Hole Image Filter",
-    "command-line": "/opt/slicer/Slicer --launch GrayscaleFillHoleImageFilter -- #inputVolume# #outputVolume#",
+    "command-line": "/opt/slicer/Slicer --launch GrayscaleFillHoleImageFilter #inputVolume# #outputVolume#",
     "xnat": [],
     "label": "Grayscale Fill Hole Image Filter",
     "version": "0.1.0.$Revision: 24799 $(alpha)",

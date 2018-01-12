@@ -1,7 +1,7 @@
 {
     "inputs": [
         {
-            "command-line-flag": "----insideValue",
+            "command-line-flag": "--insideValue",
             "name": "insideValue",
             "default-value": "0",
             "required": true,
@@ -9,7 +9,7 @@
             "description": "The value assigned to pixels that are inside the computed threshold"
         },
         {
-            "command-line-flag": "----outsideValue",
+            "command-line-flag": "--outsideValue",
             "name": "outsideValue",
             "default-value": "255",
             "required": true,
@@ -17,7 +17,7 @@
             "description": "The value assigned to pixels that are outside the computed threshold"
         },
         {
-            "command-line-flag": "----numberOfBins",
+            "command-line-flag": "--numberOfBins",
             "name": "numberOfBins",
             "default-value": "128",
             "required": true,
@@ -43,7 +43,7 @@
     "image": "quay.io/fedorov/slicerdockers:4.8.1",
     "info-url": "http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.3/Modules/OtsuThresholdImageFilter",
     "name": "Otsu Threshold Image Filter",
-    "command-line": "/opt/slicer/Slicer --launch OtsuThresholdImageFilter #insideValue# #outsideValue# #numberOfBins# -- #inputVolume# #outputVolume#",
+    "command-line": "/opt/slicer/Slicer --launch OtsuThresholdImageFilter #insideValue# #outsideValue# #numberOfBins# #inputVolume# #outputVolume#",
     "xnat": [],
     "label": "Otsu Threshold Image Filter",
     "version": "0.1.0.$Revision$(alpha)",

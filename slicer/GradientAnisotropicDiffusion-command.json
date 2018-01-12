@@ -1,7 +1,7 @@
 {
     "inputs": [
         {
-            "command-line-flag": "----conductance",
+            "command-line-flag": "--conductance",
             "name": "conductance",
             "default-value": "1",
             "required": true,
@@ -9,7 +9,7 @@
             "description": "Conductance controls the sensitivity of the conductance term. As a general rule, the lower the value, the more strongly the filter preserves edges. A high value will cause diffusion (smoothing) across edges. Note that the number of iterations controls how much smoothing is done within regions bounded by edges."
         },
         {
-            "command-line-flag": "----iterations",
+            "command-line-flag": "--iterations",
             "name": "numberOfIterations",
             "default-value": "5",
             "required": true,
@@ -17,7 +17,7 @@
             "description": "The more iterations, the more smoothing. Each iteration takes the same amount of time. If it takes 10 seconds for one iteration, then it will take 100 seconds for 10 iterations. Note that the conductance controls how much each iteration smooths across edges."
         },
         {
-            "command-line-flag": "----timeStep",
+            "command-line-flag": "--timeStep",
             "name": "timeStep",
             "default-value": "0.0625",
             "required": true,
@@ -51,7 +51,7 @@
     "image": "quay.io/fedorov/slicerdockers:4.8.1",
     "info-url": "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/GradientAnisotropicDiffusion",
     "name": "Gradient Anisotropic Diffusion",
-    "command-line": "/opt/slicer/Slicer --launch GradientAnisotropicDiffusion #conductance# #numberOfIterations# #timeStep# #useImageSpacing# -- #inputVolume# #outputVolume#",
+    "command-line": "/opt/slicer/Slicer --launch GradientAnisotropicDiffusion #conductance# #numberOfIterations# #timeStep# #useImageSpacing# #inputVolume# #outputVolume#",
     "xnat": [],
     "label": "Gradient Anisotropic Diffusion",
     "version": "0.1.0.$Revision: 24799 $(alpha)",

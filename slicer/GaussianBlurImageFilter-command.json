@@ -27,7 +27,7 @@
     "image": "quay.io/fedorov/slicerdockers:4.8.1",
     "info-url": "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/GaussianBlurImageFilter",
     "name": "Gaussian Blur Image Filter",
-    "command-line": "/opt/slicer/Slicer --launch GaussianBlurImageFilter #sigma# -- #inputVolume# #outputVolume#",
+    "command-line": "/opt/slicer/Slicer --launch GaussianBlurImageFilter #sigma# #inputVolume# #outputVolume#",
     "xnat": [],
     "label": "Gaussian Blur Image Filter",
     "version": "0.1.0.$Revision: 1.1 $(alpha)",

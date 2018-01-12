@@ -1,7 +1,7 @@
 {
     "inputs": [
         {
-            "command-line-flag": "----conversionMode",
+            "command-line-flag": "--conversionMode",
             "name": "conversionMode",
             "default-value": "DicomToNrrd",
             "required": true,
@@ -9,7 +9,7 @@
             "description": "Determine which conversion to perform. DicomToNrrd (default): Convert DICOM series to NRRD DicomToFSL: Convert DICOM series to NIfTI File + gradient/bvalue text files NrrdToFSL: Convert DWI NRRD file to NIfTI File + gradient/bvalue text files FSLToNrrd: Convert NIfTI File + gradient/bvalue text files to NRRD file."
         },
         {
-            "command-line-flag": "----inputVolume",
+            "command-line-flag": "--inputVolume",
             "name": "inputVolume",
             "default-value": "",
             "required": true,
@@ -17,7 +17,7 @@
             "description": "Input DWI volume -- not used for DicomToNrrd mode.\n      "
         },
         {
-            "command-line-flag": "----outputVolume",
+            "command-line-flag": "--outputVolume",
             "name": "outputVolume",
             "default-value": "",
             "required": true,
@@ -25,7 +25,7 @@
             "description": "Output filename (.nhdr or .nrrd)"
         },
         {
-            "command-line-flag": "----inputDicomDirectory",
+            "command-line-flag": "--inputDicomDirectory",
             "name": "inputDicomDirectory",
             "default-value": null,
             "required": true,
@@ -33,7 +33,7 @@
             "description": "Directory holding Dicom series"
         },
         {
-            "command-line-flag": "----fslNIFTIFile",
+            "command-line-flag": "--fslNIFTIFile",
             "name": "fslNIFTIFile",
             "default-value": "",
             "required": true,
@@ -41,7 +41,7 @@
             "description": "4D NIfTI file containing gradient volumes"
         },
         {
-            "command-line-flag": "----inputBValues",
+            "command-line-flag": "--inputBValues",
             "name": "inputBValues",
             "default-value": "",
             "required": true,
@@ -49,7 +49,7 @@
             "description": "The B Values are stored in FSL .bval text file format"
         },
         {
-            "command-line-flag": "----inputBVectors",
+            "command-line-flag": "--inputBVectors",
             "name": "inputBVectors",
             "default-value": "",
             "required": true,
@@ -57,7 +57,7 @@
             "description": "The Gradient Vectors are stored in FSL .bvec text file format"
         },
         {
-            "command-line-flag": "----outputNiftiFile",
+            "command-line-flag": "--outputNiftiFile",
             "name": "outputNiftiFile",
             "default-value": "",
             "required": true,
@@ -65,7 +65,7 @@
             "description": "Nifti output filename (for Slicer GUI use)."
         },
         {
-            "command-line-flag": "----outputBValues",
+            "command-line-flag": "--outputBValues",
             "name": "outputBValues",
             "default-value": null,
             "required": true,
@@ -73,7 +73,7 @@
             "description": "The B Values are stored in FSL .bval text file format (defaults to <outputVolume>.bval)"
         },
         {
-            "command-line-flag": "----outputBVectors",
+            "command-line-flag": "--outputBVectors",
             "name": "outputBVectors",
             "default-value": null,
             "required": true,
@@ -105,7 +105,7 @@
             "description": "Fill the nhdr header with the gradient directions and bvalues computed out of the BMatrix. Only changes behavior for Siemens data.  In some cases the standard public gradients are not properly computed.  The gradients can emperically computed from the private BMatrix fields.  In some cases the private BMatrix is consistent with the public grandients, but not in all cases, when it exists BMatrix is usually most robust."
         },
         {
-            "command-line-flag": "----outputDirectory",
+            "command-line-flag": "--outputDirectory",
             "name": "outputDirectory",
             "default-value": ".",
             "required": true,
@@ -113,7 +113,7 @@
             "description": "Directory holding the output NRRD file"
         },
         {
-            "command-line-flag": "----smallGradientThreshold",
+            "command-line-flag": "--smallGradientThreshold",
             "name": "smallGradientThreshold",
             "default-value": "0.2",
             "required": true,
@@ -137,7 +137,7 @@
             "description": "The only supported output type is 'short'. Conversion from images of a different type may cause data loss due to rounding or truncation. Use with caution!\""
         },
         {
-            "command-line-flag": "----gradientVectorFile",
+            "command-line-flag": "--gradientVectorFile",
             "name": "gradientVectorFile",
             "default-value": "",
             "required": true,

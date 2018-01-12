@@ -1,7 +1,7 @@
 {
     "inputs": [
         {
-            "command-line-flag": "----Reference",
+            "command-line-flag": "--Reference",
             "name": "referenceVolume",
             "default-value": null,
             "required": true,
@@ -9,7 +9,7 @@
             "description": "Reference Volume (spacing,size,orientation,origin)"
         },
         {
-            "command-line-flag": "----transformationFile",
+            "command-line-flag": "--transformationFile",
             "name": "transformationFile",
             "default-value": null,
             "required": true,
@@ -17,7 +17,7 @@
             "description": ""
         },
         {
-            "command-line-flag": "----defField",
+            "command-line-flag": "--defField",
             "name": "deffield",
             "default-value": null,
             "required": true,
@@ -25,7 +25,7 @@
             "description": "File containing the deformation field (3D vector image containing vectors with 3 components)"
         },
         {
-            "command-line-flag": "----hfieldtype",
+            "command-line-flag": "--hfieldtype",
             "name": "typeOfField",
             "default-value": "h-Field",
             "required": true,
@@ -33,7 +33,7 @@
             "description": "Set if the deformation field is an h-Field"
         },
         {
-            "command-line-flag": "----interpolation",
+            "command-line-flag": "--interpolation",
             "name": "interpolationType",
             "default-value": "linear",
             "required": true,
@@ -41,7 +41,7 @@
             "description": "Sampling algorithm (linear or nn (nearest neighborhoor), ws (WindowedSinc), bs (BSpline) )"
         },
         {
-            "command-line-flag": "----transform_order",
+            "command-line-flag": "--transform_order",
             "name": "transformsOrder",
             "default-value": "output-to-input",
             "required": true,
@@ -65,7 +65,7 @@
             "description": "Space Orientation between transform and image is different (RAS/LPS) (warning: if the transform is a Transform Node in Slicer3, do not select)"
         },
         {
-            "command-line-flag": "----rotation_point",
+            "command-line-flag": "--rotation_point",
             "name": "rotationPoint",
             "default-value": "0,0,0",
             "required": true,
@@ -81,7 +81,7 @@
             "description": "Set the center of the transformation to the center of the input image"
         },
         {
-            "command-line-flag": "----image_center",
+            "command-line-flag": "--image_center",
             "name": "imageCenter",
             "default-value": "input",
             "required": true,
@@ -97,7 +97,7 @@
             "description": "Inverse the transformation before applying it from output image to input image"
         },
         {
-            "command-line-flag": "----spacing",
+            "command-line-flag": "--spacing",
             "name": "outputImageSpacing",
             "default-value": "0,0,0",
             "required": true,
@@ -105,7 +105,7 @@
             "description": "Spacing along each dimension (0 means use input spacing)"
         },
         {
-            "command-line-flag": "----size",
+            "command-line-flag": "--size",
             "name": "outputImageSize",
             "default-value": "0,0,0",
             "required": true,
@@ -113,7 +113,7 @@
             "description": "Size along each dimension (0 means use input size)"
         },
         {
-            "command-line-flag": "----origin",
+            "command-line-flag": "--origin",
             "name": "outputImageOrigin",
             "default-value": null,
             "required": true,
@@ -121,7 +121,7 @@
             "description": "Origin of the output Image"
         },
         {
-            "command-line-flag": "----direction_matrix",
+            "command-line-flag": "--direction_matrix",
             "name": "directionMatrix",
             "default-value": "0,0,0,0,0,0,0,0,0",
             "required": true,
@@ -129,7 +129,7 @@
             "description": "9 parameters of the direction matrix by rows (ijk to LPS if LPS transform, ijk to RAS if RAS transform)"
         },
         {
-            "command-line-flag": "----number_of_thread",
+            "command-line-flag": "--number_of_thread",
             "name": "numberOfThread",
             "default-value": "0",
             "required": true,
@@ -137,7 +137,7 @@
             "description": "Number of thread used to compute the output image"
         },
         {
-            "command-line-flag": "----default_pixel_value",
+            "command-line-flag": "--default_pixel_value",
             "name": "defaultPixelValue",
             "default-value": "0",
             "required": true,
@@ -145,7 +145,7 @@
             "description": "Default pixel value for samples falling outside of the input region"
         },
         {
-            "command-line-flag": "----window_function",
+            "command-line-flag": "--window_function",
             "name": "windowFunction",
             "default-value": "c",
             "required": true,
@@ -153,7 +153,7 @@
             "description": "Window Function \nh = Hamming \nc = Cosine \nw = Welch \nl = Lanczos \nb = Blackman"
         },
         {
-            "command-line-flag": "----spline_order",
+            "command-line-flag": "--spline_order",
             "name": "splineOrder",
             "default-value": "3",
             "required": true,
@@ -161,7 +161,7 @@
             "description": "Spline Order"
         },
         {
-            "command-line-flag": "----transform_matrix",
+            "command-line-flag": "--transform_matrix",
             "name": "transformMatrix",
             "default-value": "1,0,0,0,1,0,0,0,1,0,0,0",
             "required": true,
@@ -169,7 +169,7 @@
             "description": "12 parameters of the transform matrix by rows ( --last 3 being translation-- )"
         },
         {
-            "command-line-flag": "----transform",
+            "command-line-flag": "--transform",
             "name": "transformType",
             "default-value": "a",
             "required": true,
@@ -195,7 +195,7 @@
     "image": "quay.io/fedorov/slicerdockers:4.8.1",
     "info-url": "http://www.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/ResampleScalarVectorDWIVolume",
     "name": "Resample Scalar/Vector/DWI Volume",
-    "command-line": "/opt/slicer/Slicer --launch ResampleScalarVectorDWIVolume #referenceVolume# #transformationFile# #deffield# #typeOfField# #interpolationType# #transformsOrder# #notbulk# #space# #rotationPoint# #centeredTransform# #imageCenter# #inverseITKTransformation# #outputImageSpacing# #outputImageSize# #outputImageOrigin# #directionMatrix# #numberOfThread# #defaultPixelValue# #windowFunction# #splineOrder# #transformMatrix# #transformType# -- #inputVolume# #outputVolume#",
+    "command-line": "/opt/slicer/Slicer --launch ResampleScalarVectorDWIVolume #referenceVolume# #transformationFile# #deffield# #typeOfField# #interpolationType# #transformsOrder# #notbulk# #space# #rotationPoint# #centeredTransform# #imageCenter# #inverseITKTransformation# #outputImageSpacing# #outputImageSize# #outputImageOrigin# #directionMatrix# #numberOfThread# #defaultPixelValue# #windowFunction# #splineOrder# #transformMatrix# #transformType# #inputVolume# #outputVolume#",
     "xnat": [],
     "label": "Resample Scalar/Vector/DWI Volume",
     "version": "0.1",

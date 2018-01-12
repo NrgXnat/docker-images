@@ -1,7 +1,7 @@
 {
     "inputs": [
         {
-            "command-line-flag": "----acpc",
+            "command-line-flag": "--acpc",
             "name": "ACPC",
             "default-value": "0,0,0",
             "required": true,
@@ -9,7 +9,7 @@
             "description": "ACPC line, a list of two fiducial points, one at the anterior commissure and one at the posterior commissure."
         },
         {
-            "command-line-flag": "----midline",
+            "command-line-flag": "--midline",
             "name": "Midline",
             "default-value": "0,0,0",
             "required": true,
@@ -17,7 +17,7 @@
             "description": "The midline is a series of points defining the division between the hemispheres of the brain (the mid sagittal plane)."
         },
         {
-            "command-line-flag": "----outputTransform",
+            "command-line-flag": "--outputTransform",
             "name": "OutputTransform",
             "default-value": "",
             "required": true,

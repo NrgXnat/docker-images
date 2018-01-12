@@ -27,7 +27,7 @@
     "image": "quay.io/fedorov/slicerdockers:4.8.1",
     "info-url": "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/OrientImage",
     "name": "Orient Scalar Volume",
-    "command-line": "/opt/slicer/Slicer --launch OrientScalarVolume #orientation# -- #inputVolume1# #outputVolume#",
+    "command-line": "/opt/slicer/Slicer --launch OrientScalarVolume #orientation# #inputVolume1# #outputVolume#",
     "xnat": [],
     "label": "Orient Scalar Volume",
     "version": "0.1.0.$Revision: 24799 $(alpha)",

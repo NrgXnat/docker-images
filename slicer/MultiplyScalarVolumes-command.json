@@ -34,7 +34,7 @@
     "image": "quay.io/fedorov/slicerdockers:4.8.1",
     "info-url": "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/Multiply",
     "name": "Multiply Scalar Volumes",
-    "command-line": "/opt/slicer/Slicer --launch MultiplyScalarVolumes #order# -- #inputVolume1# #inputVolume2# #outputVolume#",
+    "command-line": "/opt/slicer/Slicer --launch MultiplyScalarVolumes #order# #inputVolume1# #inputVolume2# #outputVolume#",
     "xnat": [],
     "label": "Multiply Scalar Volumes",
     "version": "0.1.0.$Revision: 8595 $(alpha)",

@@ -115,7 +115,7 @@
     "image": "quay.io/fedorov/slicerdockers:4.8.1",
     "info-url": "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/N4ITKBiasFieldCorrection",
     "name": "N4ITK MRI Bias correction",
-    "command-line": "/opt/slicer/Slicer --launch N4ITKBiasFieldCorrection #maskImageName# #outputBiasFieldName# #initialMeshResolution# #splineDistance# #bfFWHM# #numberOfIterations# #convergenceThreshold# #bsplineOrder# #shrinkFactor# #weightImageName# #wienerFilterNoise# #nHistogramBins# -- #inputImageName# #outputImageName#",
+    "command-line": "/opt/slicer/Slicer --launch N4ITKBiasFieldCorrection #maskImageName# #outputBiasFieldName# #initialMeshResolution# #splineDistance# #bfFWHM# #numberOfIterations# #convergenceThreshold# #bsplineOrder# #shrinkFactor# #weightImageName# #wienerFilterNoise# #nHistogramBins# #inputImageName# #outputImageName#",
     "xnat": [],
     "label": "N4ITK MRI Bias correction",
     "version": "9",

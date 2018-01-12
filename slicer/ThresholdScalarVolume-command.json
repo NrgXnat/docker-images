@@ -1,7 +1,7 @@
 {
     "inputs": [
         {
-            "command-line-flag": "----thresholdtype",
+            "command-line-flag": "--thresholdtype",
             "name": "ThresholdType",
             "default-value": "Outside",
             "required": true,
@@ -9,7 +9,7 @@
             "description": "What kind of threshold to perform. If Outside is selected, uses Upper and Lower values. If Below is selected, uses the ThresholdValue, if Above is selected, uses the ThresholdValue."
         },
         {
-            "command-line-flag": "----threshold",
+            "command-line-flag": "--threshold",
             "name": "ThresholdValue",
             "default-value": "128",
             "required": true,
@@ -17,7 +17,7 @@
             "description": "Threshold value"
         },
         {
-            "command-line-flag": "----lower",
+            "command-line-flag": "--lower",
             "name": "Lower",
             "default-value": "1",
             "required": true,
@@ -25,7 +25,7 @@
             "description": "Lower threshold value"
         },
         {
-            "command-line-flag": "----upper",
+            "command-line-flag": "--upper",
             "name": "Upper",
             "default-value": "200",
             "required": true,
@@ -33,7 +33,7 @@
             "description": "Upper threshold value"
         },
         {
-            "command-line-flag": "----outsidevalue",
+            "command-line-flag": "--outsidevalue",
             "name": "OutsideValue",
             "default-value": "0",
             "required": true,
@@ -67,7 +67,7 @@
     "image": "quay.io/fedorov/slicerdockers:4.8.1",
     "info-url": "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/Threshold",
     "name": "Threshold Scalar Volume",
-    "command-line": "/opt/slicer/Slicer --launch ThresholdScalarVolume #ThresholdType# #ThresholdValue# #Lower# #Upper# #OutsideValue# #Negate# -- #InputVolume# #OutputVolume#",
+    "command-line": "/opt/slicer/Slicer --launch ThresholdScalarVolume #ThresholdType# #ThresholdValue# #Lower# #Upper# #OutsideValue# #Negate# #InputVolume# #OutputVolume#",
     "xnat": [],
     "label": "Threshold Scalar Volume",
     "version": "0.1.0.$Revision: 2104 $(alpha)",

@@ -1,7 +1,7 @@
 {
     "inputs": [
         {
-            "command-line-flag": "----threshold",
+            "command-line-flag": "--threshold",
             "name": "Threshold",
             "default-value": "100.0",
             "required": true,
@@ -9,7 +9,7 @@
             "description": "Grayscale threshold of isosurface. The resulting surface of triangles separates the volume into voxels that lie above (inside) and below (outside) the threshold."
         },
         {
-            "command-line-flag": "----name",
+            "command-line-flag": "--name",
             "name": "Name",
             "default-value": "Model",
             "required": true,
@@ -17,7 +17,7 @@
             "description": "Name to use for this model."
         },
         {
-            "command-line-flag": "----smooth",
+            "command-line-flag": "--smooth",
             "name": "Smooth",
             "default-value": "15",
             "required": true,
@@ -25,7 +25,7 @@
             "description": "Number of smoothing iterations. If 0, no smoothing will be done."
         },
         {
-            "command-line-flag": "----decimate",
+            "command-line-flag": "--decimate",
             "name": "Decimate",
             "default-value": "0.25",
             "required": true,
@@ -67,7 +67,7 @@
     "image": "quay.io/fedorov/slicerdockers:4.8.1",
     "info-url": "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/GrayscaleModelMaker",
     "name": "Grayscale Model Maker",
-    "command-line": "/opt/slicer/Slicer --launch GrayscaleModelMaker #Threshold# #Name# #Smooth# #Decimate# #SplitNormals# #PointNormals# -- #InputVolume# #OutputGeometry#",
+    "command-line": "/opt/slicer/Slicer --launch GrayscaleModelMaker #Threshold# #Name# #Smooth# #Decimate# #SplitNormals# #PointNormals# #InputVolume# #OutputGeometry#",
     "xnat": [],
     "label": "Grayscale Model Maker",
     "version": "3.0",
