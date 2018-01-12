@@ -40,12 +40,14 @@ Inside `quay.io/federov/slicerdockers:4.8.1` at path `/opt/slicer/lib/Slicer-4.8
 * BRAINSFit
     * Register a three-dimensional volume to a reference volume
     * Good test case.
+    * On second thought... Has a lot of parameters. May be too complex for me to learn for a test.
 * BRAINSLabelStats
     * Compute image statistics within each label of a label map.
     * I don't think we have any "label maps". I also don't know what one is.
 * BRAINSROIAuto
     * create a mask over the most prominant forground region in an image
     * Sounds interesting. Not sure why it is useful, but I could test it.
+    * On second thought... Has a lot of parameters. May be too complex for me to learn for a test.
 * BRAINSResample
     * collects together three common image processing tasks that all involve resampling an image volume: Resampling to a new resolution and spacing, applying a transformation (using an ITK transform IO mechanisms) and Warping (using a vector image deformation field).
     * Could be interesting, but it seems like this would require a lot of setup. Not sure how to assemble the transformation and the "vector image deformation field".
@@ -188,15 +190,12 @@ Inside `quay.io/federov/slicerdockers:4.8.1` at path `/opt/slicer/lib/Slicer-4.8
 
 ### Good
 
-* AddScalarVolumes
-* BRAINSFit
-    * Has a lot of parameters. May be too complex for me to learn for a test.
-* BRAINSROIAuto
-* BRAINSResize
-* BRAINSStripRotation
-* GaussianBlurImageFilter
-* MultiplyScalarVolumes
-* SubtractScalarVolumes
+* AddScalarVolumes - Success, but I couldn't use one of the arguments.
+* BRAINSResize - Fail
+* BRAINSStripRotation - Success
+* GaussianBlurImageFilter - Fail
+* MultiplyScalarVolumes - Success, but I couldn't use one of the arguments.
+* SubtractScalarVolumes - Success, but I couldn't use one of the arguments.
 
 ### Maybe
 
@@ -208,7 +207,749 @@ Inside `quay.io/federov/slicerdockers:4.8.1` at path `/opt/slicer/lib/Slicer-4.8
 * RobustStatisticsSegmenter
 * ThresholdScalarVolume
 
-ACPCTransform AddScalarVolumes BRAINSDWICleanup BRAINSDemonWarp BRAINSFit BRAINSLabelStats BRAINSROIAuto BRAINSResample BRAINSResize BRAINSStripRotation BRAINSTransformConvert CastScalarVolume CheckerBoardFilter CreateDICOMSeries CurvatureAnisotropicDiffusion DWIConvert EMSegmentCommandLine EMSegmentTransformToNewFormat ExecutionModelTour ExpertAutomatedRegistration ExtractSkeleton FiducialRegistration GaussianBlurImageFilter GradientAnisotropicDiffusion GrayscaleFillHoleImageFilter GrayscaleGrindPeakImageFilter GrayscaleModelMaker HistogramMatching ImageLabelCombine IslandRemoval LabelMapSmoothing MaskScalarVolume MedianImageFilter MergeModels ModelMaker ModelToLabelMap MultiplyScalarVolumes N4ITKBiasFieldCorrection OrientScalarVolume OtsuThresholdImageFilter PETStandardUptakeValueComputation PerformMetricTest ProbeVolumeWithModel ResampleDTIVolume ResampleScalarVectorDWIVolume ResampleScalarVolume RobustStatisticsSegmenter SimpleRegionGrowingSegmentation SubtractScalarVolumes ThresholdScalarVolume VBRAINSDemonWarp VotingBinaryHoleFillingImageFilter
+## Tests
+
+Note: several of these tests have problems if I use the argument format:
+
+    --optional-arg value -- positional-arg
+
+This format, while endorsed by the usage messages, doesn't work. This does, however:
+
+    --optional-arg value positional-arg
+
+I need to go through the auto-generated commands and remove the `--`s.
+
+### AddScalarVolumes
+
+Command
+
+    docker run -v ~/Downloads/BRAINIX/301/:/input1 -v ~/Downloads/BRAINIX/401:/input2 -v ~/Downloads/slicer-tests/add-scalar-volumes/:/output quay.io/fedorov/slicerdockers:4.8.1 /opt/slicer/Slicer --launch AddScalarVolumes /input1/IM-0001-0001.dcm /input2/IM-0001-0001.dcm /output/output.dcm
+
+Result
+Seems to have worked. Produced output on stdout, and a file at the specified location. I gave it the `.dcm` file extension, but I don't know if it is actually a dicom file.
+
+stdout
+
+    <filter-start>
+    <filter-name>ImageFileReader</filter-name>
+    <filter-comment> "Read Volume 1" </filter-comment>
+    </filter-start>
+    <filter-progress>0</filter-progress>
+    <filter-progress>1</filter-progress>
+    <filter-end>
+    <filter-name>ImageFileReader</filter-name>
+    <filter-time>0.00373006</filter-time>
+    </filter-end><filter-start>
+    <filter-name>ImageFileReader</filter-name>
+    <filter-comment> "Read Volume 2" </filter-comment>
+    </filter-start>
+    <filter-progress>0</filter-progress>
+    <filter-progress>1</filter-progress>
+    <filter-end>
+    <filter-name>ImageFileReader</filter-name>
+    <filter-time>0.00258708</filter-time>
+    </filter-end><filter-start>
+    <filter-name>ImageFileWriter</filter-name>
+    <filter-comment> "Write Volume" </filter-comment>
+    </filter-start>
+    <filter-start>
+    <filter-name>ImageFileReader</filter-name>
+    <filter-comment> "Read Volume 2" </filter-comment>
+    </filter-start>
+    <filter-progress>0</filter-progress>
+    <filter-progress>1</filter-progress>
+    <filter-end>
+    <filter-name>ImageFileReader</filter-name>
+    <filter-time>0.00348699</filter-time>
+    </filter-end><filter-start>
+    <filter-name>ResampleImageFilter</filter-name>
+    <filter-comment> "Resampling" </filter-comment>
+    </filter-start>
+    <filter-progress>0</filter-progress>
+    <filter-progress>0.0078125</filter-progress>
+    <filter-progress>0.015625</filter-progress>
+    <filter-progress>0.0234375</filter-progress>
+    <filter-progress>0.03125</filter-progress>
+    <filter-progress>0.0390625</filter-progress>
+    <filter-progress>0.046875</filter-progress>
+    <filter-progress>0.0546875</filter-progress>
+    <filter-progress>0.0625</filter-progress>
+    <filter-progress>0.0703125</filter-progress>
+    <filter-progress>0.078125</filter-progress>
+    <filter-progress>0.0859375</filter-progress>
+    <filter-progress>0.09375</filter-progress>
+    <filter-progress>0.101562</filter-progress>
+    <filter-progress>0.109375</filter-progress>
+    <filter-progress>0.117188</filter-progress>
+    <filter-progress>0.125</filter-progress>
+    <filter-progress>0.132812</filter-progress>
+    <filter-progress>0.140625</filter-progress>
+    <filter-progress>0.148438</filter-progress>
+    <filter-progress>0.15625</filter-progress>
+    <filter-progress>0.164062</filter-progress>
+    <filter-progress>0.171875</filter-progress>
+    <filter-progress>0.179688</filter-progress>
+    <filter-progress>0.1875</filter-progress>
+    <filter-progress>0.195312</filter-progress>
+    <filter-progress>0.203125</filter-progress>
+    <filter-progress>0.210938</filter-progress>
+    <filter-progress>0.21875</filter-progress>
+    <filter-progress>0.226562</filter-progress>
+    <filter-progress>0.234375</filter-progress>
+    <filter-progress>0.242188</filter-progress>
+    <filter-progress>0.25</filter-progress>
+    <filter-progress>0.257812</filter-progress>
+    <filter-progress>0.265625</filter-progress>
+    <filter-progress>0.273438</filter-progress>
+    <filter-progress>0.28125</filter-progress>
+    <filter-progress>0.289062</filter-progress>
+    <filter-progress>0.296875</filter-progress>
+    <filter-progress>0.304688</filter-progress>
+    <filter-progress>0.3125</filter-progress>
+    <filter-progress>0.320312</filter-progress>
+    <filter-progress>0.328125</filter-progress>
+    <filter-progress>0.335938</filter-progress>
+    <filter-progress>0.34375</filter-progress>
+    <filter-progress>0.351562</filter-progress>
+    <filter-progress>0.359375</filter-progress>
+    <filter-progress>0.367188</filter-progress>
+    <filter-progress>0.375</filter-progress>
+    <filter-progress>0.382812</filter-progress>
+    <filter-progress>0.390625</filter-progress>
+    <filter-progress>0.398438</filter-progress>
+    <filter-progress>0.40625</filter-progress>
+    <filter-progress>0.414062</filter-progress>
+    <filter-progress>0.421875</filter-progress>
+    <filter-progress>0.429688</filter-progress>
+    <filter-progress>0.4375</filter-progress>
+    <filter-progress>0.445312</filter-progress>
+    <filter-progress>0.453125</filter-progress>
+    <filter-progress>0.460938</filter-progress>
+    <filter-progress>0.46875</filter-progress>
+    <filter-progress>0.476562</filter-progress>
+    <filter-progress>0.484375</filter-progress>
+    <filter-progress>0.492188</filter-progress>
+    <filter-progress>0.5</filter-progress>
+    <filter-progress>0.507812</filter-progress>
+    <filter-progress>0.515625</filter-progress>
+    <filter-progress>0.523438</filter-progress>
+    <filter-progress>0.53125</filter-progress>
+    <filter-progress>0.539062</filter-progress>
+    <filter-progress>0.546875</filter-progress>
+    <filter-progress>0.554688</filter-progress>
+    <filter-progress>0.5625</filter-progress>
+    <filter-progress>0.570312</filter-progress>
+    <filter-progress>0.578125</filter-progress>
+    <filter-progress>0.585938</filter-progress>
+    <filter-progress>0.59375</filter-progress>
+    <filter-progress>0.601562</filter-progress>
+    <filter-progress>0.609375</filter-progress>
+    <filter-progress>0.617188</filter-progress>
+    <filter-progress>0.625</filter-progress>
+    <filter-progress>0.632812</filter-progress>
+    <filter-progress>0.640625</filter-progress>
+    <filter-progress>0.648438</filter-progress>
+    <filter-progress>0.65625</filter-progress>
+    <filter-progress>0.664062</filter-progress>
+    <filter-progress>0.671875</filter-progress>
+    <filter-progress>0.679688</filter-progress>
+    <filter-progress>0.6875</filter-progress>
+    <filter-progress>0.695312</filter-progress>
+    <filter-progress>0.703125</filter-progress>
+    <filter-progress>0.710938</filter-progress>
+    <filter-progress>0.71875</filter-progress>
+    <filter-progress>0.726562</filter-progress>
+    <filter-progress>0.734375</filter-progress>
+    <filter-progress>0.742188</filter-progress>
+    <filter-progress>0.75</filter-progress>
+    <filter-progress>0.757812</filter-progress>
+    <filter-progress>0.765625</filter-progress>
+    <filter-progress>0.773438</filter-progress>
+    <filter-progress>0.78125</filter-progress>
+    <filter-progress>0.789062</filter-progress>
+    <filter-progress>0.796875</filter-progress>
+    <filter-progress>0.804688</filter-progress>
+    <filter-progress>0.8125</filter-progress>
+    <filter-progress>0.820312</filter-progress>
+    <filter-progress>0.828125</filter-progress>
+    <filter-progress>0.835938</filter-progress>
+    <filter-progress>0.84375</filter-progress>
+    <filter-progress>0.851562</filter-progress>
+    <filter-progress>0.859375</filter-progress>
+    <filter-progress>0.867188</filter-progress>
+    <filter-progress>0.875</filter-progress>
+    <filter-progress>0.882812</filter-progress>
+    <filter-progress>0.890625</filter-progress>
+    <filter-progress>0.898438</filter-progress>
+    <filter-progress>0.90625</filter-progress>
+    <filter-progress>0.914062</filter-progress>
+    <filter-progress>0.921875</filter-progress>
+    <filter-progress>0.929688</filter-progress>
+    <filter-progress>0.9375</filter-progress>
+    <filter-progress>0.945312</filter-progress>
+    <filter-progress>0.953125</filter-progress>
+    <filter-progress>0.960938</filter-progress>
+    <filter-progress>0.96875</filter-progress>
+    <filter-progress>0.976562</filter-progress>
+    <filter-progress>0.984375</filter-progress>
+    <filter-progress>0.992188</filter-progress>
+    <filter-progress>1</filter-progress>
+    <filter-progress>1</filter-progress>
+    <filter-end>
+    <filter-name>ResampleImageFilter</filter-name>
+    <filter-time>0.0678499</filter-time>
+    </filter-end><filter-start>
+    <filter-name>ConstrainedValueAdditionImageFilter</filter-name>
+    <filter-comment> "Adding" </filter-comment>
+    </filter-start>
+    <filter-progress>0</filter-progress>
+    <filter-progress>0.0078125</filter-progress>
+    <filter-progress>0.015625</filter-progress>
+    <filter-progress>0.0234375</filter-progress>
+    <filter-progress>0.03125</filter-progress>
+    <filter-progress>0.0390625</filter-progress>
+    <filter-progress>0.046875</filter-progress>
+    <filter-progress>0.0546875</filter-progress>
+    <filter-progress>0.0625</filter-progress>
+    <filter-progress>0.0703125</filter-progress>
+    <filter-progress>0.078125</filter-progress>
+    <filter-progress>0.0859375</filter-progress>
+    <filter-progress>0.09375</filter-progress>
+    <filter-progress>0.101562</filter-progress>
+    <filter-progress>0.109375</filter-progress>
+    <filter-progress>0.117188</filter-progress>
+    <filter-progress>0.125</filter-progress>
+    <filter-progress>0.132812</filter-progress>
+    <filter-progress>0.140625</filter-progress>
+    <filter-progress>0.148438</filter-progress>
+    <filter-progress>0.15625</filter-progress>
+    <filter-progress>0.164062</filter-progress>
+    <filter-progress>0.171875</filter-progress>
+    <filter-progress>0.179688</filter-progress>
+    <filter-progress>0.1875</filter-progress>
+    <filter-progress>0.195312</filter-progress>
+    <filter-progress>0.203125</filter-progress>
+    <filter-progress>0.210938</filter-progress>
+    <filter-progress>0.21875</filter-progress>
+    <filter-progress>0.226562</filter-progress>
+    <filter-progress>0.234375</filter-progress>
+    <filter-progress>0.242188</filter-progress>
+    <filter-progress>0.25</filter-progress>
+    <filter-progress>0.257812</filter-progress>
+    <filter-progress>0.265625</filter-progress>
+    <filter-progress>0.273438</filter-progress>
+    <filter-progress>0.28125</filter-progress>
+    <filter-progress>0.289062</filter-progress>
+    <filter-progress>0.296875</filter-progress>
+    <filter-progress>0.304688</filter-progress>
+    <filter-progress>0.3125</filter-progress>
+    <filter-progress>0.320312</filter-progress>
+    <filter-progress>0.328125</filter-progress>
+    <filter-progress>0.335938</filter-progress>
+    <filter-progress>0.34375</filter-progress>
+    <filter-progress>0.351562</filter-progress>
+    <filter-progress>0.359375</filter-progress>
+    <filter-progress>0.367188</filter-progress>
+    <filter-progress>0.375</filter-progress>
+    <filter-progress>0.382812</filter-progress>
+    <filter-progress>0.390625</filter-progress>
+    <filter-progress>0.398438</filter-progress>
+    <filter-progress>0.40625</filter-progress>
+    <filter-progress>0.414062</filter-progress>
+    <filter-progress>0.421875</filter-progress>
+    <filter-progress>0.429688</filter-progress>
+    <filter-progress>0.4375</filter-progress>
+    <filter-progress>0.445312</filter-progress>
+    <filter-progress>0.453125</filter-progress>
+    <filter-progress>0.460938</filter-progress>
+    <filter-progress>0.46875</filter-progress>
+    <filter-progress>0.476562</filter-progress>
+    <filter-progress>0.484375</filter-progress>
+    <filter-progress>0.492188</filter-progress>
+    <filter-progress>0.5</filter-progress>
+    <filter-progress>0.507812</filter-progress>
+    <filter-progress>0.515625</filter-progress>
+    <filter-progress>0.523438</filter-progress>
+    <filter-progress>0.53125</filter-progress>
+    <filter-progress>0.539062</filter-progress>
+    <filter-progress>0.546875</filter-progress>
+    <filter-progress>0.554688</filter-progress>
+    <filter-progress>0.5625</filter-progress>
+    <filter-progress>0.570312</filter-progress>
+    <filter-progress>0.578125</filter-progress>
+    <filter-progress>0.585938</filter-progress>
+    <filter-progress>0.59375</filter-progress>
+    <filter-progress>0.601562</filter-progress>
+    <filter-progress>0.609375</filter-progress>
+    <filter-progress>0.617188</filter-progress>
+    <filter-progress>0.625</filter-progress>
+    <filter-progress>0.632812</filter-progress>
+    <filter-progress>0.640625</filter-progress>
+    <filter-progress>0.648438</filter-progress>
+    <filter-progress>0.65625</filter-progress>
+    <filter-progress>0.664062</filter-progress>
+    <filter-progress>0.671875</filter-progress>
+    <filter-progress>0.679688</filter-progress>
+    <filter-progress>0.6875</filter-progress>
+    <filter-progress>0.695312</filter-progress>
+    <filter-progress>0.703125</filter-progress>
+    <filter-progress>0.710938</filter-progress>
+    <filter-progress>0.71875</filter-progress>
+    <filter-progress>0.726562</filter-progress>
+    <filter-progress>0.734375</filter-progress>
+    <filter-progress>0.742188</filter-progress>
+    <filter-progress>0.75</filter-progress>
+    <filter-progress>0.757812</filter-progress>
+    <filter-progress>0.765625</filter-progress>
+    <filter-progress>0.773438</filter-progress>
+    <filter-progress>0.78125</filter-progress>
+    <filter-progress>0.789062</filter-progress>
+    <filter-progress>0.796875</filter-progress>
+    <filter-progress>0.804688</filter-progress>
+    <filter-progress>0.8125</filter-progress>
+    <filter-progress>0.820312</filter-progress>
+    <filter-progress>0.828125</filter-progress>
+    <filter-progress>0.835938</filter-progress>
+    <filter-progress>0.84375</filter-progress>
+    <filter-progress>0.851562</filter-progress>
+    <filter-progress>0.859375</filter-progress>
+    <filter-progress>0.867188</filter-progress>
+    <filter-progress>0.875</filter-progress>
+    <filter-progress>0.882812</filter-progress>
+    <filter-progress>0.890625</filter-progress>
+    <filter-progress>0.898438</filter-progress>
+    <filter-progress>0.90625</filter-progress>
+    <filter-progress>0.914062</filter-progress>
+    <filter-progress>0.921875</filter-progress>
+    <filter-progress>0.929688</filter-progress>
+    <filter-progress>0.9375</filter-progress>
+    <filter-progress>0.945312</filter-progress>
+    <filter-progress>0.953125</filter-progress>
+    <filter-progress>0.960938</filter-progress>
+    <filter-progress>0.96875</filter-progress>
+    <filter-progress>0.976562</filter-progress>
+    <filter-progress>0.984375</filter-progress>
+    <filter-progress>0.992188</filter-progress>
+    <filter-progress>1</filter-progress>
+    <filter-progress>1</filter-progress>
+    <filter-end>
+    <filter-name>ConstrainedValueAdditionImageFilter</filter-name>
+    <filter-time>0.000887871</filter-time>
+    </filter-end><filter-progress>0</filter-progress>
+    <filter-progress>1</filter-progress>
+    <filter-end>
+    <filter-name>ImageFileWriter</filter-name>
+    <filter-time>0.109658</filter-time>
+    </filter-end>
+
+### BRAINSResize
+Command
+
+    docker run -v ~/Downloads/BRAINIX/301/:/input -v ~/Downloads/slicer-tests/brains-resize/:/output quay.io/fedorov/slicerdockers:4.8.1 /opt/slicer/Slicer --launch BRAINSResize --inputVolume /input/IM-0001-0001.dcm --outputVolume /output/output.dcm --pixelType float --scaleFactor 2
+
+Results: Failed.
+
+    Exception Object caught:
+    itk::ExceptionObject (0x21167c0)
+    Location: "unknown"
+    File: /home/kitware/Dashboards/Package/Slicer-481-package/ITKv4/Modules/IO/GDCM/src/itkGDCMImageIO.cxx
+    Line: 1047
+    Description: itk::ERROR: GDCMImageIO(0x2114930): A Floating point buffer was passed but the stored pixel type was not specified.This is currently not supported
+    BRAINSResize
+    itk::ExceptionObject (0x21167c0)
+    Location: "unknown"
+    File: /home/kitware/Dashboards/Package/Slicer-481-package/ITKv4/Modules/IO/GDCM/src/itkGDCMImageIO.cxx
+    Line: 1047
+    Description: itk::ERROR: GDCMImageIO(0x2114930): A Floating point buffer was passed but the stored pixel type was not specified.This is currently not supported
+
+### BRAINSStripRotation
+Command
+
+        docker run -v ~/Downloads/BRAINIX/301/:/input -v ~/Downloads/slicer-tests/brains-strip-rotation/:/output quay.io/fedorov/slicerdockers:4.8.1 /opt/slicer/Slicer --launch BRAINSStripRotation --inputVolume /input/IM-0001-0001.dcm --outputVolume /output/output.dcm --transform /output/transform.txt
+
+Results: Success. (Initially failed to write transformation. I had not given it a file extension, and apparently the executable uses that to determine the file type it should write. So I ran it again with the extension `.txt`.)
+
+    sizeof(XFRMPrecisionType = 8
+    VersorTransform (0x2721560)
+      RTTI typeinfo:   itk::VersorTransform<double>
+      Reference Count: 2
+      Modified Time: 1751
+      Debug: Off
+      Object Name:
+      Observers:
+        none
+      Matrix:
+        1 0 0
+        0 1 0
+        0 0 1
+      Offset: [0, 0, 0]
+      Center: [0, 0, 0]
+      Translation: [0, 0, 0]
+      Inverse:
+        1 0 0
+        0 1 0
+        0 0 1
+      Singular: 0
+      Versor: [ 0, 0, 0, 1 ]
+    1 0 0
+    0 1 0
+    0 0 1
+
+### GaussianBlurImageFilter
+Command
+
+    docker run -v ~/Downloads/BRAINIX/301/:/input -v ~/Downloads/slicer-tests/brains-strip-rotation/:/output quay.io/fedorov/slicerdockers:4.8.1 /opt/slicer/Slicer --launch GaussianBlurImageFilter --sigma 1.0 --  /input/IM-0001-0001.dcm /output/output.dcm
+
+Result: Failed. For some reason it thought the sigma value I gave it was a file.
+
+    /opt/slicer/lib/Slicer-4.8/cli-modules/./GaussianBlurImageFilter: exception caught !
+    itk::ImageFileReaderException (0xf5eb00)
+    Location: "unknown"
+    File: /home/kitware/Dashboards/Package/Slicer-481-package/ITKv4/Modules/IO/ImageBase/include/itkImageFileReader.hxx
+    Line: 143
+    Description:  Could not create IO object for reading file 1.0
+    The file doesn't exist.
+    Filename = 1.0
+
+If I try to remove the sigma argument from the command, it still fails. But that could be because of my input images. Not sure.
+
+    $ docker run -v ~/Downloads/BRAINIX/301/:/input -v ~/Downloads/slicer-tests/gaussian-blur-image-filter/:/output quay.io/fedorov/slicerdockers:4.8.1 /opt/slicer/Slicer --launch GaussianBlurImageFilter --  /input/IM-0001-0001.dcm /output/output.dcm
+    /opt/slicer/lib/Slicer-4.8/cli-modules/./GaussianBlurImageFilter: exception caught !
+    itk::ExceptionObject (0xc2e220)
+    Location: "unknown"
+    File: /home/kitware/Dashboards/Package/Slicer-481-package/ITKv4/Modules/Filtering/Smoothing/include/itkSmoothingRecursiveGaussianImageFilter.hxx
+    Line: 237
+    Description: itk::ERROR: SmoothingRecursiveGaussianImageFilter(0xc2e2b0): The number of pixels along dimension 2 is less than 4. This filter requires a minimum of four pixels along the dimension to be processed.
+
+### MultiplyScalarVolumes
+Command
+
+    docker run -v ~/Downloads/BRAINIX/301/:/input1 -v ~/Downloads/BRAINIX/401/:/input2 -v ~/Downloads/slicer-tests/multiply-scalar-volumes/:/output quay.io/fedorov/slicerdockers:4.8.1 /opt/slicer/Slicer --launch MultiplyScalarVolumes -- /input1/IM-0001-0001.dcm /input2/IM-0001-0001.dcm /output/output.dcm
+
+Result: Success. But, similar to GaussianBlurImageFilter, I cannot give it a value for the `order` parameter. If I give it anything, it tries to parse it as a file and fails.
+
+stdout
+
+    <filter-start>
+    <filter-name>ImageFileReader</filter-name>
+    <filter-comment> "Read Volume 1" </filter-comment>
+    </filter-start>
+    <filter-progress>0</filter-progress>
+    <filter-progress>1</filter-progress>
+    <filter-end>
+    <filter-name>ImageFileReader</filter-name>
+    <filter-time>0.00571012</filter-time>
+    </filter-end><filter-start>
+    <filter-name>ImageFileReader</filter-name>
+    <filter-comment> "Read Volume 2" </filter-comment>
+    </filter-start>
+    <filter-progress>0</filter-progress>
+    <filter-progress>1</filter-progress>
+    <filter-end>
+    <filter-name>ImageFileReader</filter-name>
+    <filter-time>0.00443101</filter-time>
+    </filter-end><filter-start>
+    <filter-name>ImageFileWriter</filter-name>
+    <filter-comment> "Write Volume" </filter-comment>
+    </filter-start>
+    <filter-start>
+    <filter-name>ImageFileReader</filter-name>
+    <filter-comment> "Read Volume 2" </filter-comment>
+    </filter-start>
+    <filter-progress>0</filter-progress>
+    <filter-progress>1</filter-progress>
+    <filter-end>
+    <filter-name>ImageFileReader</filter-name>
+    <filter-time>0.005337</filter-time>
+    </filter-end><filter-start>
+    <filter-name>ResampleImageFilter</filter-name>
+    <filter-comment> "Resampling" </filter-comment>
+    </filter-start>
+    <filter-progress>0</filter-progress>
+    <filter-progress>0.0078125</filter-progress>
+    <filter-progress>0.015625</filter-progress>
+    <filter-progress>0.0234375</filter-progress>
+    <filter-progress>0.03125</filter-progress>
+    <filter-progress>0.0390625</filter-progress>
+    <filter-progress>0.046875</filter-progress>
+    <filter-progress>0.0546875</filter-progress>
+    <filter-progress>0.0625</filter-progress>
+    <filter-progress>0.0703125</filter-progress>
+    <filter-progress>0.078125</filter-progress>
+    <filter-progress>0.0859375</filter-progress>
+    <filter-progress>0.09375</filter-progress>
+    <filter-progress>0.101562</filter-progress>
+    <filter-progress>0.109375</filter-progress>
+    <filter-progress>0.117188</filter-progress>
+    <filter-progress>0.125</filter-progress>
+    <filter-progress>0.132812</filter-progress>
+    <filter-progress>0.140625</filter-progress>
+    <filter-progress>0.148438</filter-progress>
+    <filter-progress>0.15625</filter-progress>
+    <filter-progress>0.164062</filter-progress>
+    <filter-progress>0.171875</filter-progress>
+    <filter-progress>0.179688</filter-progress>
+    <filter-progress>0.1875</filter-progress>
+    <filter-progress>0.195312</filter-progress>
+    <filter-progress>0.203125</filter-progress>
+    <filter-progress>0.210938</filter-progress>
+    <filter-progress>0.21875</filter-progress>
+    <filter-progress>0.226562</filter-progress>
+    <filter-progress>0.234375</filter-progress>
+    <filter-progress>0.242188</filter-progress>
+    <filter-progress>0.25</filter-progress>
+    <filter-progress>0.257812</filter-progress>
+    <filter-progress>0.265625</filter-progress>
+    <filter-progress>0.273438</filter-progress>
+    <filter-progress>0.28125</filter-progress>
+    <filter-progress>0.289062</filter-progress>
+    <filter-progress>0.296875</filter-progress>
+    <filter-progress>0.304688</filter-progress>
+    <filter-progress>0.3125</filter-progress>
+    <filter-progress>0.320312</filter-progress>
+    <filter-progress>0.328125</filter-progress>
+    <filter-progress>0.335938</filter-progress>
+    <filter-progress>0.34375</filter-progress>
+    <filter-progress>0.351562</filter-progress>
+    <filter-progress>0.359375</filter-progress>
+    <filter-progress>0.367188</filter-progress>
+    <filter-progress>0.375</filter-progress>
+    <filter-progress>0.382812</filter-progress>
+    <filter-progress>0.390625</filter-progress>
+    <filter-progress>0.398438</filter-progress>
+    <filter-progress>0.40625</filter-progress>
+    <filter-progress>0.414062</filter-progress>
+    <filter-progress>0.421875</filter-progress>
+    <filter-progress>0.429688</filter-progress>
+    <filter-progress>0.4375</filter-progress>
+    <filter-progress>0.445312</filter-progress>
+    <filter-progress>0.453125</filter-progress>
+    <filter-progress>0.460938</filter-progress>
+    <filter-progress>0.46875</filter-progress>
+    <filter-progress>0.476562</filter-progress>
+    <filter-progress>0.484375</filter-progress>
+    <filter-progress>0.492188</filter-progress>
+    <filter-progress>0.5</filter-progress>
+    <filter-progress>0.507812</filter-progress>
+    <filter-progress>0.515625</filter-progress>
+    <filter-progress>0.523438</filter-progress>
+    <filter-progress>0.53125</filter-progress>
+    <filter-progress>0.539062</filter-progress>
+    <filter-progress>0.546875</filter-progress>
+    <filter-progress>0.554688</filter-progress>
+    <filter-progress>0.5625</filter-progress>
+    <filter-progress>0.570312</filter-progress>
+    <filter-progress>0.578125</filter-progress>
+    <filter-progress>0.585938</filter-progress>
+    <filter-progress>0.59375</filter-progress>
+    <filter-progress>0.601562</filter-progress>
+    <filter-progress>0.609375</filter-progress>
+    <filter-progress>0.617188</filter-progress>
+    <filter-progress>0.625</filter-progress>
+    <filter-progress>0.632812</filter-progress>
+    <filter-progress>0.640625</filter-progress>
+    <filter-progress>0.648438</filter-progress>
+    <filter-progress>0.65625</filter-progress>
+    <filter-progress>0.664062</filter-progress>
+    <filter-progress>0.671875</filter-progress>
+    <filter-progress>0.679688</filter-progress>
+    <filter-progress>0.6875</filter-progress>
+    <filter-progress>0.695312</filter-progress>
+    <filter-progress>0.703125</filter-progress>
+    <filter-progress>0.710938</filter-progress>
+    <filter-progress>0.71875</filter-progress>
+    <filter-progress>0.726562</filter-progress>
+    <filter-progress>0.734375</filter-progress>
+    <filter-progress>0.742188</filter-progress>
+    <filter-progress>0.75</filter-progress>
+    <filter-progress>0.757812</filter-progress>
+    <filter-progress>0.765625</filter-progress>
+    <filter-progress>0.773438</filter-progress>
+    <filter-progress>0.78125</filter-progress>
+    <filter-progress>0.789062</filter-progress>
+    <filter-progress>0.796875</filter-progress>
+    <filter-progress>0.804688</filter-progress>
+    <filter-progress>0.8125</filter-progress>
+    <filter-progress>0.820312</filter-progress>
+    <filter-progress>0.828125</filter-progress>
+    <filter-progress>0.835938</filter-progress>
+    <filter-progress>0.84375</filter-progress>
+    <filter-progress>0.851562</filter-progress>
+    <filter-progress>0.859375</filter-progress>
+    <filter-progress>0.867188</filter-progress>
+    <filter-progress>0.875</filter-progress>
+    <filter-progress>0.882812</filter-progress>
+    <filter-progress>0.890625</filter-progress>
+    <filter-progress>0.898438</filter-progress>
+    <filter-progress>0.90625</filter-progress>
+    <filter-progress>0.914062</filter-progress>
+    <filter-progress>0.921875</filter-progress>
+    <filter-progress>0.929688</filter-progress>
+    <filter-progress>0.9375</filter-progress>
+    <filter-progress>0.945312</filter-progress>
+    <filter-progress>0.953125</filter-progress>
+    <filter-progress>0.960938</filter-progress>
+    <filter-progress>0.96875</filter-progress>
+    <filter-progress>0.976562</filter-progress>
+    <filter-progress>0.984375</filter-progress>
+    <filter-progress>0.992188</filter-progress>
+    <filter-progress>1</filter-progress>
+    <filter-progress>1</filter-progress>
+    <filter-end>
+    <filter-name>ResampleImageFilter</filter-name>
+    <filter-time>0.0503571</filter-time>
+    </filter-end><filter-start>
+    <filter-name>ConstrainedValueMultiplicationImageFilter</filter-name>
+    <filter-comment> "Multiplying" </filter-comment>
+    </filter-start>
+    <filter-progress>0</filter-progress>
+    <filter-progress>0.0078125</filter-progress>
+    <filter-progress>0.015625</filter-progress>
+    <filter-progress>0.0234375</filter-progress>
+    <filter-progress>0.03125</filter-progress>
+    <filter-progress>0.0390625</filter-progress>
+    <filter-progress>0.046875</filter-progress>
+    <filter-progress>0.0546875</filter-progress>
+    <filter-progress>0.0625</filter-progress>
+    <filter-progress>0.0703125</filter-progress>
+    <filter-progress>0.078125</filter-progress>
+    <filter-progress>0.0859375</filter-progress>
+    <filter-progress>0.09375</filter-progress>
+    <filter-progress>0.101562</filter-progress>
+    <filter-progress>0.109375</filter-progress>
+    <filter-progress>0.117188</filter-progress>
+    <filter-progress>0.125</filter-progress>
+    <filter-progress>0.132812</filter-progress>
+    <filter-progress>0.140625</filter-progress>
+    <filter-progress>0.148438</filter-progress>
+    <filter-progress>0.15625</filter-progress>
+    <filter-progress>0.164062</filter-progress>
+    <filter-progress>0.171875</filter-progress>
+    <filter-progress>0.179688</filter-progress>
+    <filter-progress>0.1875</filter-progress>
+    <filter-progress>0.195312</filter-progress>
+    <filter-progress>0.203125</filter-progress>
+    <filter-progress>0.210938</filter-progress>
+    <filter-progress>0.21875</filter-progress>
+    <filter-progress>0.226562</filter-progress>
+    <filter-progress>0.234375</filter-progress>
+    <filter-progress>0.242188</filter-progress>
+    <filter-progress>0.25</filter-progress>
+    <filter-progress>0.257812</filter-progress>
+    <filter-progress>0.265625</filter-progress>
+    <filter-progress>0.273438</filter-progress>
+    <filter-progress>0.28125</filter-progress>
+    <filter-progress>0.289062</filter-progress>
+    <filter-progress>0.296875</filter-progress>
+    <filter-progress>0.304688</filter-progress>
+    <filter-progress>0.3125</filter-progress>
+    <filter-progress>0.320312</filter-progress>
+    <filter-progress>0.328125</filter-progress>
+    <filter-progress>0.335938</filter-progress>
+    <filter-progress>0.34375</filter-progress>
+    <filter-progress>0.351562</filter-progress>
+    <filter-progress>0.359375</filter-progress>
+    <filter-progress>0.367188</filter-progress>
+    <filter-progress>0.375</filter-progress>
+    <filter-progress>0.382812</filter-progress>
+    <filter-progress>0.390625</filter-progress>
+    <filter-progress>0.398438</filter-progress>
+    <filter-progress>0.40625</filter-progress>
+    <filter-progress>0.414062</filter-progress>
+    <filter-progress>0.421875</filter-progress>
+    <filter-progress>0.429688</filter-progress>
+    <filter-progress>0.4375</filter-progress>
+    <filter-progress>0.445312</filter-progress>
+    <filter-progress>0.453125</filter-progress>
+    <filter-progress>0.460938</filter-progress>
+    <filter-progress>0.46875</filter-progress>
+    <filter-progress>0.476562</filter-progress>
+    <filter-progress>0.484375</filter-progress>
+    <filter-progress>0.492188</filter-progress>
+    <filter-progress>0.5</filter-progress>
+    <filter-progress>0.507812</filter-progress>
+    <filter-progress>0.515625</filter-progress>
+    <filter-progress>0.523438</filter-progress>
+    <filter-progress>0.53125</filter-progress>
+    <filter-progress>0.539062</filter-progress>
+    <filter-progress>0.546875</filter-progress>
+    <filter-progress>0.554688</filter-progress>
+    <filter-progress>0.5625</filter-progress>
+    <filter-progress>0.570312</filter-progress>
+    <filter-progress>0.578125</filter-progress>
+    <filter-progress>0.585938</filter-progress>
+    <filter-progress>0.59375</filter-progress>
+    <filter-progress>0.601562</filter-progress>
+    <filter-progress>0.609375</filter-progress>
+    <filter-progress>0.617188</filter-progress>
+    <filter-progress>0.625</filter-progress>
+    <filter-progress>0.632812</filter-progress>
+    <filter-progress>0.640625</filter-progress>
+    <filter-progress>0.648438</filter-progress>
+    <filter-progress>0.65625</filter-progress>
+    <filter-progress>0.664062</filter-progress>
+    <filter-progress>0.671875</filter-progress>
+    <filter-progress>0.679688</filter-progress>
+    <filter-progress>0.6875</filter-progress>
+    <filter-progress>0.695312</filter-progress>
+    <filter-progress>0.703125</filter-progress>
+    <filter-progress>0.710938</filter-progress>
+    <filter-progress>0.71875</filter-progress>
+    <filter-progress>0.726562</filter-progress>
+    <filter-progress>0.734375</filter-progress>
+    <filter-progress>0.742188</filter-progress>
+    <filter-progress>0.75</filter-progress>
+    <filter-progress>0.757812</filter-progress>
+    <filter-progress>0.765625</filter-progress>
+    <filter-progress>0.773438</filter-progress>
+    <filter-progress>0.78125</filter-progress>
+    <filter-progress>0.789062</filter-progress>
+    <filter-progress>0.796875</filter-progress>
+    <filter-progress>0.804688</filter-progress>
+    <filter-progress>0.8125</filter-progress>
+    <filter-progress>0.820312</filter-progress>
+    <filter-progress>0.828125</filter-progress>
+    <filter-progress>0.835938</filter-progress>
+    <filter-progress>0.84375</filter-progress>
+    <filter-progress>0.851562</filter-progress>
+    <filter-progress>0.859375</filter-progress>
+    <filter-progress>0.867188</filter-progress>
+    <filter-progress>0.875</filter-progress>
+    <filter-progress>0.882812</filter-progress>
+    <filter-progress>0.890625</filter-progress>
+    <filter-progress>0.898438</filter-progress>
+    <filter-progress>0.90625</filter-progress>
+    <filter-progress>0.914062</filter-progress>
+    <filter-progress>0.921875</filter-progress>
+    <filter-progress>0.929688</filter-progress>
+    <filter-progress>0.9375</filter-progress>
+    <filter-progress>0.945312</filter-progress>
+    <filter-progress>0.953125</filter-progress>
+    <filter-progress>0.960938</filter-progress>
+    <filter-progress>0.96875</filter-progress>
+    <filter-progress>0.976562</filter-progress>
+    <filter-progress>0.984375</filter-progress>
+    <filter-progress>0.992188</filter-progress>
+    <filter-progress>1</filter-progress>
+    <filter-progress>1</filter-progress>
+    <filter-end>
+    <filter-name>ConstrainedValueMultiplicationImageFilter</filter-name>
+    <filter-time>0.00248718</filter-time>
+    </filter-end><filter-progress>0</filter-progress>
+    <filter-progress>1</filter-progress>
+    <filter-end>
+    <filter-name>ImageFileWriter</filter-name>
+    <filter-time>0.118545</filter-time>
+    </filter-end>
+
+### SubtractScalarVolumes
+Command
+
+    docker run -v ~/Downloads/BRAINIX/301/:/input1 -v ~/Downloads/BRAINIX/401/:/input2 -v ~/Downloads/slicer-tests/subtract-scalar-volumes/:/output quay.io/fedorov/slicerdockers:4.8.1 /opt/slicer/Slicer --launch SubtractScalarVolumes -- /input1/IM-0001-0001.dcm /input2/IM-0001-0001.dcm /output/output.dcm
+
+Result: Success
+
+## Help Text
 
 ### ACPCTransform
 
