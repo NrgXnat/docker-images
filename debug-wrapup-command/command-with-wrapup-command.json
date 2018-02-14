@@ -1,0 +1,170 @@
+{
+    "name": "debug-command-with-wrapup-commands",
+    "description": "Runs a user-provided command. By default, makes a list of files in /input.",
+    "version": "1.0",
+    "schema-version": "1.0",
+    "type": "docker",
+    "command-line": "#COMMAND#",
+    "mounts": [
+        {
+            "name": "in",
+            "writable": "false",
+            "path": "/input"
+        },
+        {
+            "name": "out",
+            "writable": "true",
+            "path": "/output"
+        }
+    ],
+    "inputs": [
+        {
+            "name": "command",
+            "description": "The command to run",
+            "type": "string",
+            "required": true,
+            "default-value": "find /input",
+            "replacement-key": "#COMMAND#"
+        }
+    ],
+    "outputs": [
+        {
+            "name": "output",
+            "description": "The command's stdout",
+            "mount": "out",
+            "required": true
+        }
+    ],
+    "xnat": [
+        {
+            "name": "debug-project-with-wrapup",
+            "description": "Run the debug container with a project mounted. Process the output via a wrapup container.",
+            "contexts": ["xnat:projectData"],
+            "external-inputs": [
+                {
+                    "name": "project",
+                    "description": "Input project",
+                    "type": "Project",
+                    "required": true,
+                    "provides-files-for-command-mount": "in",
+                    "load-children": false
+                }
+            ],
+            "derived-inputs": [],
+            "output-handlers": [
+                {
+                    "name": "output-resource",
+                    "accepts-command-output": "output",
+                    "via-wrapup-command": "xnat/debug-wrapup:1.0:debug-wrapup-command",
+                    "as-a-child-of-wrapper-input": "project",
+                    "type": "Resource",
+                    "label": "DEBUG_OUTPUT"
+                }
+            ]
+        },
+        {
+            "name": "debug-subject-with-wrapup",
+            "description": "Run the debug container with a subject mounted. Process the output via a wrapup container.",
+            "contexts": ["xnat:subjectData"],
+            "external-inputs": [
+                {
+                    "name": "subject",
+                    "description": "Input subject",
+                    "type": "Subject",
+                    "required": true,
+                    "provides-files-for-command-mount": "in",
+                    "load-children": false
+                }
+            ],
+            "derived-inputs": [],
+            "output-handlers": [
+                {
+                    "name": "output-resource",
+                    "accepts-command-output": "output",
+                    "via-wrapup-command": "xnat/debug-wrapup:1.0:debug-wrapup-command",
+                    "as-a-child-of-wrapper-input": "subject",
+                    "type": "Resource",
+                    "label": "DEBUG_OUTPUT"
+                }
+            ]
+        },
+        {
+            "name": "debug-session-with-wrapup",
+            "description": "Run the debug container with a session mounted. Process the output via a wrapup container.",
+            "contexts": ["xnat:imageSessionData"],
+            "external-inputs": [
+                {
+                    "name": "session",
+                    "description": "Input session",
+                    "type": "Session",
+                    "required": true,
+                    "provides-files-for-command-mount": "in",
+                    "load-children": false
+                }
+            ],
+            "derived-inputs": [],
+            "output-handlers": [
+                {
+                    "name": "output-resource",
+                    "accepts-command-output": "output",
+                    "via-wrapup-command": "xnat/debug-wrapup:1.0:debug-wrapup-command",
+                    "as-a-child-of-wrapper-input": "session",
+                    "type": "Resource",
+                    "label": "DEBUG_OUTPUT"
+                }
+            ]
+        },
+        {
+            "name": "debug-scan-with-wrapup",
+            "description": "Run the debug container with a scan mounted. Process the output via a wrapup container.",
+            "contexts": ["xnat:imageScanData"],
+            "external-inputs": [
+                {
+                    "name": "scan",
+                    "description": "Input scan",
+                    "type": "Scan",
+                    "required": true,
+                    "provides-files-for-command-mount": "in",
+                    "load-children": false
+                }
+            ],
+            "derived-inputs": [],
+            "output-handlers": [
+                {
+                    "name": "output-resource",
+                    "accepts-command-output": "output",
+                    "via-wrapup-command": "xnat/debug-wrapup:1.0:debug-wrapup-command",
+                    "as-a-child-of-wrapper-input": "scan",
+                    "type": "Resource",
+                    "label": "DEBUG_OUTPUT"
+                }
+            ]
+        },
+        {
+            "name": "debug-assessor-with-wrapup",
+            "description": "Run the debug container with a assessor mounted. Process the output via a wrapup container.",
+            "contexts": ["xnat:imageAssessorData"],
+            "external-inputs": [
+                {
+                    "name": "assessor",
+                    "description": "Input assessor",
+                    "type": "Assessor",
+                    "required": true,
+                    "provides-files-for-command-mount": "in",
+                    "load-children": false
+                }
+            ],
+            "derived-inputs": [],
+            "output-handlers": [
+                {
+                    "name": "output-resource",
+                    "accepts-command-output": "output",
+                    "via-wrapup-command": "xnat/debug-wrapup:1.0:debug-wrapup-command",
+                    "as-a-child-of-wrapper-input": "assessor",
+                    "type": "Resource",
+                    "label": "DEBUG_OUTPUT"
+                }
+            ]
+        }
+    ]
+}

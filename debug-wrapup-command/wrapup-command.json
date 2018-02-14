@@ -1,0 +1,11 @@
+{
+    "name": "debug-wrapup-command",
+    "description": "The debug wrapup command. Makes a file /output/wrapup-command-was-here with the contents being `find /input`.",
+    "version": "1.0",
+    "type": "docker-wrapup",
+    "image": "xnat/debug-wrapup:1.0",
+    "command-line": "wrapup-command-script.sh",
+    "inputs": [],
+    "mounts": [],
+    "xnat": []
+}
