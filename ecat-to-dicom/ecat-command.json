@@ -1,0 +1,59 @@
+{
+    "name": "ecat-to-dicom",
+    "description": "Runs medcon to convert ECAT images to DICOM",
+    "info-url": "http://xmedcon.sourceforge.net/Main/HomePage",
+    "version": "1.0",
+    "schema-version": "1.0",
+    "type": "docker",
+    "image": "greppy/medcon",
+    "command-line": "medcon -c dicom -f /input/ECAT/*",
+    "override-entrypoint": true,
+    "working-directory": "/output",
+    "mounts": [
+        {
+            "name": "ecat-in",
+            "writable": "false",
+            "path": "/input"
+        },
+        {
+            "name": "dicom-out",
+            "writable": "true",
+            "path": "/output"
+        }
+    ],
+    "inputs": [],
+    "outputs": [
+        {
+            "name": "dicom",
+            "description": "The converted DICOM files",
+            "mount": "dicom-out",
+            "required": "true"
+        }
+    ],
+    "xnat": [
+        {
+            "name": "ecat-to-dicom-scan",
+            "description": "Runs medcon to convert ECAT images to DICOM on a Scan",
+            "contexts": ["xnat:imageScanData"],
+            "external-inputs": [
+                {
+                    "name": "scan",
+                    "description": "Input scan",
+                    "type": "Scan",
+                    "required": true,
+                    "provides-files-for-command-mount": "ecat-in"
+                }
+            ],
+            "derived-inputs": [],
+            "output-handlers": [
+                {
+                    "name": "dicom-resource",
+                    "accepts-command-output": "dicom",
+                    "as-a-child-of-wrapper-input": "scan",
+                    "type": "Resource",
+                    "label": "DICOM"
+                }
+            ]
+        }
+    ]
+}
