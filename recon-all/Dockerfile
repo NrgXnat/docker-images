@@ -28,8 +28,9 @@ RUN wget -N -qO- ftp://surfer.nmr.mgh.harvard.edu/pub/dist/freesurfer/5.3.0/free
         --exclude='freesurfer/lib/cuda' \
         --exclude='freesurfer/lib/qt'
 
-# Configure license
 COPY license /opt/freesurfer/.license
+COPY stats2xml_fs5.3.pl /usr/local/bin
+COPY fs2xml /usr/local/bin
 
 # Configure basic freesurfer ENV
 ENV OS=Linux \
