@@ -74,7 +74,7 @@
                     "description": "Session label. Used as Freesurfer subject identifier.",
                     "type": "string",
                     "required": true,
-                    "derived-from-wrapper-input": "session",
+                    "derived-from-xnat-input": "session",
                     "derived-from-xnat-object-property": "label",
                     "provides-value-for-command-input": "session-id"
                 },
@@ -88,14 +88,14 @@
                     "name": "T1",
                     "description": "Input T1 scan",
                     "type": "Scan",
-                    "derived-from-wrapper-input": "session",
+                    "derived-from-xnat-input": "session",
                     "matcher": "@.scan-type in [^wrapper:$.external-inputs[?(@.name == 'T1-scantype')].value^]"
                 },
                 {
                     "name": "resource",
                     "description": "Input resource: DICOM or NIFTI",
                     "type": "Resource",
-                    "derived-from-wrapper-input": "T1",
+                    "derived-from-xnat-input": "T1",
                     "matcher": "@.label in [\"DICOM\", \"NIFTI\"]",
                     "provides-files-for-command-mount": "input"
                 }
@@ -105,12 +105,12 @@
                     "name": "fs-assessor",
                     "type": "Assessor",
                     "accepts-command-output": "fs",
-                    "as-a-child-of-wrapper-input": "session"
+                    "as-a-child-of-xnat-input": "session"
                 },
                 {
                     "name": "data-resource",
                     "accepts-command-output": "data",
-                    "as-a-child-of-wrapper-output": "fs",
+                    "as-a-child-of-xnat-output": "fs",
                     "type": "Resource",
                     "label": "DATA",
                 }
