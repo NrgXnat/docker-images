@@ -46,6 +46,7 @@
         {
             "name": "generate-test-qc-assessor-from-session",
             "description": "Generate a test QC assessor from a session and upload it back",
+            "contexts": ["xnat:imageSessionData"],
             "external-inputs": [
                 {
                     "name": "session",
