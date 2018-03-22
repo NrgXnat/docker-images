@@ -1,0 +1,92 @@
+{
+    "name": "generate-test-qc-assessor",
+    "description": "Generate a bogus QC assessor for testing",
+    "version": "1.0",
+    "schema-version": "1.0",
+    "type": "docker",
+    "command-line": "generate-qc-assessor.py #SESSION_ID# #SESSION_LABEL# #PROJECT# #SCANS_CSV# /mount/out.xml",
+    "mounts": [
+        {
+            "name": "mount",
+            "writable": true,
+            "path": "/mount"
+        }
+    ],
+    "inputs": [
+        {
+            "name": "SESSION_ID",
+            "description": "ID of a session",
+            "required": true
+        },
+        {
+            "name": "SESSION_LABEL",
+            "description": "Label of a session",
+            "required": true
+        },
+        {
+            "name": "PROJECT",
+            "description": "Project in which session and assessor live",
+            "required": true
+        },
+        {
+            "name": "SCANS_CSV",
+            "description": "A comma-separated list of scan IDs on the session",
+            "required": true
+        }
+    ],
+    "outputs": [
+        {
+            "name": "ASSESSOR_XML",
+            "description": "QC assessor XML file",
+            "mount": "mount",
+            "path": "out.xml"
+        }
+    ],
+    "xnat": [
+        {
+            "name": "generate-test-qc-assessor-from-session",
+            "description": "Generate a test QC assessor from a session and upload it back",
+            "external-inputs": [
+                {
+                    "name": "session",
+                    "type": "Session"
+                }
+            ],
+            "derived-inputs": [
+                {
+                    "name": "session_id",
+                    "derived-from-wrapper-input": "session",
+                    "derived-from-xnat-object-property": "id",
+                    "provides-value-for-command-input": "SESSION_ID"
+                },
+                {
+                    "name": "session_label",
+                    "derived-from-wrapper-input": "session",
+                    "derived-from-xnat-object-property": "label",
+                    "provides-value-for-command-input": "SESSION_LABEL"
+                },
+                {
+                    "name": "project",
+                    "derived-from-wrapper-input": "session",
+                    "derived-from-xnat-object-property": "project-id",
+                    "provides-value-for-command-input": "PROJECT"
+                }
+            ],
+            "output-handlers": [
+                {
+                    "name": "assessor",
+                    "type": "Assessor",
+                    "accepts-command-output": "ASSESSOR_XML",
+                    "as-a-child-of": "session"
+                },
+                {
+                    "name": "assessor_resource",
+                    "type": "Resource",
+                    "accepts-command-output": "ASSESSOR_XML",
+                    "as-a-child-of": "assessor"
+                }
+            ]
+        }
+    ]
+
+}
