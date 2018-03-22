@@ -8,12 +8,13 @@ RUN apk update && \
     && \
     pip install \
         lxml \
+        requests \
     && \
     rm -r ${HOME}/.cache/pip && \
     apk del \
         g++ \
         gcc \
-        libxslt-dev \
     && \
     rm /var/cache/apk/*
 
+ADD generate-qc-assessor.py /usr/local/bin/
