@@ -84,7 +84,8 @@
                     "name": "assessor_resource",
                     "type": "Resource",
                     "accepts-command-output": "ASSESSOR_XML",
-                    "as-a-child-of": "assessor"
+                    "as-a-child-of": "assessor",
+                    "label": "XML_FILE"
                 }
             ]
         }
