@@ -53,8 +53,14 @@
     ],
     "outputs": [
         {
-            "name": "data",
-            "mount": "output"
+            "name": "DATA",
+            "mount": "output",
+            "path": "#LABEL#"
+        },
+        {
+            "name": "ASSESSOR_XML",
+            "mount": "output",
+            "path": "#ID#_freesurfer5.xml"
         }
     ],
     "xnat": [
@@ -122,11 +128,17 @@
             ],
             "output-handlers": [
                 {
+                    "name": "assessor",
+                    "type": "Assessor",
+                    "accepts-command-output": "ASSESSOR_XML",
+                    "as-a-child-of": "session"
+                }
+                {
                     "name": "data-resource",
-                    "accepts-command-output": "data",
-                    "as-a-child-of-xnat-input": "session",
+                    "accepts-command-output": "DATA",
+                    "as-a-child-of": "assessor",
                     "type": "Resource",
-                    "label": "FREESURFER_DATA"
+                    "label": "DATA"
                 }
             ]
         }
