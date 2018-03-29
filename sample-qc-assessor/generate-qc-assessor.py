@@ -22,15 +22,6 @@ def ns(namespace, tag):
 def schemaLoc(namespace):
     return "{0} https://www.xnat.org/schemas/{1}/{1}.xsd".format(nsdict[namespace], namespace)
 
-def generateScanDict(scanId):
-    return {
-        "imageScan_ID": scanId,
-        "coverage": "0",
-        "motion": "0",
-        "otherImageArtifacts": "0",
-        "pass": "1"
-    }
-
 def main():
     #######################################################
     # PARSE INPUT ARGS
@@ -77,18 +68,13 @@ def main():
 
     assessorId = '{}_qc_{}'.format(sessionId, datestamp)
     assessorLabel = '{}_qc_{}'.format(sessionLabel, datestamp)
+    #######################################################
 
-    assessorElementsDict = {
-        "date": isodate,
-        "imageSession_ID": sessionId,
-        "rater": name,
-        "stereotacticMarker": "0",
-        "incidentalFindings": "None",
-        "comments": "Looks good",
-        "pass": "1",
-        "payable": "1",
-        "rescan": "0"
-    }
+    #######################################################
+    # BUILD ASSESSOR XML
+    # Building XML using lxml ElementMaker.
+    # For documentation, see http://lxml.de/tutorial.html#the-e-factory
+    E = ElementMaker(namespace=nsdict['xnat'], nsmap=nsdict)
 
     assessorTitleAttributesDict = {
         'ID': assessorId,
@@ -97,21 +83,28 @@ def main():
         ns('xsi','schemaLocation'): schemaLoc('xnat')
     }
 
-    scanDicts = [generateScanDict(scanId) for scanId in scans]
-    #######################################################
+    assessorElementsList = [
+        E("date", isodate),
+        E("imageSession_ID", sessionId),
+        E("rater", name),
+        E("stereotacticMarker", "0"),
+        E("incidentalFindings", "None"),
+        E("scans",
+            *[E("scan",
+                E("imageScan_ID", scanId),
+                E("coverage", "0"),
+                E("motion", "0"),
+                E("otherImageArtifacts", "0"),
+                E("pass", "1")
+            ) for scanId in scans]
+        ),
+        E("comments", "Looks good"),
+        E("pass", "1"),
+        E("payable", "1"),
+        E("rescan", "0")
+    ]
 
-    #######################################################
-    # BUILD ASSESSOR XML
-    # Building XML using lxml ElementMaker.
-    # For documentation, see http://lxml.de/tutorial.html#the-e-factory
-    E = ElementMaker(namespace=nsdict['xnat'], nsmap=nsdict)
-    assessorXML = E('QCManualAssessment', assessorTitleAttributesDict,
-        E('scans',
-            *[E('scan',
-                *[E(name, value) for name, value in scanDict.iteritems()])
-            for scanDict in scanDicts]),
-        *[E(name, value) for name, value in assessorElementsDict.iteritems()]
-    )
+    assessorXML = E('QCManualAssessment', assessorTitleAttributesDict, *assessorElementsList)
 
     print 'Writing assessor XML to %s' % outpath
     # print(xmltostring(assessorXML, pretty_print=True))
