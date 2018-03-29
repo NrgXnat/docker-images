@@ -1,7 +1,7 @@
 {
     "name": "freesurfer-5-3-0",
     "label": "Freesurfer v5.3.0",
-    "description": "Runs Freesurfer v5.3.0 using vistalab/recon-all.",
+    "description": "Runs Freesurfer v5.3.0",
     "info-url": "https://github.com/vistalab/docker/tree/master/freesurfer/recon-all",
     "version": "1.0",
     "schema-version": "1.0",
