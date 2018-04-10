@@ -1,10 +1,11 @@
 {
     "name": "bids-mriqc",
     "description": "Runs the MRIQC BIDS App",
-    "version": "1.0",
+    "version": "1.1",
     "schema-version": "1.0",
     "type": "docker",
     "command-line": "mriqc /input /output participant",
+    "override-entrypoint": true,
     "image": "poldracklab/mriqc:0.10.0",
     "mounts": [
         {

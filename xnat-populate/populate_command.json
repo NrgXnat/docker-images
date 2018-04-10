@@ -1,9 +1,10 @@
 {
     "name": "xnat_populate",
-    "version": "2.0",
+    "version": "2.1",
     "working-directory": "/xnat_populate",
     "type": "docker",
     "command-line": "groovy PopulateXnat.groovy -u $XNAT_USER -p $XNAT_PASS --url $XNAT_HOST #project_list# #config# #delay#",
+    "override-entrypoint": true,
     "inputs": [
         {
             "name": "project_list",

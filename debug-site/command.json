@@ -1,10 +1,11 @@
 {
     "name": "create-debug-project",
     "description": "Runs a script to create new debug project",
-    "version": "1.0",
+    "version": "1.1",
     "schema-version": "1.0",
     "type": "docker",
     "command-line": "create-debug-project.py $XNAT_HOST $XNAT_USER $XNAT_PASS #PROJECT_PREFIX#",
+    "override-entrypoint": true,
     "inputs": [
         {
             "name": "project-prefix",
