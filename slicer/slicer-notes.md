@@ -1,4 +1,17 @@
-# Slicer Command Notes
+# Slicer Command Notes - 2018-04-12
+
+Looking at some the test executables I have identified (Add-, Subtract-, and MultiplyScalarVolumes). I can see some barriers to getting these to work as containers.
+
+1. They all need a single file path for their input arguments. That isn't a thing the container service is capable of delivering right now (I think... unless I could dig up a file through jsonpath shenanigans).
+2. They need an output file name (which is generally ok because I could hard code it) with a file extension. The latter is less than ideal, because...
+     1. I think that the output type would match whatever the input type is
+     2. I don't know in advance what that input type is
+     3. I can't hard-code the file extension because I don't know what it is (per 2)
+     4. I can't as of now figure it out in a script because I'm trying to use raw CS command for this.
+
+I could solve all these problems with a script. That would be less than ideal. I would prefer not to have to create a new docker image to embed the script into.
+
+# Slicer Command Notes - pre 2018-04-12
 
 Part of the information on running slicer executables in a docker image comes from a google doc by John Flavin and Andrey Federov: [Notes on Schemas for Command Line Executables / Docker Images](https://docs.google.com/document/d/1XRLWm_gJj8YC7TagihQd8DQfqT1XSTm1SMOCzfxEfqM/edit).
 
