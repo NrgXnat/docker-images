@@ -24,7 +24,7 @@ import shutil
 from glob import glob
 from docopt import docopt
 
-bidsAnatModalities = ['T1w', 'T2w', 'T1rho', 'T1map', 'T2map', 'T2star', 'FLAIR', 'FLASH', 'PD', 'PDmap', 'PDT2', 'inplaneT1', 'inplaneT2', 'angio', 'defacemask', 'SWImagandphase']
+bidsAnatModalities = ['t1w', 't2w', 't1rho', 't1map', 't2map', 't2star', 'flair', 'flash', 'pd', 'pdmap', 'pdt2', 'inplanet1', 'inplanet2', 'angio', 'defacemask', 'swimagandphase']
 bidsFuncModalities = ['bold', 'physio', 'stim', 'sbref']
 bidsDwiModalities = ['dwi', 'dti']
 bidsBehavioralModalities = ['beh']
@@ -36,11 +36,12 @@ class BidsScan(object):
         self.bidsNameMap = bidsNameMap
         self.subject = bidsNameMap.get('sub')
         self.modality = bidsNameMap.get('modality')
-        self.subDir = 'anat' if self.modality in bidsAnatModalities else \
-                      'func' if self.modality in bidsFuncModalities else \
-                      'dwi' if self.modality in bidsDwiModalities else \
-                      'beh' if self.modality in bidsBehavioralModalities else \
-                      'fmap' if self.modality in bidsFieldmapModalities else \
+        modalityLowercase = self.modality.lower()
+        self.subDir = 'anat' if modalityLowercase in bidsAnatModalities else \
+                      'func' if modalityLowercase in bidsFuncModalities else \
+                      'dwi' if modalityLowercase in bidsDwiModalities else \
+                      'beh' if modalityLowercase in bidsBehavioralModalities else \
+                      'fmap' if modalityLowercase in bidsFieldmapModalities else \
                       None
         self.sourceFiles = list(args)
 
