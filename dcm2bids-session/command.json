@@ -1,10 +1,10 @@
 {
     "name": "dcm2bids-session",
     "description": "Runs dcm2niix on a session's scans, and uploads the nifti and bids json",
-    "version": "1.4",
+    "version": "1.5",
     "schema-version": "1.0",
     "type": "docker",
-    "image": "xnat/dcm2bids-session:1.4",
+    "image": "xnat/dcm2bids-session:1.5",
     "command-line": "python dcm2bids_wholeSession.py #SESSION_ID# #OVERWRITE# --host $XNAT_HOST --user $XNAT_USER --pass $XNAT_PASS --upload-by-ref False --dicomdir /dicom --niftidir /nifti",
     "workdir": "/src",
     "override-entrypoint": true,
@@ -27,7 +27,7 @@
         {
             "name": "overwrite",
             "description": "Overwrite any existing NIFTI and BIDS scan resources?",
-            "type": "string",
+            "type": "boolean",
             "required": false,
             "default-value": false,
             "replacement-key": "#OVERWRITE#",
