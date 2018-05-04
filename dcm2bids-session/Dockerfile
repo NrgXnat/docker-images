@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y \
         requests \
         && \
     rm -r ${HOME}/.cache/pip && \
-    curl -L https://github.com/rordenlab/dcm2niix/releases/download/v1.0.20171204/dcm2niix_8-Dec-2017_lnx.zip  > dcm2niix.zip && \
+    curl -L https://github.com/rordenlab/dcm2niix/releases/download/v1.0.20180328/dcm2niix_28-Mar-2018_lnx.zip  > dcm2niix.zip && \
     unzip dcm2niix.zip && \
     mv dcm2niix /usr/local/bin && \
     chmod a+x /usr/local/bin/dcm2niix && \
