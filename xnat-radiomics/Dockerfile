@@ -34,7 +34,7 @@ RUN yum -y update &&\
     wget https://fsl.fmrib.ox.ac.uk/fsldownloads/fslinstaller.py && \
     export FSLDIR=/usr/local/fsl && \
     python fslinstaller.py -d ${FSLDIR} && \
-    /usr/local/fsl/etc/fslconf/fslpython_install.sh && \
+    rm fslinstaller.py && \
     echo ". ${FSLDIR}/etc/fslconf/fsl.sh" >> /root/.bash_profile && \
     mkdir /usr/local/scripts
 
