@@ -1,0 +1,142 @@
+{
+    "name": "make-rt-struct-assessor",
+    "description": "Create an RoiCollection assessor from a DICOM RT-STRUCT scan",
+    "version": "1.0",
+    "schema-version": "1.0",
+    "type": "docker",
+    "command-line": "make-rt-struct-assessor.py #SUBJ_ID# #SESS_ID# #PROJ# /input/#RT_FILE_NAME# /output/assessor.xml",
+    "mounts": [
+        {
+            "name": "out",
+            "writable": "true",
+            "path": "/output"
+        },
+        {
+            "name": "in",
+            "writable": "false",
+            "path": "/input"
+        }
+    ],
+    "inputs": [
+        {
+            "name": "SUBJ_ID",
+            "description": "Subject ID",
+            "type": "string",
+            "required": true
+        },
+        {
+            "name": "SESS_ID",
+            "description": "Session ID",
+            "type": "string",
+            "required": true
+        },
+        {
+            "name": "PROJ",
+            "description": "Project",
+            "type": "string",
+            "required": true
+        },
+        {
+            "name": "RT_FILE_NAME",
+            "description": "Name of DICOM RT-STRUCT file",
+            "type": "string",
+            "required": true
+        }
+    ],
+    "outputs": [
+        {
+            "name": "xml",
+            "description": "The assessor XML",
+            "mount": "out",
+            "path": "assessor.xml",
+            "required": true
+        },
+        {
+            "name": "dicom-rt",
+            "description": "The DICOM RT-STRUCT file",
+            "mount": "in",
+            "required": true,
+            "path": "#RT_FILE_NAME#"
+        }
+    ],
+    "xnat": [
+        {
+            "name": "make-rt-struct-assessor-from-rt-struct-scan",
+            "description": "Run the make-rt-struct-assess container from a scan",
+            "contexts": ["xnat:imageScanData"],
+            "external-inputs": [
+                {
+                    "name": "scan",
+                    "description": "RT-STRUCT scan",
+                    "type": "Scan",
+                    "required": true,
+                    "matcher": ""
+                }
+            ],
+            "derived-inputs": [
+                {
+                    "name": "session",
+                    "type": "Session",
+                    "derived-from-wrapper-input": "scan",
+                    "required": true,
+                    "load-children": false
+                },
+                {
+                    "name": "session-id",
+                    "type": "string",
+                    "derived-from-wrapper-input": "session",
+                    "derived-from-xnat-object-property": "id",
+                    "provides-value-for-command-input": "SESS_ID"
+                },
+                {
+                    "name": "subject-id",
+                    "type": "string",
+                    "derived-from-wrapper-input": "session",
+                    "derived-from-xnat-object-property": "subject-id",
+                    "provides-value-for-command-input": "SUBJ_ID"
+                },
+                {
+                    "name": "project",
+                    "type": "string",
+                    "derived-from-wrapper-input": "session",
+                    "derived-from-xnat-object-property": "project-id",
+                    "provides-value-for-command-input": "PROJ"
+                },
+                {
+                    "name": "scan-dicom",
+                    "type": "Resource",
+                    "derived-from-wrapper-input": "scan",
+                    "matcher": "@.label == 'DICOM'",
+                    "provides-files-for-command-mount": "in"
+                },
+                {
+                    "name": "scan-dicom-rt-struct-file",
+                    "type": "File",
+                    "derived-from-wrapper-input": "scan-dicom"
+                },
+                {
+                    "name": "scan-dicom-rt-struct-file-name",
+                    "type": "string",
+                    "derived-from-wrapper-input": "scan-dicom-rt-struct-file",
+                    "derived-from-xnat-object-property": "name",
+                    "provides-value-for-command-input": "RT_FILE_NAME"
+                }
+            ],
+            "output-handlers": [
+                {
+                    "name": "assessor",
+                    "type": "Assessor",
+                    "accepts-command-output": "xml",
+                    "as-a-child-of": "session"
+                },
+                {
+                    "name": "assessor-resource",
+                    "type": "Resource",
+                    "accepts-command-output": "dicom-rt",
+                    "as-a-child-of": "assessor",
+                    "label": "RTSTRUCT"
+                }
+            ]
+        }
+    ]
+}
