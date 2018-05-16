@@ -10,6 +10,12 @@ RUN yum -y update &&\
         gcc \
         zip \
         unzip \
+        ImageMagick \
+        csh \
+        compat-libgfortran-41 \
+        util-linux \
+        bc \
+        perl \
     && \
     wget http://www.python.org/ftp/python/2.7.8/Python-2.7.8.tar.xz && \
     xz -d Python-2.7.8.tar.xz && \
@@ -32,16 +38,19 @@ RUN yum -y update &&\
         matplotlib \
     && \
     wget https://fsl.fmrib.ox.ac.uk/fsldownloads/fslinstaller.py && \
+    python fslinstaller.py -d /usr/local/fsl && \
+    rm -rf /usr/local/fsl/data && \
     export FSLDIR=/usr/local/fsl && \
-    python fslinstaller.py -d ${FSLDIR} && \
-    rm fslinstaller.py && \
     echo ". ${FSLDIR}/etc/fslconf/fsl.sh" >> /root/.bash_profile && \
     mkdir /usr/local/scripts
 
-COPY /home/shared/NRG/mmilch/lib/html2ps/bin/html2ps /usr/local/bin
-COPY /usr/bin/ps2pdf /usr/local/bin
-COPY /home/shared/NRG/mmilch/bin/* /usr/local/bin
-COPY /home/shared/NRG/mmilch/bin/CONDR /usr/local/bin
-COPY /home/shared/NRG/mmilch/script/* /usr/local/scripts
+COPY /home/shared/NRG/mmilch/lib/metlab/dependencies/bin /usr/local/bin
+COPY /home/shared/NRG/mmilch/lib/metlab/dependencies/scripts /usr/local/scripts
+COPY /home/shared/NRG/mmilch/lib/metlab/dependencies/lib /usr/local/lib
+COPY /home/shared/NRG/mmilch/lib/metlab/dependencies/nil-tools/RELEASE /usr/local/bin
+COPY /home/shared/NRG/mmilch/lib/metlab/dependencies/nil-tools/REFDIR /usr/local/etc/nil-atlases
 
-ENV FSLDIR=/usr/local/fsl PATH=/usr/local/scripts:${FSLDIR}/bin:${PATH}
+COPY /home/shared/NRG/mmilch/lib/metlab/metlab /usr/local/bin/metlab
+
+
+ENV RELEASE=/usr/local/bin REFDIR=/usr/local/etc/nil-atlases FSLDIR=/usr/local/fsl METLAB_HOME=/usr/local/bin/metlab PATH=/usr/local/scripts:${FSLDIR}/bin:${PATH}
