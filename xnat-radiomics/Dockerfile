@@ -34,8 +34,11 @@ RUN yum -y update &&\
     rm -rf setuptools-1.4.2* && \
     (curl -s https://bootstrap.pypa.io/get-pip.py | python -) && \
     pip install \
+        docopt \
+        lxml \
         numpy \
         matplotlib \
+        requests \
     && \
     wget https://fsl.fmrib.ox.ac.uk/fsldownloads/fslinstaller.py && \
     yum -y remove \
