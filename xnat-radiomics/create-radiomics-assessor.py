@@ -3,7 +3,7 @@
 Read in the metlab timecourse XML and create a radm:radiomics assessor XML for the given parent session
 
 Usage:
-    create-radiomics-assessor.py [--no-verify] XNAT_HOST XNAT_USER XNAT_PASS PROJECT SESSION_ID SESSION_LABEL METLAB_XML RADIOMICS_ASSESSOR_XML_DIR
+    create-radiomics-assessor.py [--no-verify] XNAT_HOST XNAT_USER XNAT_PASS PROJECT SESSION_ID SESSION_LABEL METLAB_XML
     create-radiomics-assessor.py (-h | --help)
     create-radiomics-assessor.py --version
 
@@ -15,7 +15,6 @@ Options:
     SESSION_ID                  XNAT Accession number of parent session
     SESSION_LABEL               Label of parent session
     METLAB_XML                  Input XML produced from matlab script
-    RADIOMICS_ASSESSOR_XML_DIR  Directory in which to write output radm:radiomics assessor XML
     -h --help                   Show the usage
     --version                   Show the version
     --no-verify                 Do not verify server SSL certificate. (Useful for dev servers.)
@@ -28,6 +27,9 @@ import datetime as dt
 from docopt import docopt
 from lxml.builder import ElementMaker
 from lxml.etree import tostring as xmltostring
+
+import requests.packages.urllib3
+requests.packages.urllib3.disable_warnings()
 
 def getValueFromBetweenTags(line):
     firstRightAngleBracket = line.find('>')
@@ -155,7 +157,7 @@ for lesion, firstorder in sessionDict['lesions'].iteritems():
 
     shape = lesionInfo[lesion]
 
-    print("Constructing assessor XML\n\tlesion={}\n\tID={}\n\tlabel={}".format(lesion, assessor_id, assessor_label))
+    print("Constructing lesion assessor XML\n\tlesion={}\n\tID={}\n\tlabel={}".format(lesion, assessor_id, assessor_label))
 
     assessorTitleAttributesDict = {
         'ID': assessor_id,
@@ -177,6 +179,13 @@ for lesion, firstorder in sessionDict['lesions'].iteritems():
     )
 
     print("Creating assessor on server {}".format(xnat_host))
-    r = s.put(xnat_host + '/data/projects/{}/experiments/{}/assessors/{}')
-    xmltostring(assessorXML, pretty_print=True, encoding='UTF-8', xml_declaration=True)
+    print(xmltostring(assessorXML, pretty_print=True, encoding='UTF-8', xml_declaration=True))
+    r = s.put(xnat_host + '/data/projects/{}/experiments/{}/assessors/{}'.format(project, session_id, assessor_id),
+                 params={"inbody": "true"},
+                 data=xmltostring(assessorXML, encoding='UTF-8', xml_declaration=True)
+             )
+    if not r.ok:
+        sys.exit("Failed to upload assessor {}\n{}".format(assessor_label, r.text))
+    print("Done.\n")
+print("All done.")
 
