@@ -38,19 +38,26 @@ RUN yum -y update &&\
         matplotlib \
     && \
     wget https://fsl.fmrib.ox.ac.uk/fsldownloads/fslinstaller.py && \
-    python fslinstaller.py -d /usr/local/fsl && \
+    yum -y remove \
+        gcc \
+        wget \
+    && \
+    yum -y clean all
+
+RUN python fslinstaller.py -d /usr/local/fsl && \
     rm -rf /usr/local/fsl/data && \
     export FSLDIR=/usr/local/fsl && \
     echo ". ${FSLDIR}/etc/fslconf/fsl.sh" >> /root/.bash_profile && \
     mkdir /usr/local/scripts
 
-COPY /home/shared/NRG/mmilch/lib/metlab/dependencies/bin /usr/local/bin
-COPY /home/shared/NRG/mmilch/lib/metlab/dependencies/scripts /usr/local/scripts
-COPY /home/shared/NRG/mmilch/lib/metlab/dependencies/lib /usr/local/lib
-COPY /home/shared/NRG/mmilch/lib/metlab/dependencies/nil-tools/RELEASE /usr/local/bin
-COPY /home/shared/NRG/mmilch/lib/metlab/dependencies/nil-tools/REFDIR /usr/local/etc/nil-atlases
+COPY dependencies/bin /usr/local/bin
+COPY dependencies/scripts /usr/local/scripts
+COPY dependencies/lib /usr/local/lib
+COPY dependencies/nil-tools/RELEASE /usr/local/bin
+COPY dependencies/nil-tools/REFDIR /usr/local/etc/nil-atlases
 
-COPY /home/shared/NRG/mmilch/lib/metlab/metlab /usr/local/bin/metlab
+COPY metlab /usr/local/bin/metlab
 
 
-ENV RELEASE=/usr/local/bin REFDIR=/usr/local/etc/nil-atlases FSLDIR=/usr/local/fsl METLAB_HOME=/usr/local/bin/metlab PATH=/usr/local/scripts:${FSLDIR}/bin:${PATH}
+ENV RELEASE=/usr/local/bin REFDIR=/usr/local/etc/nil-atlases FSLDIR=/usr/local/fsl METLAB_HOME=/usr/local/bin/metlab
+ENV PATH=/usr/local/scripts:${METLAB_HOME}:${FSLDIR}/bin:${PATH}
