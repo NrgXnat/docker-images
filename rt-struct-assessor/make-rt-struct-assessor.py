@@ -4,11 +4,12 @@
 Read in an RT-STRUCT DICOM file. Write out an icr:roiCollectionData assessor.
 
 Usage:
-    make-rt-struct-assessor.py SUBJECT_ID SESSION_ID PROJECT DICOM_IN ASSESSOR_XML_OUT
+    make-rt-struct-assessor.py SUBJECT_ID SESSION_ID SESSION_LABEL PROJECT DICOM_IN ASSESSOR_XML_OUT
 
 Options:
     SUBJECT_ID                  ID of parent subject
     SESSION_ID                  ID of parent session
+    SESSION_LABEL               Label of parent session
     PROJECT                     Project of parent session
     DICOM_IN                    Path to input RT-STRUCT DICOM file
     ASSESSOR_XML_OUT            Path to output XML file
@@ -46,6 +47,7 @@ args = docopt(__doc__, version=version)
 dicom_path = args.get('DICOM_IN')
 subject_id = args.get("SUBJECT_ID")
 session_id = args.get('SESSION_ID')
+session_label = args.get('SESSION_LABEL')
 project = args.get('PROJECT')
 assessor_xml_path = args.get('ASSESSOR_XML_OUT')
 
@@ -68,11 +70,11 @@ print()
 
 uid = dicom[tags['SOPInstanceUID']].value
 name = dicom[tags['StructureSetLabel']].value
-date = dicom[tags['StudyDate']].value
-time_header = dicom[tags['StudyTime']].value
+date =  dicom[tags['StudyDate']].value if tags['StudyDate'] in dicom else "yyyymmdd"
+time_header = dicom[tags['StudyTime']].value if tags['StudyTime'] in dicom else "hhmmss"
 time = time_header if '.' not in time_header else time_header[:time_header.index('.')]
-assessor_label = 'RTSTRUCT_{}_{}'.format(date, time)
-assessor_id = 'RTSTRUCT_{}'.format(uuid.uuid4())
+assessor_label = "{}_RTSTRUCT_{}_{}".format(session_label, date, time)
+assessor_id = '{}_RTSTRUCT_{}'.format(session_id, uuid.uuid4())
 
 assessorElements = [
     ('UID', uid),

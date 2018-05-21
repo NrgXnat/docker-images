@@ -4,7 +4,7 @@
     "version": "1.0",
     "schema-version": "1.0",
     "type": "docker",
-    "command-line": "make-rt-struct-assessor.py #SUBJ_ID# #SESS_ID# #PROJ# /input/#RT_FILE_NAME# /output/assessor.xml",
+    "command-line": "make-rt-struct-assessor.py #SUBJ_ID# #SESS_ID# #SESS_LABEL# #PROJ# /input/#RT_FILE_NAME# /output/assessor.xml",
     "mounts": [
         {
             "name": "out",
@@ -27,6 +27,12 @@
         {
             "name": "SESS_ID",
             "description": "Session ID",
+            "type": "string",
+            "required": true
+        },
+        {
+            "name": "SESS_LABEL",
+            "description": "Session Label",
             "type": "string",
             "required": true
         },
@@ -89,6 +95,13 @@
                     "provides-value-for-command-input": "SESS_ID"
                 },
                 {
+                    "name": "session-label",
+                    "type": "string",
+                    "derived-from-wrapper-input": "session",
+                    "derived-from-xnat-object-property": "label",
+                    "provides-value-for-command-input": "SESS_LABEL"
+                },
+                {
                     "name": "subject-id",
                     "type": "string",
                     "derived-from-wrapper-input": "session",
@@ -106,7 +119,7 @@
                     "name": "scan-dicom",
                     "type": "Resource",
                     "derived-from-wrapper-input": "scan",
-                    "matcher": "@.label == 'DICOM'",
+                    "matcher": "@.label == 'DICOM' || @.label == 'secondary'",
                     "provides-files-for-command-mount": "in"
                 },
                 {
