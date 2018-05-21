@@ -128,24 +128,23 @@ for line in metlab_xml:
             sessionInfo[currentSession]['lesions'][currentLesion][name] = getValueFromBetweenTags(line)
             continue
 print("Done.\n")
-# print("lesionInfo")
-# for lesion, d in lesionInfo.iteritems():
-#     print(lesion)
-#     for name, value in d.iteritems():
-#         print("\t{}: {}".format(name, value))
-# print("sessionInfo")
-# for session, sessionDict in sessionInfo.iteritems():
-#     print(session)
-#     print("\tscan: {}".format(sessionDict['scan']))
-#     for lesion, d in sessionDict['lesions'].iteritems():
-#         print("\t" + lesion)
-#         for name, value in d.iteritems():
-#             print("\t\t{}: {}".format(name, value))
-#
+
+print("lesionInfo")
+for lesion, d in lesionInfo.iteritems():
+    print(lesion)
+    for name, value in d.iteritems():
+        print("\t{}: {}".format(name, value))
+print("sessionInfo")
+for session, sessionDict in sessionInfo.iteritems():
+    print(session)
+    print("\tscan: {}".format(sessionDict['scan']))
+    for lesion, d in sessionDict['lesions'].iteritems():
+        print("\t" + lesion)
+        for name, value in d.iteritems():
+            print("\t\t{}: {}".format(name, value))
+
 
 print("Creating lesion assessors for session {}".format(session_label))
-
-assessor_template = "{}_{}_{}_{}"
 
 sessionDict = sessionInfo[session_label]
 scan = sessionDict['scan']
@@ -153,8 +152,8 @@ scan = sessionDict['scan']
 allLesionAssessorsDict = {}
 for lesion, firstorder in sessionDict['lesions'].iteritems():
     datestamp = dt.datetime.today().strftime('%Y%m%d%H%M%S')
-    assessor_id = assessor_template.format(session_id, scan, lesion, datestamp)
-    assessor_label = assessor_template.format(session_label, scan, lesion, datestamp)
+    assessor_id = "{}_RADIOMICS_{}".format(session_id, datestamp)
+    assessor_label = "{}_{}_{}_{}".format(session_label, scan, lesion, datestamp)
 
     shape = lesionInfo[lesion]
 
@@ -168,15 +167,26 @@ for lesion, firstorder in sessionDict['lesions'].iteritems():
     }
 
     E = ElementMaker(namespace=nsdict['radm'], nsmap=nsdict)
+
+    firstOrderStatsWNames = [(name, firstorder.get(name)) for name in firstorderElems]
+    shapeStatsWNames = [(name, shape.get(name)) for name in shapeElems]
+
+    firstOrderXmlElementsList = [E(name, stat) for name, stat in firstOrderStatsWNames if stat is not None]
+    shapeXmlElementsList = [E(name, stat) for name, stat in shapeStatsWNames if stat is not None]
+
+    firstOrderXmlElement = E('firstorder', *firstOrderXmlElementsList) if len(firstOrderXmlElementsList) > 0 else None
+    shapeXmlElement = E('shape', *shapeXmlElementsList) if len(shapeXmlElementsList) > 0 else None
+
+    lesionStatsXmlElements = []
+    if firstOrderXmlElement is not None:
+        lesionStatsXmlElements.append(firstOrderXmlElement)
+    if shapeXmlElement is not None:
+        lesionStatsXmlElements.append(shapeXmlElement)
+
     assessorXML = E('Radiomics', assessorTitleAttributesDict,
         E(ns('xnat', 'date'), dt.date.today().isoformat()),
         E(ns('xnat', 'imageSession_ID'), session_id),
-        E('firstorder',
-            *[E(name, firstorder[name]) for name in firstorderElems]
-        ),
-        E('shape',
-            *[E(name, shape[name]) for name in shapeElems]
-        )
+        *lesionStatsXmlElements
     )
 
     allLesionAssessorsDict[lesion] = (
