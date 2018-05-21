@@ -150,6 +150,7 @@ assessor_template = "{}_{}_{}_{}"
 sessionDict = sessionInfo[session_label]
 scan = sessionDict['scan']
 
+allLesionAssessorsDict = {}
 for lesion, firstorder in sessionDict['lesions'].iteritems():
     datestamp = dt.datetime.today().strftime('%Y%m%d%H%M%S')
     assessor_id = assessor_template.format(session_id, scan, lesion, datestamp)
@@ -178,8 +179,29 @@ for lesion, firstorder in sessionDict['lesions'].iteritems():
         )
     )
 
-    print("Creating assessor on server {}".format(xnat_host))
-    print(xmltostring(assessorXML, pretty_print=True, encoding='UTF-8', xml_declaration=True))
+    allLesionAssessorsDict[lesion] = (
+        assessor_id,
+        assessor_label,
+        assessorXML
+    )
+print("All assessor objects created.\n")
+
+# Save to files
+for lesion, (assessor_id, assessor_label, assessorXML) in allLesionAssessorsDict.iteritems():
+    with open("{}.xml".format(assessor_label), 'w') as f:
+        f.write(xmltostring(assessorXML, pretty_print=True, encoding='UTF-8', xml_declaration=True))
+
+# Print to screen
+# for lesion, (assessor_id, assessor_label, assessorXML) in allLesionAssessorsDict.iteritems():
+#     print("{}\n{}\n".format(
+#         assessor_label,
+#         xmltostring(assessorXML, pretty_print=True, encoding='UTF-8', xml_declaration=True)
+#     ))
+
+# Save to server
+for lesion, (assessor_id, assessor_label, assessorXML) in allLesionAssessorsDict.iteritems():
+    print("Creating lesion {} assessor on server {}".format(lesion, xnat_host))
+
     r = s.put(xnat_host + '/data/projects/{}/experiments/{}/assessors/{}'.format(project, session_id, assessor_id),
                  params={"inbody": "true"},
                  data=xmltostring(assessorXML, encoding='UTF-8', xml_declaration=True)
