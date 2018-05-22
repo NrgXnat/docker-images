@@ -153,12 +153,10 @@ sessionDict = sessionInfo[session_label]
 scan = sessionDict['scan']
 
 allLesionAssessorsDict = {}
-id_suffix = 0
 for lesion, firstorder in sessionDict['lesions'].iteritems():
     datestamp = dt.datetime.today().strftime('%Y%m%d%H%M%S')
-    assessor_id = "{}{}".format(datestamp, id_suffix) # This is awful but I can't get the server to accept my XML with any ID other than all ints
+    assessor_id = datestamp # This is awful but I can't get the server to accept my XML with any ID other than all ints
     assessor_label = "{}_{}_{}_{}".format(session_label, scan, lesion, datestamp)
-    id_suffix += 1
 
     shape = lesionInfo[lesion]
 
@@ -213,7 +211,27 @@ for lesion, (assessor_id, assessor_label, assessorXML) in allLesionAssessorsDict
 #         xmltostring(assessorXML, pretty_print=True, encoding='UTF-8', xml_declaration=True)
 #     ))
 
-# Save to server
+print("Uploading PDF to session resource")
+session_resource_label = "RADIOMICS_" + dt.datetime.today().strftime('%Y%m%d%H%M%S')
+r = s.put(xnat_host + '/data/experiments/{}/resources/{}'.format(session_id, session_resource_label))
+if not r.ok:
+    sys.exit("Could not create {} resource on session {}.".format(session_resource_label, session_label))
+
+(t, tempFilePath) = tempfile.mkstemp(suffix='.zip')
+print("Opening temp zip file at {}".format(tempFilePath))
+zipFile = zipfile.ZipFile(tempFilePath, "w", compression=zipfile.ZIP_DEFLATED)
+for filename in glob.glob("*.pdf") + glob.glob("*.html"):
+    print("Writing to zip: {}".format(filename))
+    zipFile.write(filename)
+zipFile.close()
+print("Uploading zip file to session {} {} resource".format(session_label, session_resource_label))
+files = {'file': open(tempFilePath, 'rb')}
+r = s.put(xnat_host + '/data/experiments/{}/resources/{}/files'.format(session_id, session_resource_label), params={"extract": "true"}, files=files)
+os.remove(tempFilePath)
+if not r.ok:
+    sys.exit("Failed to upload files to session {}.".format(session_label))
+
+# Create assessors on server
 for lesion, (assessor_id, assessor_label, assessorXML) in allLesionAssessorsDict.iteritems():
     print("Creating lesion {} assessor on server {}".format(lesion, xnat_host))
 
@@ -222,32 +240,30 @@ for lesion, (assessor_id, assessor_label, assessorXML) in allLesionAssessorsDict
     if not r.ok:
         sys.exit("Failed to upload assessor {}\n{}".format(assessor_label, r.text))
 
-    print("Created assessor.\nUploading files to assessor.")
+    print("Created assessor.\nID={}\tlabel={}\nCreating DATA resource.".format(assessor_id, assessor_label))
 
-    r = s.put(xnat_host + '/data/projects/{}/experiments/{}/assessors/{}/resources/DATA'.format(project, session_id, assessor_id))
+    r = s.put(xnat_host + '/data/experiments/{}/resources/DATA'.format(assessor_id))
     if not r.ok:
         print("Could not create DATA resource on assessor {}. Skipping.".format(assessor_label))
         continue
 
+    print("Starting to upload files to DATA resource.")
     (t, tempFilePath) = tempfile.mkstemp(suffix='.zip')
+    print("Opening temp zip file at {}".format(tempFilePath))
     zipFile = zipfile.ZipFile(tempFilePath, "w", compression=zipfile.ZIP_DEFLATED)
-    for filename in glob.glob(os.path.join(session_label, "*" + lesion + "*")):
-        zipFile.write(filename)
-    for filename in glob.glob(os.path.join(session_label, "*.pdf")):
-        zipFile.write(filename)
-    for filename in glob.glob(os.path.join(session_label, "*.html")):
+    for filename in glob.glob("*" + lesion + "*"):
+        print("Writing to zip: {}".format(filename))
         zipFile.write(filename)
     zipFile.close()
+    print("Uploading zip file to assessor {} DATA resource".format(assessor_label))
     files = {'file': open(tempFilePath, 'rb')}
-    r = s.put(xnat_host + '/data/projects/{}/experiments/{}/assessors/{}/resources/DATA/files'.format(project, session_id, assessor_id),
+    r = s.put(xnat_host + '/data/experiments/{}/resources/DATA/files'.format(assessor_id),
                 params={"extract": "true"}, files=files)
     os.remove(tempFilePath)
-
     if not r.ok:
         print("Failed to upload files to assessor {}.".format(assessor_id))
 
     print("Done with lesion {}.\n".format(lesion))
-
 
 print("All done.")
 
