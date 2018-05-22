@@ -1,0 +1,102 @@
+{
+    "name": "metlab",
+    "description": "Runs metlab",
+    "version": "1.0",
+    "schema-version": "1.0",
+    "type": "docker",
+    "image": "xnat/metlab:latest",
+    "command-line": "metlab_wrapper.sh #PROJECT# #SUBJECT#",
+    "mounts": [
+        {
+            "name": "scratch",
+            "writable": "true",
+            "path": "/scratch"
+        }
+    ],
+    "working-directory": "/scratch",
+    "environment-variables": {
+        "PATH": "/usr/local/bin/metlab:/usr/local/scripts:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+        "RELEASE": "/usr/local/bin",
+        "REFDIR": "/usr/local/etc/nil-atlases",
+        "METLAB_HOME": "/usr/local/bin/metlab"
+    },
+    "inputs": [
+        {
+            "name": "PROJECT",
+            "description": "The project",
+            "type": "string",
+            "required": true
+        },
+        {
+            "name": "SUBJECT",
+            "description": "Label or ID of the subject",
+            "type": "string",
+            "required": true
+        }
+    ],
+    "outputs": [],
+    "xnat": [
+        {
+            "name": "metlab-session",
+            "description": "Run metlab from a session",
+            "contexts": ["xnat:imageSessionData"],
+            "external-inputs": [
+                {
+                    "name": "session",
+                    "description": "Input session. Must have a Gamma-Knife scan and an RT-STRUCT in a scan or an ROI Collection assessor resource.",
+                    "type": "Session",
+                    "required": true,
+                    "load-children": false
+                }
+            ],
+            "derived-inputs": [
+                {
+                    "name": "subject-id",
+                    "type": "string",
+                    "derived-from-wrapper-input": "session",
+                    "derived-from-xnat-object-property": "subject-id",
+                    "provides-value-for-command-input": "SUBJECT"
+                },
+                {
+                    "name": "project",
+                    "type": "string",
+                    "derived-from-wrapper-input": "session",
+                    "derived-from-xnat-object-property": "project-id",
+                    "provides-value-for-command-input": "PROJECT"
+                }
+            ],
+            "output-handlers": []
+        },
+        {
+            "name": "metlab-subject",
+            "description": "Run metlab from a subject",
+            "contexts": ["xnat:subjectData"],
+            "external-inputs": [
+                {
+                    "name": "subject",
+                    "description": "Input subject",
+                    "type": "Subject",
+                    "required": true,
+                    "load-children": false
+                }
+            ],
+            "derived-inputs": [
+                {
+                    "name": "subject-label",
+                    "type": "string",
+                    "derived-from-wrapper-input": "subject",
+                    "derived-from-xnat-object-property": "label",
+                    "provides-value-for-command-input": "SUBJECT"
+                },
+                {
+                    "name": "project",
+                    "type": "string",
+                    "derived-from-wrapper-input": "subject",
+                    "derived-from-xnat-object-property": "project-id",
+                    "provides-value-for-command-input": "PROJECT"
+                }
+            ],
+            "output-handlers": []
+        },
+    ]
+}

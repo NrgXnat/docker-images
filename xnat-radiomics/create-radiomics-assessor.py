@@ -1,4 +1,4 @@
-
+#!/usr/bin/env python
 '''create-radiomics-assessor.py
 Read in the metlab timecourse XML and create a radm:radiomics assessor XML for the given parent session
 
@@ -22,6 +22,9 @@ Options:
 
 import os
 import sys
+import glob
+import zipfile
+import tempfile
 import requests
 import datetime as dt
 from docopt import docopt
@@ -150,10 +153,12 @@ sessionDict = sessionInfo[session_label]
 scan = sessionDict['scan']
 
 allLesionAssessorsDict = {}
+id_suffix = 0
 for lesion, firstorder in sessionDict['lesions'].iteritems():
     datestamp = dt.datetime.today().strftime('%Y%m%d%H%M%S')
-    assessor_id = "{}_RADIOMICS_{}".format(session_id, datestamp)
+    assessor_id = "{}{}".format(datestamp, id_suffix) # This is awful but I can't get the server to accept my XML with any ID other than all ints
     assessor_label = "{}_{}_{}_{}".format(session_label, scan, lesion, datestamp)
+    id_suffix += 1
 
     shape = lesionInfo[lesion]
 
@@ -212,12 +217,37 @@ for lesion, (assessor_id, assessor_label, assessorXML) in allLesionAssessorsDict
 for lesion, (assessor_id, assessor_label, assessorXML) in allLesionAssessorsDict.iteritems():
     print("Creating lesion {} assessor on server {}".format(lesion, xnat_host))
 
-    r = s.put(xnat_host + '/data/projects/{}/experiments/{}/assessors/{}'.format(project, session_id, assessor_id),
-                 params={"inbody": "true"},
-                 data=xmltostring(assessorXML, encoding='UTF-8', xml_declaration=True)
-             )
+    f = {'item': open(assessor_label + ".xml", 'rb')}
+    r = s.post(xnat_host + '/xapi/archive/upload/xml', files=f)
     if not r.ok:
         sys.exit("Failed to upload assessor {}\n{}".format(assessor_label, r.text))
-    print("Done.\n")
+
+    print("Created assessor.\nUploading files to assessor.")
+
+    r = s.put(xnat_host + '/data/projects/{}/experiments/{}/assessors/{}/resources/DATA'.format(project, session_id, assessor_id))
+    if not r.ok:
+        print("Could not create DATA resource on assessor {}. Skipping.".format(assessor_label))
+        continue
+
+    (t, tempFilePath) = tempfile.mkstemp(suffix='.zip')
+    zipFile = zipfile.ZipFile(tempFilePath, "w", compression=zipfile.ZIP_DEFLATED)
+    for filename in glob.glob(os.path.join(session_label, "*" + lesion + "*")):
+        zipFile.write(filename)
+    for filename in glob.glob(os.path.join(session_label, "*.pdf")):
+        zipFile.write(filename)
+    for filename in glob.glob(os.path.join(session_label, "*.html")):
+        zipFile.write(filename)
+    zipFile.close()
+    files = {'file': open(tempFilePath, 'rb')}
+    r = s.put(xnat_host + '/data/projects/{}/experiments/{}/assessors/{}/resources/DATA/files'.format(project, session_id, assessor_id),
+                params={"extract": "true"}, files=files)
+    os.remove(tempFilePath)
+
+    if not r.ok:
+        print("Failed to upload files to assessor {}.".format(assessor_id))
+
+    print("Done with lesion {}.\n".format(lesion))
+
+
 print("All done.")
 
