@@ -4,7 +4,7 @@
     "version": "1.0",
     "schema-version": "1.0",
     "type": "docker",
-    "command-line": "run.sh #PROJECT# #SUBJECT_LABEL# #SESSION_ID# #SESSION_LABEL#",
+    "command-line": "run.sh #PROJECT# #SUBJECT# #SESSION_ID# #SESSION_LABEL#",
     "mounts": [
         {
             "name": "scratch",
@@ -21,8 +21,8 @@
             "required": true
         },
         {
-            "name": "SUBJECT_LABEL",
-            "description": "Label of the subject",
+            "name": "SUBJECT",
+            "description": "Label or ID of the subject",
             "type": "string",
             "required": true
         },
@@ -74,7 +74,7 @@
                     "type": "string",
                     "derived-from-wrapper-input": "session",
                     "derived-from-xnat-object-property": "subject-id",
-                    "provides-value-for-command-input": "SUBJECT_ID"
+                    "provides-value-for-command-input": "SUBJECT"
                 },
                 {
                     "name": "project",
@@ -105,7 +105,7 @@
                     "type": "Session",
                     "derived-from-wrapper-input": "assessor",
                     "load-children": false
-                }
+                },
                 {
                     "name": "session-id",
                     "type": "string",
@@ -125,7 +125,7 @@
                     "type": "string",
                     "derived-from-wrapper-input": "session",
                     "derived-from-xnat-object-property": "subject-id",
-                    "provides-value-for-command-input": "SUBJECT_ID"
+                    "provides-value-for-command-input": "SUBJECT"
                 },
                 {
                     "name": "project",
@@ -136,6 +136,6 @@
                 }
             ],
             "output-handlers": []
-        },
+        }
     ]
 }
