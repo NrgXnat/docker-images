@@ -26,6 +26,7 @@ import glob
 import zipfile
 import tempfile
 import requests
+import itertools
 import datetime as dt
 from docopt import docopt
 from lxml.builder import ElementMaker
@@ -220,7 +221,7 @@ if not r.ok:
 (t, tempFilePath) = tempfile.mkstemp(suffix='.zip')
 print("Opening temp zip file at {}".format(tempFilePath))
 zipFile = zipfile.ZipFile(tempFilePath, "w", compression=zipfile.ZIP_DEFLATED)
-for filename in glob.glob("*.pdf") + glob.glob("*.html"):
+for filename in itertools.chain.from_iterable(map(glob.glob, ("*.pdf", "*.html", "*.png", "*.gif"))):
     print("Writing to zip: {}".format(filename))
     zipFile.write(filename)
 zipFile.close()
