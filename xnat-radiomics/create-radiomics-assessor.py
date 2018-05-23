@@ -154,8 +154,12 @@ sessionDict = sessionInfo[session_label]
 scan = sessionDict['scan']
 
 allLesionAssessorsDict = {}
+ids = []
 for lesion, firstorder in sessionDict['lesions'].iteritems():
     datestamp = dt.datetime.today().strftime('%Y%m%d%H%M%S')
+    while datestamp in ids:
+        datestamp += 1
+    ids.append(datestamp)
     assessor_id = datestamp # This is awful but I can't get the server to accept my XML with any ID other than all ints
     assessor_label = "{}_{}_{}_{}".format(session_label, scan, lesion, datestamp)
 
