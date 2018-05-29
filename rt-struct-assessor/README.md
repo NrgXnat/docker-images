@@ -8,7 +8,7 @@ When we upload RT-STRUCT files to XNAT using the ordinary DICOM upload process, 
 
 ## Purpose
 
-* The command will be invoked when an RT-STRUCT scan is uploaded. (Or at least that is the hope. I don't yet know a reliabel way to trigger on these scans.)
+* The command will be invoked when an RT-STRUCT scan is uploaded. (Or at least that is the hope. I don't yet know a reliable way to trigger on these scans.)
 * The container service will mount the scan's DICOM resource.
 * The script that runs inside the container will read the DICOM RT-STRUCT headers and use them to write the `icr:roiCollectionData` assessor XML.
 * The container service will create the assessor object from this XML, and upload the DICOM RT-STRUCT to it as a resource.
