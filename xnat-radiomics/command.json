@@ -1,0 +1,141 @@
+{
+    "name": "metlab",
+    "description": "Runs metlab and uploads lesion assessors",
+    "version": "1.1",
+    "schema-version": "1.0",
+    "type": "docker",
+    "command-line": "run.sh #PROJECT# #SUBJECT# #SESSION_ID# #SESSION_LABEL#",
+    "mounts": [
+        {
+            "name": "scratch",
+            "writable": "true",
+            "path": "/scratch"
+        }
+    ],
+    "working-directory": "/scratch",
+    "inputs": [
+        {
+            "name": "PROJECT",
+            "description": "The project",
+            "type": "string",
+            "required": true
+        },
+        {
+            "name": "SUBJECT",
+            "description": "Label or ID of the subject",
+            "type": "string",
+            "required": true
+        },
+        {
+            "name": "SESSION_ID",
+            "description": "ID of the session",
+            "type": "string",
+            "required": true
+        },
+        {
+            "name": "SESSION_LABEL",
+            "description": "Label of the session",
+            "type": "string",
+            "required": true
+        }
+    ],
+    "outputs": [],
+    "xnat": [
+        {
+            "name": "metlab",
+            "description": "Run metlab from a session",
+            "contexts": ["xnat:imageSessionData"],
+            "external-inputs": [
+                {
+                    "name": "session",
+                    "description": "Input session. Must have a Gamma-Knife scan and an RT-STRUCT in a scan or an ROI Collection assessor resource.",
+                    "type": "Session",
+                    "required": true,
+                    "load-children": false
+                }
+            ],
+            "derived-inputs": [
+                {
+                    "name": "session-id",
+                    "type": "string",
+                    "derived-from-wrapper-input": "session",
+                    "derived-from-xnat-object-property": "id",
+                    "provides-value-for-command-input": "SESSION_ID"
+                },
+                {
+                    "name": "session-label",
+                    "type": "string",
+                    "derived-from-wrapper-input": "session",
+                    "derived-from-xnat-object-property": "label",
+                    "provides-value-for-command-input": "SESSION_LABEL"
+                },
+                {
+                    "name": "subject-id",
+                    "type": "string",
+                    "derived-from-wrapper-input": "session",
+                    "derived-from-xnat-object-property": "subject-id",
+                    "provides-value-for-command-input": "SUBJECT"
+                },
+                {
+                    "name": "project",
+                    "type": "string",
+                    "derived-from-wrapper-input": "session",
+                    "derived-from-xnat-object-property": "project-id",
+                    "provides-value-for-command-input": "PROJECT"
+                }
+            ],
+            "output-handlers": []
+        },
+        {
+            "name": "metlab-from-roi-collection",
+            "description": "Run metlab from an ROI Collection assessor",
+            "contexts": ["icr:roiCollectionData"],
+            "external-inputs": [
+                {
+                    "name": "assessor",
+                    "description": "Input assessor. Must have RT-STRUCT resource. Parent session must have a Gamma-Knife scan.",
+                    "type": "Assessor",
+                    "required": true,
+                    "load-children": false
+                }
+            ],
+            "derived-inputs": [
+                {
+                    "name": "session",
+                    "type": "Session",
+                    "derived-from-wrapper-input": "assessor",
+                    "load-children": false
+                },
+                {
+                    "name": "session-id",
+                    "type": "string",
+                    "derived-from-wrapper-input": "session",
+                    "derived-from-xnat-object-property": "id",
+                    "provides-value-for-command-input": "SESSION_ID"
+                },
+                {
+                    "name": "session-label",
+                    "type": "string",
+                    "derived-from-wrapper-input": "session",
+                    "derived-from-xnat-object-property": "label",
+                    "provides-value-for-command-input": "SESSION_LABEL"
+                },
+                {
+                    "name": "subject-id",
+                    "type": "string",
+                    "derived-from-wrapper-input": "session",
+                    "derived-from-xnat-object-property": "subject-id",
+                    "provides-value-for-command-input": "SUBJECT"
+                },
+                {
+                    "name": "project",
+                    "type": "string",
+                    "derived-from-wrapper-input": "session",
+                    "derived-from-xnat-object-property": "project-id",
+                    "provides-value-for-command-input": "PROJECT"
+                }
+            ],
+            "output-handlers": []
+        }
+    ]
+}
