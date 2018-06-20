@@ -82,7 +82,7 @@
                     "description": "Session label. Used as Freesurfer subject identifier.",
                     "type": "string",
                     "required": true,
-                    "derived-from-xnat-input": "session",
+                    "derived-from-wrapper-input": "session",
                     "derived-from-xnat-object-property": "label",
                     "provides-value-for-command-input": "SESSION_LABEL"
                 },
@@ -91,7 +91,7 @@
                     "description": "Session ID. Used to generate Freesurfer assessor ID.",
                     "type": "string",
                     "required": true,
-                    "derived-from-xnat-input": "session",
+                    "derived-from-wrapper-input": "session",
                     "derived-from-xnat-object-property": "id",
                     "provides-value-for-command-input": "SESSION_ID"
                 },
@@ -99,7 +99,7 @@
                     "name": "project-id",
                     "description": "Project id",
                     "type": "string",
-                    "derived-from-xnat-input": "session",
+                    "derived-from-wrapper-input": "session",
                     "derived-from-xnat-object-property": "project-id",
                     "provides-value-for-command-input": "PROJECT"
                 },
@@ -107,13 +107,13 @@
                     "name": "scan",
                     "description": "Input scan",
                     "type": "Scan",
-                    "derived-from-xnat-input": "session"
+                    "derived-from-wrapper-input": "session"
                 },
                 {
                     "name": "scan-id",
                     "description": "Input scan ID",
                     "type": "string",
-                    "derived-from-xnat-input": "scan",
+                    "derived-from-wrapper-input": "scan",
                     "derived-from-xnat-object-property": "id",
                     "provides-value-for-command-input": "SCAN_ID"
                 },
@@ -121,7 +121,7 @@
                     "name": "resource",
                     "description": "Input resource: DICOM or NIFTI",
                     "type": "Resource",
-                    "derived-from-xnat-input": "scan",
+                    "derived-from-wrapper-input": "scan",
                     "matcher": "@.label in [\"DICOM\", \"NIFTI\"]",
                     "provides-files-for-command-mount": "input"
                 }
@@ -132,7 +132,7 @@
                     "type": "Assessor",
                     "accepts-command-output": "ASSESSOR_XML",
                     "as-a-child-of": "session"
-                }
+                },
                 {
                     "name": "data-resource",
                     "accepts-command-output": "DATA",
