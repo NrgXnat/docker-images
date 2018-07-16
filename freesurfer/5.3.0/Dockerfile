@@ -10,10 +10,8 @@ RUN yum update -y && yum -y install \
         tar \
         tcsh \
         wget \
-        zip \
-        && \
-    yum clean all
-RUN wget -N -qO- ftp://surfer.nmr.mgh.harvard.edu/pub/dist/freesurfer/5.3.0/freesurfer-Linux-centos6_x86_64-stable-pub-v5.3.0.tar.gz | tar -xzv -C /opt \
+    && \
+    wget -N -qO- ftp://surfer.nmr.mgh.harvard.edu/pub/dist/freesurfer/5.3.0/freesurfer-Linux-centos6_x86_64-stable-pub-v5.3.0.tar.gz | tar -xzv -C /opt \
         --exclude='freesurfer/trctrain' \
         --exclude='freesurfer/subjects/fsaverage_sym' \
         --exclude='freesurfer/subjects/fsaverage3' \
@@ -26,7 +24,13 @@ RUN wget -N -qO- ftp://surfer.nmr.mgh.harvard.edu/pub/dist/freesurfer/5.3.0/free
         --exclude='freesurfer/subjects/V1_average' \
         --exclude='freesurfer/average/mult-comp-cor' \
         --exclude='freesurfer/lib/cuda' \
-        --exclude='freesurfer/lib/qt'
+        --exclude='freesurfer/lib/qt' \
+    && \
+    yum -y remove \
+        tar \
+        wget \
+    && \
+    yum clean all
 
 COPY license /opt/freesurfer/.license
 COPY stats2xml_fs5.3.pl /usr/local/bin
