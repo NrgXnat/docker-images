@@ -28,7 +28,7 @@ def schemaLoc(namespace):
 def main():
     #######################################################
     # PARSE INPUT ARGS
-    parser = argparse.ArgumentParser(description='Generate XML assessor file from PUP output logs')
+    parser = argparse.ArgumentParser(description='Generate QC Manual Assessor XML file')
     parser.add_argument('-v', '--version',
                         help='Print version number and exit',
                         action='version',
@@ -145,6 +145,8 @@ def main():
     # print(xmltostring(assessorXML, pretty_print=True))
     with open(outpath, 'w') as f:
         f.write(xmltostring(assessorXML, pretty_print=True, encoding='UTF-8', xml_declaration=True))
+
+
 
 if __name__ == '__main__':
     print idstring
