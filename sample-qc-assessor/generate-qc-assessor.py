@@ -5,6 +5,7 @@ from lxml.etree import tostring as xmltostring
 import datetime as dt
 import sys
 import json
+import random
 import argparse
 import requests
 import requests.packages.urllib3
@@ -121,21 +122,21 @@ def main():
         E("date", isodate),
         E("imageSession_ID", sessionId),
         E("rater", name),
-        E("stereotacticMarker", "0"),
-        E("incidentalFindings", "None"),
+        E("stereotacticMarker", random.choice(["0", "1"])),
+        E("incidentalFindings", random.choice(["None", "There is something here", "Wowza!", "Nothing", "Nada", "Bupkis", "Meh"])),
         E("scans",
             *[E("scan",
                 E("imageScan_ID", scanId),
-                E("coverage", "0"),
-                E("motion", "0"),
-                E("otherImageArtifacts", "0"),
-                E("pass", "1")
+                E("coverage", random.choice(["0", "1", "0.5", "0.25", "0.75", "0.9", "0.1"])),
+                E("motion", random.choice(["0", "1", "0.5", "0.25", "0.75", "0.9", "0.1"])),
+                E("otherImageArtifacts", random.choice(["None", "NA", "none", "Nothing", "Blurry pixels", "Obscured obscura", "Smudge on the lens", "No", "Nope", "Nothing"])),
+                E("pass", random.choice(["1", "0", "Yes", "No"]))
             ) for scanId in scans]
         ),
-        E("comments", "Looks good"),
-        E("pass", "1"),
-        E("payable", "1"),
-        E("rescan", "0")
+        E("comments", random.choice(["Looks good", "All good", "Good", "Bad", "None", "NA"])),
+        E("pass", random.choice(["1", "0", "Yes", "No"])),
+        E("payable", random.choice(["1", "0", "Yes", "No"])),
+        E("rescan", random.choice(["1", "0", "Yes", "No"]))
     ]
 
     assessorXML = E('QCManualAssessment', assessorTitleAttributesDict, *assessorElementsList)
