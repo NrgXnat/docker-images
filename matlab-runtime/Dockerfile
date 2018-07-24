@@ -12,9 +12,12 @@ FROM ubuntu:bionic-20180426
 # Install the MCR dependencies and some things we'll need and download the MCR
 # from Mathworks -silently install it
 RUN apt-get -y update && apt-get -y install \
+        curl \
         unzip \
         xorg \
-        curl \
+        gcc \
+        gfortran \
+        openjdk-8-jdk \
     && \
     mkdir \
         /mcr-install \
@@ -27,8 +30,8 @@ RUN apt-get -y update && apt-get -y install \
     cd / && \
     rm -rf mcr-install /tmp/* && \
     apt-get remove --purge --auto-remove -y \
-        unzip \
         curl \
+        unzip \
     && \
     apt-get -y clean
 
