@@ -7,9 +7,11 @@ import sys
 import json
 import argparse
 import requests
+import requests.packages.urllib3
+requests.packages.urllib3.disable_warnings()
 
-versionNumber='1'
-dateString='20180321'
+versionNumber='1.1'
+dateString='20180724'
 author='flavin'
 progName=sys.argv[0].split('/')[-1]
 idstring = '$Id: %s,v %s %s %s Exp $'%(progName,versionNumber,dateString,author)
@@ -37,30 +39,26 @@ def main():
     parser.add_argument('sessionId', help='Session id')
     parser.add_argument('sessionLabel', help='Session label')
     parser.add_argument('project', help='Project')
-    parser.add_argument('scansCsv', help='Comma-separated list of scan ids. Will generate random QC info for each.')
+    parser.add_argument('xnat_host', help='XNAT Host')
+    parser.add_argument('xnat_user', help='XNAT Username')
+    parser.add_argument('xnat_pass', help='XNAT Password')
     parser.add_argument('outpath',
                         help='Path to XML assessor file (output)')
     args=parser.parse_args()
     #######################################################
 
     #######################################################
-    # GENERATE RANDOM USER
-    r = requests.get('https://randomuser.me/api/')
-    if r.ok:
-        userResults = r.json()['results'][0]
-        nameObj = userResults['name']
-        name = ' '.join((nameObj['title'], nameObj['first'], nameObj['last']))
-    else:
-        name = 'A. User'
-    #######################################################
-
-    #######################################################
     # ASSEMBLE HEADERS AND OTHER NECESSARY INFO
+    print("Parsing input arguments")
     sessionId = args.sessionId
     sessionLabel = args.sessionLabel
     project = args.project
-    scans = args.scansCsv.split(',')
+    # scans = args.scansCsv.split(',')
     outpath = args.outpath
+
+    xnat_host = args.xnat_host
+    xnat_user = args.xnat_user
+    xnat_pass = args.xnat_pass
 
     now = dt.datetime.today()
     isodate = now.strftime('%Y-%m-%d')
@@ -71,9 +69,45 @@ def main():
     #######################################################
 
     #######################################################
+    # GET LIST OF SCANS ON SESSION
+    print("Getting list of scans for session {} (id {}) on XNAT {}.".format(sessionLabel, sessionId, xnat_host))
+    s = requests.Session()
+    s.verify = False
+    s.auth = (xnat_user, xnat_pass)
+
+    r = s.get(xnat_host + '/data/JSESSION')
+    if not r.ok:
+        print("ERROR Could not connect to XNAT host {}.".format(xnat_host))
+        sys.exit(r.text)
+
+    r = s.get(xnat_host + '/data/experiments/{}/scans'.format(sessionId))
+    if not r.ok:
+        print("ERROR Could not get scans from XNAT host {}, experiment {}.".format(xnat_host, sessionId))
+        sys.exit(r.text)
+
+    scans = [scan['ID'] for scan in r.json().get('ResultSet', {}).get('Result', []) if 'ID' in scan]
+    print("Got scans {}.".format(scans))
+    #######################################################
+
+    #######################################################
+    # GENERATE RANDOM USER
+    print("Generating random user information.")
+    r = requests.get('https://randomuser.me/api/')
+    if r.ok:
+        userResults = r.json()['results'][0]
+        nameObj = userResults['name']
+        name = ' '.join((nameObj['title'], nameObj['first'], nameObj['last']))
+    else:
+        name = 'A. User'
+    print("Generated username {}.".format(name))
+    #######################################################
+
+    #######################################################
     # BUILD ASSESSOR XML
     # Building XML using lxml ElementMaker.
     # For documentation, see http://lxml.de/tutorial.html#the-e-factory
+
+    print("Constructing assessor XML.")
     E = ElementMaker(namespace=nsdict['xnat'], nsmap=nsdict)
 
     assessorTitleAttributesDict = {
@@ -106,7 +140,7 @@ def main():
 
     assessorXML = E('QCManualAssessment', assessorTitleAttributesDict, *assessorElementsList)
 
-    print 'Writing assessor XML to %s' % outpath
+    print('Writing assessor XML to {}'.format(outpath))
     # print(xmltostring(assessorXML, pretty_print=True))
     with open(outpath, 'w') as f:
         f.write(xmltostring(assessorXML, pretty_print=True, encoding='UTF-8', xml_declaration=True))
