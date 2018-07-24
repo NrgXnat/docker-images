@@ -92,7 +92,7 @@ def main():
     #######################################################
     # GENERATE RANDOM USER
     print("Generating random user information.")
-    r = requests.get('https://randomuser.me/api/')
+    r = requests.get('https://randomuser.me/api/', params={"inc": "name", "noinfo": "true", "nat": "us"})
     if r.ok:
         userResults = r.json()['results'][0]
         nameObj = userResults['name']
