@@ -3,9 +3,11 @@
 from lxml.builder import ElementMaker
 from lxml.etree import tostring as xmltostring
 import datetime as dt
+import os
 import sys
 import json
 import random
+import string
 import argparse
 import requests
 import requests.packages.urllib3
@@ -25,6 +27,9 @@ def ns(namespace, tag):
 def schemaLoc(namespace):
     return "{0} https://www.xnat.org/schemas/{1}/{1}.xsd".format(nsdict[namespace], namespace)
 
+def randstring(length):
+    return ''.join(random.choice(string.lowercase) for i in range(length))
+
 def main():
     #######################################################
     # PARSE INPUT ARGS
@@ -43,8 +48,9 @@ def main():
     parser.add_argument('xnat_host', help='XNAT Host')
     parser.add_argument('xnat_user', help='XNAT Username')
     parser.add_argument('xnat_pass', help='XNAT Password')
-    parser.add_argument('outpath',
-                        help='Path to XML assessor file (output)')
+    parser.add_argument('outdir', help='Root output directory')
+    parser.add_argument('xml_file_name',
+                        help='Name of XML assessor file to create within output directory')
     args=parser.parse_args()
     #######################################################
 
@@ -55,7 +61,8 @@ def main():
     sessionLabel = args.sessionLabel
     project = args.project
     # scans = args.scansCsv.split(',')
-    outpath = args.outpath
+    outdir = args.outdir
+    outpath = os.path.join(outdir, args.xml_file_name)
 
     xnat_host = args.xnat_host
     xnat_user = args.xnat_user
@@ -146,7 +153,15 @@ def main():
     with open(outpath, 'w') as f:
         f.write(xmltostring(assessorXML, pretty_print=True, encoding='UTF-8', xml_declaration=True))
 
-
+    length = 20
+    print("Generating nonsense files in subdirectories of {}.".format(outdir))
+    os.makedirs(os.path.join(outdir, 'dir0', 'dir1', 'dir2'))
+    with open(os.path.join(outdir, 'dir0', 'file1.txt'), 'w') as f:
+        f.write(randstring(length)+"\n")
+    with open(os.path.join(outdir, 'dir0', 'dir1', 'file2.txt'), 'w') as f:
+        f.write(randstring(length)+"\n")
+    with open(os.path.join(outdir, 'dir0', 'dir1', 'dir2', 'file3.txt'), 'w') as f:
+        f.write(randstring(length)+"\n")
 
 if __name__ == '__main__':
     print idstring

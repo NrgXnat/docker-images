@@ -4,7 +4,7 @@
     "version": "1.1",
     "schema-version": "1.0",
     "type": "docker",
-    "command-line": "generate-qc-assessor.py #SESSION_ID# #SESSION_LABEL# #PROJECT# $XNAT_HOST $XNAT_USER $XNAT_PASS /mount/out.xml",
+    "command-line": "generate-qc-assessor.py #SESSION_ID# #SESSION_LABEL# #PROJECT# $XNAT_HOST $XNAT_USER $XNAT_PASS /mount out.xml",
     "override-entrypoint": true,
     "mounts": [
         {
@@ -36,6 +36,12 @@
             "description": "QC assessor XML file",
             "mount": "mount",
             "path": "out.xml"
+        },
+        {
+            "name": "SUBDIRS",
+            "description": "Nested subdirectories",
+            "mount": "mount",
+            "path": "dir0"
         }
     ],
     "xnat": [
@@ -79,12 +85,11 @@
                 {
                     "name": "assessor_resource",
                     "type": "Resource",
-                    "accepts-command-output": "ASSESSOR_XML",
+                    "accepts-command-output": "SUBDIRS",
                     "as-a-child-of": "assessor",
-                    "label": "XML_FILE"
+                    "label": "RESOURCE"
                 }
             ]
         }
     ]
-
 }
