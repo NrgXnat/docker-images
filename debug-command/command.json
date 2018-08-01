@@ -1,7 +1,8 @@
 {
     "name": "debug",
     "description": "Runs a user-provided command",
-    "version": "1.4",
+    "label": "debug",
+    "version": "1.5",
     "schema-version": "1.0",
     "type": "docker",
     "command-line": "#COMMAND# > /output/#OUTFILE#",
@@ -48,6 +49,7 @@
         {
             "name": "debug-project",
             "description": "Run the debug container with a project mounted",
+            "label": "Debug",
             "contexts": ["xnat:projectData"],
             "external-inputs": [
                 {
@@ -97,6 +99,7 @@
         {
             "name": "debug-session",
             "description": "Run the debug container with a session mounted",
+            "label": "Debug",
             "contexts": ["xnat:imageSessionData"],
             "external-inputs": [
                 {
@@ -122,6 +125,7 @@
         {
             "name": "debug-scan",
             "description": "Run the debug container with a scan mounted",
+            "label": "Debug",
             "contexts": ["xnat:imageScanData"],
             "external-inputs": [
                 {
@@ -147,6 +151,7 @@
         {
             "name": "debug-assessor",
             "description": "Run the debug container with a assessor mounted",
+            "label": "Debug",
             "contexts": ["xnat:imageAssessorData"],
             "external-inputs": [
                 {

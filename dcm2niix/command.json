@@ -1,8 +1,9 @@
 {
     "name": "dcm2niix",
     "description": "Runs dcm2niix",
+    "label": "dcm2niix",
     "info-url": "https://github.com/rordenlab/dcm2niix",
-    "version": "1.4",
+    "version": "1.5",
     "schema-version": "1.0",
     "type": "docker",
     "image": "xnat/dcm2niix",
@@ -51,6 +52,7 @@
         {
             "name": "dcm2niix-scan",
             "description": "Run dcm2niix on a Scan",
+            "label": "dcm2niix",
             "contexts": ["xnat:imageScanData"],
             "external-inputs": [
                 {
