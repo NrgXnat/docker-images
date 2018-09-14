@@ -1,4 +1,4 @@
-FROM xnat/metlab:demo.20180522.1
+FROM xnat/metlab-base:demo.20180914.1
 
 COPY run.sh /usr/local/scripts
 COPY create-radiomics-assessor.py /usr/local/scripts

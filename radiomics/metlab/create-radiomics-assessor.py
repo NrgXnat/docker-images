@@ -147,6 +147,10 @@ for session, sessionDict in sessionInfo.iteritems():
         for name, value in d.iteritems():
             print("\t\t{}: {}".format(name, value))
 
+if len(sessionInfo) == 0 or len(lesionInfo) == 0:
+    print("ERROR: No data in metlab XML file {}.".format(metlabPath))
+    print(''.join(metlab_xml))
+    sys.exit(1)
 
 print("Creating lesion assessors for session {}".format(session_label))
 
