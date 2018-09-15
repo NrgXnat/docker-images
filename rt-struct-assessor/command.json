@@ -1,7 +1,7 @@
 {
     "name": "make-rt-struct-assessor",
     "description": "Create an RoiCollection assessor from a DICOM RT-STRUCT scan",
-    "version": "1.0",
+    "version": "1.1",
     "schema-version": "1.0",
     "type": "docker",
     "command-line": "make-rt-struct-assessor.py #SUBJ_ID# #SESS_ID# #SESS_LABEL# #PROJ# /input/#RT_FILE_NAME# /output/assessor.xml",
