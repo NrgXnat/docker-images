@@ -1,6 +1,6 @@
 {
-    "name": "metlab",
-    "description": "Runs metlab and uploads lesion assessors",
+    "name": "rtlab",
+    "description": "Runs rtlab and uploads lesion assessors",
     "version": "1.1",
     "schema-version": "1.0",
     "type": "docker",
@@ -42,8 +42,8 @@
     "outputs": [],
     "xnat": [
         {
-            "name": "metlab",
-            "description": "Run metlab from a session",
+            "name": "rtlab",
+            "description": "Run rtlab from a session",
             "contexts": ["xnat:imageSessionData"],
             "external-inputs": [
                 {
@@ -87,8 +87,8 @@
             "output-handlers": []
         },
         {
-            "name": "metlab-from-roi-collection",
-            "description": "Run metlab from an ROI Collection assessor",
+            "name": "rtlab-from-roi-collection",
+            "description": "Run rtlab from an ROI Collection assessor",
             "contexts": ["icr:roiCollectionData"],
             "external-inputs": [
                 {

@@ -52,7 +52,7 @@ COPY dependencies/lib /usr/local/lib
 COPY dependencies/nil-tools/RELEASE /usr/local/bin
 COPY dependencies/nil-tools/REFDIR /usr/local/etc/nil-atlases
 
-COPY metlab /usr/local/bin/metlab
+COPY rtlab /usr/local/bin/rtlab
 
-ENV RELEASE=/usr/local/bin REFDIR=/usr/local/etc/nil-atlases METLAB_HOME=/usr/local/bin/metlab
-ENV PATH=/usr/local/scripts:${METLAB_HOME}:${PATH}
+ENV RELEASE=/usr/local/bin REFDIR=/usr/local/etc/nil-atlases RTLAB_HOME=/usr/local/bin/rtlab
+ENV PATH=/usr/local/scripts:${RTLAB_HOME}:${PATH}
