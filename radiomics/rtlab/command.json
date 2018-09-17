@@ -43,7 +43,7 @@
     "xnat": [
         {
             "name": "rtlab",
-            "description": "Run rtlab from a session",
+            "description": "Generate rtlab lesion assessors",
             "contexts": ["xnat:imageSessionData"],
             "external-inputs": [
                 {
@@ -88,7 +88,7 @@
         },
         {
             "name": "rtlab-from-roi-collection",
-            "description": "Run rtlab from an ROI Collection assessor",
+            "description": "Generate rtlab lesion assessors",
             "contexts": ["icr:roiCollectionData"],
             "external-inputs": [
                 {
