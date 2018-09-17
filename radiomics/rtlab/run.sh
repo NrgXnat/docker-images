@@ -11,7 +11,7 @@ session_id=$3
 session_label=$4
 
 echo "Running metlab"
-echo "metlab_wrapper.sh $XNAT_HOST $XNAT_USER $XNAT_PASS $project $subject"
+echo "metlab_wrapper.sh $XNAT_HOST $XNAT_USER ***** $project $subject"
 metlab_wrapper.sh $XNAT_HOST $XNAT_USER $XNAT_PASS $project $subject || die "metlab_wrapper.sh failed"
 echo "Done running metlab"
 
@@ -25,6 +25,6 @@ fi
 
 echo
 echo "Creating assessor XML"
-echo "create-radiomics-assessor.py $XNAT_HOST $XNAT_USER $XNAT_PASS $project $session_id $session_label $metlab_xml"
+echo "create-radiomics-assessor.py $XNAT_HOST $XNAT_USER ***** $project $session_id $session_label $metlab_xml"
 create-radiomics-assessor.py $XNAT_HOST $XNAT_USER $XNAT_PASS $project $session_id $session_label $metlab_xml || die "Failed to create metlab assessors"
 echo "Done creating assessor XML"
