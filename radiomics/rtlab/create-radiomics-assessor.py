@@ -210,17 +210,15 @@ for lesion, firstorder in sessionDict['lesions'].iteritems():
     )
 print("All assessor objects created.\n")
 
+# Change directories to where all the files are
+resourceDir = os.path.dirname(metlabPath)
+print("Changing directories to {}\n".format(resourceDir))
+os.chdir(resourceDir)
+
 # Save to files
 for lesion, (assessor_id, assessor_label, assessorXML) in allLesionAssessorsDict.iteritems():
     with open("{}.xml".format(assessor_label), 'w') as f:
         f.write(xmltostring(assessorXML, pretty_print=True, encoding='UTF-8', xml_declaration=True))
-
-# Print to screen
-# for lesion, (assessor_id, assessor_label, assessorXML) in allLesionAssessorsDict.iteritems():
-#     print("{}\n{}\n".format(
-#         assessor_label,
-#         xmltostring(assessorXML, pretty_print=True, encoding='UTF-8', xml_declaration=True)
-#     ))
 
 print("Uploading PDF to session resource")
 session_resource_label = "RADIOMICS_" + dt.datetime.today().strftime('%Y%m%d%H%M%S')

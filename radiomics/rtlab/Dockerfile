@@ -1,4 +1,4 @@
-FROM xnat/rtlab-base:demo.20180917.1
+FROM xnat/rtlab-base:demo.20180917.2
 
 COPY run.sh /usr/local/scripts
 COPY create-radiomics-assessor.py /usr/local/scripts

@@ -15,12 +15,10 @@ echo "rtlab_wrapper.sh $XNAT_HOST $XNAT_USER ***** $project $subject"
 rtlab_wrapper.sh $XNAT_HOST $XNAT_USER $XNAT_PASS $project $subject || die "rtlab_wrapper.sh failed"
 echo "Done running rtlab"
 
-pushd ./*/
-
 # Check if metlab XML file exists
-metlab_xml=$(ls *.xml)
+metlab_xml=$(find /scratch -type f -name '*.xml')
 if [[ ! -e $metlab_xml ]]; then
-    die "Could not find metlab XML file where I expected it."
+    die "Could not find metlab XML file anywhere inside /scratch."
 fi
 
 echo
