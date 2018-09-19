@@ -4,7 +4,7 @@
 Read in an RT-STRUCT DICOM file. Write out an icr:roiCollectionData assessor.
 
 Usage:
-    make-rt-struct-assessor.py SUBJECT_ID SESSION_ID SESSION_LABEL PROJECT DICOM_IN ASSESSOR_XML_OUT
+    make-rt-struct-assessor.py SUBJECT_ID SESSION_ID SESSION_LABEL PROJECT DICOM_IN ASSESSOR_XML_OUT [DELAY]
 
 Options:
     SUBJECT_ID                  ID of parent subject
@@ -13,9 +13,14 @@ Options:
     PROJECT                     Project of parent session
     DICOM_IN                    Path to input RT-STRUCT DICOM file
     ASSESSOR_XML_OUT            Path to output XML file
+    DELAY                       Optional delay time. This is a hack to avoid uploading
+                                an assessor before the AutoRun pipeline is finished,
+                                because having any custom datatypes on the session will
+                                prevent snapshot generation. [default: 0]
 '''
 
 import os
+import time as tm
 import uuid
 import pydicom
 import datetime as dt
@@ -50,6 +55,11 @@ session_id = args.get('SESSION_ID')
 session_label = args.get('SESSION_LABEL')
 project = args.get('PROJECT')
 assessor_xml_path = args.get('ASSESSOR_XML_OUT')
+delayStr = args.get('DELAY', "0")
+try:
+    delay = int(delayStr)
+except ValueError:
+    delay = 0
 
 print("Debug: args " + ", ".join("{}={}".format(name, value) for name, value in args.items()) + "\n")
 
@@ -118,3 +128,10 @@ assessorXML = E('RoiCollection', assessorTitleAttributesDict,
 print('Writing assessor XML to {}'.format(assessor_xml_path))
 with open(assessor_xml_path, 'wb') as f:
     f.write(xmltostring(assessorXML, pretty_print=True, encoding='UTF-8', xml_declaration=True))
+
+if delay > 0:
+    print()
+    print("DIRTY HACK: Adding a {} second delay so snapshots can finish generating.".format(delay))
+    tm.sleep(delay)
+
+print("\nDone\n")
