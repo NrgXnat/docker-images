@@ -45,14 +45,3 @@ RUN yum -y update &&\
         wget \
     && \
     yum -y clean all
-
-COPY dependencies/bin /usr/local/bin
-COPY dependencies/scripts /usr/local/scripts
-COPY dependencies/lib /usr/local/lib
-COPY dependencies/nil-tools/RELEASE /usr/local/bin
-COPY dependencies/nil-tools/REFDIR /usr/local/etc/nil-atlases
-
-COPY metlab /usr/local/bin/metlab
-
-ENV RELEASE=/usr/local/bin REFDIR=/usr/local/etc/nil-atlases METLAB_HOME=/usr/local/bin/metlab
-ENV PATH=/usr/local/scripts:${METLAB_HOME}:${PATH}
