@@ -1,0 +1,82 @@
+{
+    "name": "dicomtonrrd",
+    "description": "Converts dicom to nrrd with plastimatch",
+    "label": "dicom to nrrd",
+    "info-url": "http://plastimatch.org",
+    "version": "1.0",
+    "schema-version": "1.0",
+    "type": "docker",
+    "image": "xnat/plastimatch:1.0",
+    "command-line": "plastimatch convert --input /input --output-img /output/#SCAN_ID#.nrrd",
+    "mounts": [
+        {
+            "name": "in",
+            "writable": "false",
+            "path": "/input"
+        },
+        {
+            "name": "out",
+            "writable": "true",
+            "path": "/output"
+        }
+    ],
+    "inputs": [
+        {
+            "name": "SCAN_ID",
+            "description": "Scan ID",
+            "required": true
+        }
+    ],
+    "outputs": [
+        {
+            "name": "output",
+            "description": "The nrrd file",
+            "mount": "out",
+            "required": true
+        }
+    ],
+    "xnat": [
+        {
+            "name": "dicomtonrrd-scan",
+            "description": "Run dcm2nrrd on a Scan",
+            "label": "dicom to nrrd",
+            "contexts": ["xnat:imageScanData"],
+            "external-inputs": [
+                {
+                    "name": "scan",
+                    "description": "Input scan",
+                    "type": "Scan",
+                    "required": true,
+                    "matcher": "'DICOM' in @.resources[*].label"
+                }
+            ],
+            "derived-inputs": [
+                {
+                    "name": "scan-id",
+                    "description": "Scan id",
+                    "type": "string",
+                    "derived-from-wrapper-input": "scan",
+                    "derived-from-xnat-object-property": "id",
+                    "provides-value-for-command-input": "SCAN_ID"
+                },
+                {
+                    "name": "scan-dicoms",
+                    "description": "The dicom resource on the scan",
+                    "type": "Resource",
+                    "derived-from-wrapper-input": "scan",
+                    "provides-files-for-command-mount": "in",
+                    "matcher": "@.label == 'DICOM'"
+                }
+            ],
+            "output-handlers": [
+                {
+                    "name": "nrrd-resource",
+                    "accepts-command-output": "output",
+                    "as-a-child-of": "scan",
+                    "type": "Resource",
+                    "label": "NRRD"
+                }
+            ]
+        }
+    ]
+}

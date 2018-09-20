@@ -1,0 +1,100 @@
+{
+    "name": "dicomtonrrd-rtstruct",
+    "description": "Converts RT-STRUCT DICOM to NRRD with plastimatch",
+    "label": "dicom to nrrd (rt-struct)",
+    "info-url": "http://plastimatch.org",
+    "version": "1.0",
+    "schema-version": "1.0",
+    "type": "docker",
+    "image": "xnat/plastimatch:1.0",
+    "command-line": "plastimatch convert --input /input --output-prefix /output --prefix-format nrrd --output-ss-list /output/RTSS.txt",
+    "mounts": [
+        {
+            "name": "in",
+            "writable": "false",
+            "path": "/input"
+        },
+        {
+            "name": "out",
+            "writable": "true",
+            "path": "/output"
+        }
+    ],
+    "inputs": [],
+    "outputs": [
+        {
+            "name": "output",
+            "description": "The nrrd files",
+            "mount": "out",
+            "required": true
+        }
+    ],
+    "xnat": [
+        {
+            "name": "dicomtonrrd-rtstruct-scan",
+            "description": "Run dicomtonrrd-rtstruct on an RT-STRUCT Scan",
+            "label": "dicom to nrrd (rt-struct)",
+            "contexts": ["xnat:imageScanData"],
+            "external-inputs": [
+                {
+                    "name": "scan",
+                    "description": "RT-STRUCT scan",
+                    "type": "Scan",
+                    "required": true,
+                    "matcher": "'DICOM' in @.resources[*].label || 'secondary' in @.resources[*].label"
+                }
+            ],
+            "derived-inputs": [
+                {
+                    "name": "scan-dicom",
+                    "type": "Resource",
+                    "derived-from-wrapper-input": "scan",
+                    "matcher": "@.label == 'DICOM' || @.label == 'secondary'",
+                    "provides-files-for-command-mount": "in"
+                }
+            ],
+            "output-handlers": [
+                {
+                    "name": "nrrd-resource",
+                    "accepts-command-output": "output",
+                    "as-a-child-of": "scan",
+                    "type": "Resource",
+                    "label": "NRRD"
+                }
+            ]
+        },
+        {
+            "name": "dicomtonrrd-rtstruct-roi-collection",
+            "description": "Run dicomtonrrd-rtstruct on an RT-STRUCT ROI Collection assessor",
+            "label": "dicom to nrrd (rt-struct)",
+            "contexts": ["icr:roiCollectionData"],
+            "external-inputs": [
+                {
+                    "name": "assessor",
+                    "description": "ROI Collection assessor",
+                    "type": "Assessor",
+                    "required": true,
+                    "matcher": "'RTSTRUCT' in @.resources[*].label"
+                }
+            ],
+            "derived-inputs": [
+                {
+                    "name": "rtstruct",
+                    "type": "Resource",
+                    "derived-from-wrapper-input": "assessor",
+                    "matcher": "@.label == 'RTSTRUCT'",
+                    "provides-files-for-command-mount": "in"
+                }
+            ],
+            "output-handlers": [
+                {
+                    "name": "nrrd-resource",
+                    "accepts-command-output": "output",
+                    "as-a-child-of": "assessor",
+                    "type": "Resource",
+                    "label": "NRRD"
+                }
+            ]
+        }
+    ]
+}
