@@ -1,0 +1,355 @@
+{
+    "name": "pyradiomics",
+    "description": "Runs pyradiomics on lesion masks",
+    "type": "docker",
+    "version": "2.0",
+    "schema-version": "1.0",
+    "command-line": "run.sh /input/scan/#SCAN_FILE# /input/mask/#MASK_FILE# /output #PROJECT# #SESSION_ID# #SESSION_LABEL# #SCAN_ID# #MASK_FILE_URI#",
+    "mounts": [
+        {
+            "name": "scan-in",
+            "writable": false,
+            "path": "/input/scan"
+        },
+        {
+            "name": "mask-in",
+            "writable": false,
+            "path": "/input/mask"
+        },
+        {
+            "name": "out",
+            "writable": true,
+            "path": "/output"
+        }
+    ],
+    "inputs": [
+        {
+            "name": "SCAN_FILE",
+            "user-settable": false,
+            "required": true
+        },
+        {
+            "name": "MASK_FILE",
+            "user-settable": false,
+            "required": true
+        },
+        {
+            "name": "PROJECT",
+            "user-settable": false,
+            "required": true
+        },
+        {
+            "name": "SESSION_ID",
+            "user-settable": false,
+            "required": true
+        },
+        {
+            "name": "SESSION_LABEL",
+            "user-settable": false,
+            "required": true
+        },
+        {
+            "name": "SCAN_ID",
+            "user-settable": false,
+            "required": true
+        },
+        {
+            "name": "MASK_FILE_URI",
+            "user-settable": false,
+            "required": true
+        }
+    ],
+    "outputs": [
+        {
+            "name": "csv",
+            "description": "Pyradiomics stats (csv format)",
+            "mount": "out",
+            "path": "pyradiomics.csv",
+            "required": true
+        },
+        {
+            "name": "xml",
+            "description": "Pyradiomics assessor (XML format)",
+            "mount": "out",
+            "path": "pyradiomics.xml",
+            "required": true
+        }
+    ],
+    "xnat": [
+        {
+            "name": "pyradiomics-roi",
+            "label": "Pyradiomics (ROI Collection)",
+            "description": "Run pyradiomics using an ROI Collection assessor as the source of the lesion mask",
+            "contexts": [
+                "xnat:imageSessionData"
+            ],
+            "external-inputs": [
+                {
+                    "name": "session",
+                    "description": "Input session",
+                    "type": "Session",
+                    "required": true
+                }
+            ],
+            "derived-inputs": [
+                {
+                    "name": "project",
+                    "type": "string",
+                    "derived-from-wrapper-input": "session",
+                    "derived-from-xnat-object-property": "project-id",
+                    "provides-value-for-command-input": "PROJECT",
+                    "user-settable": false,
+                    "required": true
+                },
+                {
+                    "name": "session-id",
+                    "type": "string",
+                    "derived-from-wrapper-input": "session",
+                    "derived-from-xnat-object-property": "id",
+                    "provides-value-for-command-input": "SESSION_ID",
+                    "user-settable": false,
+                    "required": true
+                },
+                {
+                    "name": "session-label",
+                    "type": "string",
+                    "derived-from-wrapper-input": "session",
+                    "derived-from-xnat-object-property": "label",
+                    "provides-value-for-command-input": "SESSION_LABEL",
+                    "user-settable": false,
+                    "required": true
+                },
+                {
+                    "name": "scan",
+                    "type": "Scan",
+                    "required": true,
+                    "derived-from-wrapper-input": "session"
+                },
+                {
+                    "name": "scan-id",
+                    "type": "string",
+                    "user-settable": false,
+                    "required": true,
+                    "derived-from-wrapper-input": "scan",
+                    "derived-from-xnat-object-property": "id",
+                    "provides-value-for-command-input": "SCAN_ID"
+                },
+                {
+                    "name": "scan-resource",
+                    "type": "Resource",
+                    "required": true,
+                    "derived-from-wrapper-input": "scan",
+                    "matcher": "@.label == 'NIFTI' || @.label == 'NRRD'",
+                    "provides-files-for-command-mount": "scan-in"
+                },
+                {
+                    "name": "scan-file",
+                    "type": "File",
+                    "derived-from-wrapper-input": "scan-resource",
+                    "required": true
+                },
+                {
+                    "name": "scan-file-name",
+                    "type": "string",
+                    "derived-from-wrapper-input": "scan-file",
+                    "derived-from-xnat-object-property": "name",
+                    "provides-value-for-command-input": "SCAN_FILE",
+                    "user-settable": false,
+                    "required": true
+                },
+                {
+                    "name": "mask-assessor",
+                    "type": "Assessor",
+                    "derived-from-wrapper-input": "session",
+                    "matcher": "@.xsiType == 'icr:roiCollectionData'",
+                    "required": true
+                },
+                {
+                    "name": "mask-resource",
+                    "type": "Resource",
+                    "derived-from-wrapper-input": "mask-assessor",
+                    "matcher": "@.label == 'NRRD' || @.label == 'NIFTI'",
+                    "provides-files-for-command-mount": "mask-in",
+                    "required": true
+                },
+                {
+                    "name": "mask-file",
+                    "type": "File",
+                    "derived-from-wrapper-input": "mask-resource",
+                    "required": true,
+                    "matcher": "@.name =~ /.*?(nrrd|nii)/"
+                },
+                {
+                    "name": "mask-file-uri",
+                    "type": "string",
+                    "derived-from-wrapper-input": "mask-file",
+                    "derived-from-xnat-object-property": "uri",
+                    "user-settable": false,
+                    "required": true,
+                    "provides-value-for-command-input": "MASK_FILE_URI"
+                },
+                {
+                    "name": "mask-file-name",
+                    "type": "string",
+                    "derived-from-wrapper-input": "mask-file",
+                    "derived-from-xnat-object-property": "name",
+                    "user-settable": false,
+                    "required": true,
+                    "provides-value-for-command-input": "MASK_FILE"
+                }
+            ],
+            "output-handlers": [
+                {
+                    "name": "assessor",
+                    "type": "Assessor",
+                    "accepts-command-output": "xml",
+                    "as-a-child-of": "session"
+                },
+                {
+                    "name": "output-resource",
+                    "type": "Resource",
+                    "accepts-command-output": "csv",
+                    "as-a-child-of": "assessor",
+                    "label": "DATA"
+                }
+            ]
+        },
+        {
+            "name": "pyradiomics-rtstruct",
+            "label": "Pyradiomics (RTStruct scan)",
+            "description": "Run pyradiomics using an RTStruct scan as the source of the lesion mask",
+            "contexts": [
+                "xnat:imageSessionData"
+            ],
+            "external-inputs": [
+                {
+                    "name": "session",
+                    "description": "Input session",
+                    "type": "Session",
+                    "required": true
+                }
+            ],
+            "derived-inputs": [
+                {
+                    "name": "project",
+                    "type": "string",
+                    "derived-from-wrapper-input": "session",
+                    "derived-from-xnat-object-property": "project-id",
+                    "provides-value-for-command-input": "PROJECT",
+                    "user-settable": false,
+                    "required": true
+                },
+                {
+                    "name": "session-id",
+                    "type": "string",
+                    "derived-from-wrapper-input": "session",
+                    "derived-from-xnat-object-property": "id",
+                    "provides-value-for-command-input": "SESSION_ID",
+                    "user-settable": false,
+                    "required": true
+                },
+                {
+                    "name": "session-label",
+                    "type": "string",
+                    "derived-from-wrapper-input": "session",
+                    "derived-from-xnat-object-property": "label",
+                    "provides-value-for-command-input": "SESSION_LABEL",
+                    "user-settable": false,
+                    "required": true
+                },
+                {
+                    "name": "scan",
+                    "type": "Scan",
+                    "required": true,
+                    "derived-from-wrapper-input": "session"
+                },
+                {
+                    "name": "scan-id",
+                    "type": "string",
+                    "user-settable": false,
+                    "required": true,
+                    "derived-from-wrapper-input": "scan",
+                    "derived-from-xnat-object-property": "id",
+                    "provides-value-for-command-input": "SCAN_ID"
+                },
+                {
+                    "name": "scan-resource",
+                    "type": "Resource",
+                    "required": true,
+                    "derived-from-wrapper-input": "scan",
+                    "matcher": "@.label == 'NIFTI' || @.label == 'NRRD'",
+                    "provides-files-for-command-mount": "scan-in"
+                },
+                {
+                    "name": "scan-file",
+                    "type": "File",
+                    "derived-from-wrapper-input": "scan-resource",
+                    "required": true
+                },
+                {
+                    "name": "scan-file-name",
+                    "type": "string",
+                    "derived-from-wrapper-input": "scan-file",
+                    "derived-from-xnat-object-property": "name",
+                    "provides-value-for-command-input": "SCAN_FILE",
+                    "user-settable": false,
+                    "required": true
+                },
+                {
+                    "name": "mask-scan",
+                    "type": "Scan",
+                    "derived-from-wrapper-input": "session",
+                    "required": true
+                },
+                {
+                    "name": "mask-resource",
+                    "type": "Resource",
+                    "derived-from-wrapper-input": "mask-scan",
+                    "matcher": "@.label == 'NRRD' || @.label == 'NIFTI'",
+                    "provides-files-for-command-mount": "mask-in",
+                    "required": true
+                },
+                {
+                    "name": "mask-file",
+                    "type": "File",
+                    "derived-from-wrapper-input": "mask-resource",
+                    "required": true,
+                    "matcher": "@.name =~ /.*?(nrrd|nii)/"
+                },
+                {
+                    "name": "mask-file-uri",
+                    "type": "string",
+                    "derived-from-wrapper-input": "mask-file",
+                    "derived-from-xnat-object-property": "uri",
+                    "user-settable": false,
+                    "required": true,
+                    "provides-value-for-command-input": "MASK_FILE_URI"
+                },
+                {
+                    "name": "mask-file-name",
+                    "type": "string",
+                    "derived-from-wrapper-input": "mask-file",
+                    "derived-from-xnat-object-property": "name",
+                    "user-settable": false,
+                    "required": true,
+                    "provides-value-for-command-input": "MASK_FILE"
+                }
+            ],
+            "output-handlers": [
+                {
+                    "name": "assessor",
+                    "type": "Assessor",
+                    "accepts-command-output": "xml",
+                    "as-a-child-of": "session"
+                },
+                {
+                    "name": "output-resource",
+                    "type": "Resource",
+                    "accepts-command-output": "csv",
+                    "as-a-child-of": "assessor",
+                    "label": "DATA"
+                }
+            ]
+        }
+    ]
+}

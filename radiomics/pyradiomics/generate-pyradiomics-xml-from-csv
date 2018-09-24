@@ -1,0 +1,354 @@
+#!/usr/bin/env python3
+
+"""
+generate-pyradiomics-xml-from-csv
+Read in the CSV of stats produced from pyradiomics and create a radm:pyradiomics assessor XML.
+
+Usage:
+    generate-pyradiomics-xml-from-csv XNAT_HOST PROJECT SESSION_ID SESSION_LABEL SCAN_ID MASK_FILE_URI CSV_IN XML_OUT
+    generate-pyradiomics-xml-from-csv (-h | --help)
+    generate-pyradiomics-xml-from-csv --version
+
+Options:
+    XNAT_HOST           XNAT server URL
+    PROJECT             Project in which parent session and assessor live
+    SESSION_ID          XNAT Accession number of parent session
+    SESSION_LABEL       Label of parent session
+    SCAN_ID             ID of the scan to which masks were applied
+    MASK_FILE_URI       URI of the mask file
+    CSV_IN              Input CSV produced from pyradiomics
+    XML_OUT             Path to output XML
+    -h --help           Show the usage
+    --version           Show the version
+"""
+
+# import re
+import csv
+import datetime as dt
+from docopt import docopt
+import lxml.etree as et
+from lxml.builder import ElementMaker
+
+# We define this to:
+#  A. Give us a way to map the pyradiomics csv names to our assessor schema names
+#  B. Ensure we are keeping all the sequences in the right order for the assessor
+# We will be writing measures into a map, but pulling the values out based on the
+# order of this data structure.
+assessorNameMapAsTuples = (
+    (
+        ("general_info", "generalInfo"),
+        (
+            ("Image", "scanId"),
+            ("Mask", "maskFile"),
+            ("Label", "label"),
+            ("", "filter"),
+            ("BoundingBox", "boundingBox"),
+            ("CenterOfMassIndex", "centerOfMassIndex"),
+            ("CenterOfMass", "centerOfMass"),
+            ("EnabledImageTypes", "enabledImageTypes"),
+            ("GeneralSettings", "generalSettings"),
+            ("ImageHash", "imageHash"),
+            ("ImageSpacing", "imageSpacing"),
+            ("MaskHash", "maskHash"),
+            ("NumpyVersion", "numpyVersion"),
+            ("PyWaveletVersion", "pyWaveletVersion"),
+            ("SimpleITKVersion", "simpleITKVersion"),
+            ("Version", "pyradiomicsVersion"),
+            ("VolumeNum", "volumeNum"),
+            ("VoxelNum", "voxelNum")
+        )
+    ),
+    (
+        ("firstorder", "firstorder"),
+        (
+            ("Energy", "energy"),
+            ("TotalEnergy", "totalEnergy"),
+            ("Entropy", "entropy"),
+            ("Minimum", "minimum"),
+            ("10Percentile", "tenPercentile"),
+            ("90Percentile", "ninetyPercentile"),
+            ("Maximum", "maximum"),
+            ("Mean", "mean"),
+            ("Median", "median"),
+            ("InterquartileRange", "interquartileRange"),
+            ("Range", "range"),
+            ("MeanAbsoluteDeviation", "meanAbsoluteDeviation"),
+            ("RobustMeanAbsoluteDeviation", "robustMeanAbsoluteDeviation"),
+            ("RootMeanSquared", "rootMeanSquared"),
+            ("StandardDeviation", "standardDeviation"),
+            ("Skewness", "skewness"),
+            ("Kurtosis", "kurtosis"),
+            ("Variance", "variance"),
+            ("Uniformity", "uniformity")
+        )
+    ),
+    (
+        ("shape", "shape"),
+        (
+            ("Volume", "volume"),
+            ("SurfaceArea", "surfaceArea"),
+            ("SurfaceVolumeRatio", "surfaceVolumeRatio"),
+            ("Sphericity", "sphericity"),
+            ("Compactness1", "compactness1"),
+            ("Compactness2", "compactness2"),
+            ("SphericalDisproportion", "sphericalDisproportion"),
+            ("Maximum3DDiameter", "maximum3DDiameter"),
+            ("Maximum2DDiameterSlice", "maximum2DDiameterSlice"),
+            ("Maximum2DDiameterColumn", "maximum2DDiameterColumn"),
+            ("Maximum2DDiameterRow", "maximum2DDiameterRow"),
+            ("MajorAxis", "majorAxis"),
+            ("MinorAxis", "minorAxis"),
+            ("LeastAxis", "leastAxis"),
+            ("Elongation", "elongation"),
+            ("Flatness", "flatness")
+        )
+    ),
+    (
+        ("glcm", "glcm"),
+        (
+            ("Autocorrelation", "autocorrelation"),
+            ("JointAverage", "jointAverage"),
+            ("ClusterProminence", "clusterProminence"),
+            ("ClusterShade", "clusterShade"),
+            ("ClusterTendency", "clusterTendency"),
+            ("Contrast", "contrast"),
+            ("Correlation", "correlation"),
+            ("DifferenceAverage", "differenceAverage"),
+            ("DifferenceEntropy", "differenceEntropy"),
+            ("DifferenceVariance", "differenceVariance"),
+            ("JointEnergy", "jointEnergy"),
+            ("JointEntropy", "jointEntropy"),
+            ("Imc1", "informalMeasureOfCorrelation1"),
+            ("Imc2", "informalMeasureOfCorrelation2"),
+            ("Idm", "inverseDifferenceMoment"),
+            ("Idmn", "inverseDifferenceMomentNormalized"),
+            ("Id", "inverseDifference"),
+            ("Idn", "inverseDifferenceNormalized"),
+            ("InverseVariance", "inverseVariance"),
+            ("MaximumProbability", "maximumProbability"),
+            ("SumAverage", "sumAverage"),
+            ("SumEntropy", "sumEntropy"),
+            ("SumSquares", "sumSquares"),
+            ("SmallAreaEmphasis", "smallAreaEmphasis"),
+            ("LargeAreaEmphasis", "largeAreaEmphasis"),
+            ("GrayLevelNonUniformity", "grayLevelNonUniformity"),
+            ("GrayLevelNonUniformityNormalized", "grayLevelNonUniformityNormalized"),
+            ("SizeZoneNonUniformity", "sizeZoneNonUniformity"),
+            ("SizeZoneNonUniformityNormalized", "sizeZoneNonUniformityNormalized"),
+            ("ZonePercentage", "zonePercentage"),
+            ("GrayLevelVariance", "grayLevelVariance"),
+            ("ZoneVariance", "zoneVariance"),
+            ("ZoneEntropy", "zoneEntropy"),
+            ("LowGrayLevelZoneEmphasis", "lowGrayLevelZoneEmphasis"),
+            ("HighGrayLevelZoneEmphasis", "highGrayLevelZoneEmphasis"),
+            ("SmallAreaLowGrayLevelEmphasis", "smallAreaLowGrayLevelEmphasis"),
+            ("SmallAreaHighGrayLevelEmphasis", "smallAreaHighGrayLevelEmphasis"),
+            ("LargeAreaLowGrayLevelEmphasis", "largeAreaLowGrayLevelEmphasis"),
+            ("LargeAreaHighGrayLevelEmphasis", "largeAreaHighGrayLevelEmphasis")
+        )
+    ),
+    (
+        ("glrlm", "glrlm"),
+        (
+            ("ShortRunEmphasis", "shortRunEmphasis"),
+            ("LongRunEmphasis", "longRunEmphasis"),
+            ("GrayLevelNonUniformity", "grayLevelNonUniformity"),
+            ("GrayLevelNonUniformityNormalized", "grayLevelNonUniformityNormalized"),
+            ("RunLengthNonUniformity", "runLengthNonUniformity"),
+            ("RunLengthNonUniformityNormalized", "runLengthNonUniformityNormalized"),
+            ("RunPercentage", "runPercentage"),
+            ("GrayLevelVariance", "grayLevelVariance"),
+            ("RunVariance", "runVariance"),
+            ("RunEntropy", "runEntropy"),
+            ("LowGrayLevelRunEmphasis", "lowGrayLevelRunEmphasis"),
+            ("HighGrayLevelRunEmphasis", "highGrayLevelRunEmphasis"),
+            ("ShortRunLowGrayLevelEmphasis", "shortRunLowGrayLevelEmphasis"),
+            ("ShortRunHighGrayLevelEmphasis", "shortRunHighGrayLevelEmphasis"),
+            ("LongRunLowGrayLevelEmphasis", "longRunLowGrayLevelEmphasis"),
+            ("LongRunHighGrayLevelEmphasis", "longRunHighGrayLevelEmphasis")
+        )
+    ),
+    (
+        ("ngtdm", "ngtdm"),
+        (
+            ("Coarseness", "coarseness"),
+            ("Contrast", "contrast"),
+            ("Busyness", "busyness"),
+            ("Complexity", "complexity"),
+            ("Strength", "strength")
+        )
+    ),
+    (
+        ("gldm", "gldm"),
+        (
+            ("SmallDependenceEmphasis", "smallDependenceEmphasis"),
+            ("LargeDependenceEmphasis", "largeDependenceEmphasis"),
+            ("GrayLevelNonUniformity", "grayLevelNonUniformity"),
+            ("DependenceNonUniformity", "dependenceNonUniformity"),
+            ("DependenceNonUniformityNormalized", "dependenceNonUniformityNormalized"),
+            ("GrayLevelVariance", "grayLevelVariance"),
+            ("DependenceVariance", "dependenceVariance"),
+            ("DependenceEntropy", "dependenceEntropy"),
+            ("LowGrayLevelEmphasis", "lowGrayLevelEmphasis"),
+            ("HighGrayLevelEmphasis", "highGrayLevelEmphasis"),
+            ("SmallDependenceLowGrayLevelEmphasis", "smallDependenceLowGrayLevelEmphasis"),
+            ("SmallDependenceHighGrayLevelEmphasis", "smallDependenceHighGrayLevelEmphasis"),
+            ("LargeDependenceLowGrayLevelEmphasis", "largeDependenceLowGrayLevelEmphasis"),
+            ("LargeDependenceHighGrayLevelEmphasis", "largeDependenceHighGrayLevelEmphasis")
+        )
+    ),
+    (
+        ("glszm", "glszm"),
+        (
+            ("GrayLevelNonUniformity", "grayLevelNonUniformity"),
+            ("GrayLevelNonUniformityNormalized", "grayLevelNonUniformityNormalized"),
+            ("GrayLevelVariance", "grayLevelVariance"),
+            ("LargeAreaEmphasis", "largeAreaEmphasis"),
+            ("LargeAreaHighGrayLevelEmphasis", "largeAreaHighGrayLevelEmphasis"),
+            ("LargeAreaLowGrayLevelEmphasis", "largeAreaLowGrayLevelEmphasis"),
+            ("LowGrayLevelZoneEmphasis", "lowGrayLevelZoneEmphasis"),
+            ("HighGrayLevelZoneEmphasis", "highGrayLevelZoneEmphasis"),
+            ("SizeZoneNonUniformity", "sizeZoneNonUniformity"),
+            ("SizeZoneNonUniformityNormalized", "sizeZoneNonUniformityNormalized"),
+            ("SmallAreaEmphasis", "smallAreaEmphasis"),
+            ("SmallAreaHighGrayLevelEmphasis", "smallAreaHighGrayLevelEmphasis"),
+            ("SmallAreaLowGrayLevelEmphasis", "smallAreaLowGrayLevelEmphasis"),
+            ("ZonePercentage", "zonePercentage"),
+            ("ZoneVariance", "zoneVariance"),
+            ("ZoneEntropy", "zoneEntropy")
+        )
+    ),
+)
+
+# We keep this copy of the above data structure written into a map because
+# it is easier to look up the name mapping from here.
+pyradiomicsCsvStatNamesToAssessorNames = {modelTuple[0]: dict(measureNameTuples) for modelTuple, measureNameTuples in assessorNameMapAsTuples}
+pyradiomicsCsvModelNamesToAssessorNames = {modelTuple[0]: modelTuple[1] for modelTuple, measureNameTuples in assessorNameMapAsTuples}
+
+# We keep this copy of the above data structure because it preserves the order,
+# but drops the pyradiomics names. When we iterate to build the XML, this is what we will use.
+pyradiomicsAssessorSequences = ((modelTuple[1], (measureNameTuple[1] for measureNameTuple in measureNameTuples)) for modelTuple, measureNameTuples in assessorNameMapAsTuples)
+
+version = "1.0"
+args = docopt(__doc__, version=version)
+
+xnat_host = args.get('XNAT_HOST', 'http://xnat.org')
+sessionId = args['SESSION_ID']
+sessionLabel = args['SESSION_LABEL']
+scanId = args['SCAN_ID']
+maskFileUri = args['MASK_FILE_URI']
+project = args['PROJECT']
+csvin = args['CSV_IN']
+xmlout = args['XML_OUT']
+
+
+now = dt.datetime.today()
+timestamp = now.strftime('%Y%m%d%H%M%S')
+assessorId = '{}_pyradiomics_{}'.format(sessionId, timestamp)
+assessorLabel = '{}_pyradiomics_{}'.format(sessionLabel, timestamp)
+date = now.strftime('%Y-%m-%d')
+
+nsdict = {
+    'xnat': 'http://nrg.wustl.edu/xnat',
+    'xs': 'http://www.w3.org/2001/XMLSchema-instance',
+    'radm': 'http://nrg.wustl.edu/radm'
+}
+
+def ns(namespace, tag):
+    return "{%s}%s"%(nsdict[namespace], tag)
+
+def schemaLoc(namespace):
+    return "{0} {2}/schemas/{1}/{1}.xsd".format(nsdict[namespace], namespace, xnat_host)
+
+# Read input csv
+print("Reading pyradiomics CSV from " + csvin)
+f = open(csvin)
+reader = csv.DictReader(f)
+
+# We iterate here, because that's the csv reader API, even though
+# we expect to find only one row of data. If there are more data
+# rows in the csv, the last will be used.
+for row in reader:
+    # A few basic pieces of info
+    generalInfo = {
+        'scanId': scanId,
+        'maskFile': maskFileUri,
+        'filter': 'original'
+    }
+    # general_info_cols = ['Image', 'Mask']
+
+    # # The "general_info" columns
+    # for col, value in row.filter(like="general_info_").dropna().iteritems():
+    #     general_info_cols.append(col)
+    #     pyradiomicsPropertyName = col.lstrip('general_info_')
+    #     assessorPropertyName = pyradiomicsCsvStatNamesToAssessorNames['general_info'].get(pyradiomicsPropertyName)
+    #     generalInfo[assessorPropertyName] = value
+
+    # Now we go through all the other columns and match filter type and stat type
+    # We build a big nested dict structure to hold all the stats
+    measuresForFilter = {"generalInfo": generalInfo}
+    for col, value in row.items():
+        if value == None:
+            continue
+        if col == 'Image' or col == 'Mask':
+            continue
+
+        # An implementation note:
+        # Most column names are formatted as <filter>_<model>_<stat>
+        # We want to pick up two distinct cases:
+        #  1. When filter == "original". All other filters are ignored
+        #       until and unless we decide to start storing others as well.
+        #  2. If the column is a general info column, it does not follow the
+        #       same <filter>_<model>_<stat> pattern, but is instead called
+        #       general_info_<stat>. We want those too.
+
+        filterName, model, csvStatName = col.split('_')
+        if filterName == "general" and model == "info":
+            model = "general_info"
+        elif filterName != "original":
+            continue
+
+        assessorModel = pyradiomicsCsvModelNamesToAssessorNames.get(model)
+        if assessorModel is None:
+            print("ERROR: could not map model name {} from column {} to assessor model name.".format(model, col))
+            continue
+
+        if assessorModel not in measuresForFilter:
+            measuresForFilter[assessorModel] = {}
+        measuresForFilterAndModel = measuresForFilter[assessorModel]
+
+        assessorStatName = pyradiomicsCsvStatNamesToAssessorNames.get(model, {}).get(csvStatName)
+
+        if assessorStatName is not None:
+            measuresForFilterAndModel[assessorStatName] = value
+        else:
+            print("ERROR: could not map stat name {} from column {} to assessor stat name.".format(csvStatName, col))
+
+f.close()
+
+assessorTitleAttributesDict = {
+    'ID': assessorId,
+    'label': assessorLabel,
+    'project': project,
+    ns('xs','schemaLocation'): ' '.join(schemaLoc(namespace) for namespace in ('xnat', 'radm'))
+}
+
+# Build the assessor by going again through the data structures we have built,
+# Adding the XML namespace to the names
+E = ElementMaker(namespace=nsdict['radm'], nsmap=nsdict)
+
+assessorXML = E('Radiomics', assessorTitleAttributesDict,
+    E(ns('xnat', 'date'), date),
+    E(ns('xnat', 'imageSession_ID'), sessionId),
+    *[E(model,
+        *[E(str(measureName), measuresForFilter.get(model, {}).get(measureName)
+                if measureName not in ('enabledImageTypes', 'generalSettings')
+                else et.CDATA(measuresForFilter.get(model, {}).get(measureName)))
+            for measureName in measureNames if measuresForFilter.get(model, {}).get(measureName) is not None]
+    ) for model, measureNames in pyradiomicsAssessorSequences if len(measuresForFilter.get(model, {})) > 0]
+)
+
+print('Writing assessor XML to {}'.format(xmlout))
+with open(xmlout, 'wb') as f: # We open the file as binary because the xmltostring method returns bytes
+    f.write(et.tostring(assessorXML, pretty_print=True, encoding='UTF-8', xml_declaration=True))
+
