@@ -7,7 +7,7 @@
 #
 # See http://www.mathworks.com/products/compiler/mcr/ for more info.
 
-FROM ubuntu:bionic-20180426
+FROM ubuntu:bionic-20180821
 
 # Install the MCR dependencies and some things we'll need and download the MCR
 # from Mathworks -silently install it
@@ -24,16 +24,18 @@ RUN apt-get -y update && apt-get -y install \
         /opt/mcr \
     && \
     cd /mcr-install && \
-    curl --fail --silent --show-error http://ssd.mathworks.com/supportfiles/downloads/R2018a/deployment_files/R2018a/installers/glnxa64/MCR_R2018a_glnxa64_installer.zip --output MCR_R2018a_glnxa64_installer.zip && \
-    unzip -q MCR_R2018a_glnxa64_installer.zip && \
+    curl --fail --silent --show-error http://ssd.mathworks.com/supportfiles/downloads/R2018b/deployment_files/R2018b/installers/glnxa64/MCR_R2018b_glnxa64_installer.zip --output MCR_R2018b_glnxa64_installer.zip && \
+    unzip -q MCR_R2018b_glnxa64_installer.zip && \
     ./install -destinationFolder /opt/mcr -agreeToLicense yes -mode silent && \
     cd / && \
     rm -rf mcr-install /tmp/* && \
     apt-get remove --purge --auto-remove -y \
         curl \
+        gcc \
+        gfortran \
         unzip \
     && \
     apt-get -y clean
 
 # Configure environment variables for MCR
-ENV LD_LIBRARY_PATH=/opt/mcr/v94/runtime/glnxa64:/opt/mcr/v94/bin/glnxa64:/opt/mcr/v94/sys/os/glnxa64:/opt/mcr/v94/extern/bin/glnxa64 XAPPLRESDIR=/opt/mcr/v94/X11/app-defaults
+ENV LD_LIBRARY_PATH=/opt/mcr/v95/runtime/glnxa64:/opt/mcr/v95/bin/glnxa64:/opt/mcr/v95/sys/os/glnxa64:/opt/mcr/v95/extern/bin/glnxa64 XAPPLRESDIR=/opt/mcr/v95/X11/app-defaults
