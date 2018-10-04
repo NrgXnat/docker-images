@@ -2,7 +2,7 @@
     "name": "pyradiomics",
     "description": "Runs pyradiomics on lesion masks",
     "type": "docker",
-    "version": "2.0",
+    "version": "2.1",
     "schema-version": "1.0",
     "command-line": "run.sh /input/scan/#SCAN_FILE# /input/mask/#MASK_FILE# /output #PROJECT# #SESSION_ID# #SESSION_LABEL# #SCAN_ID# #MASK_FILE_URI#",
     "mounts": [
@@ -123,7 +123,8 @@
                     "name": "scan",
                     "type": "Scan",
                     "required": true,
-                    "derived-from-wrapper-input": "session"
+                    "derived-from-wrapper-input": "session",
+                    "matcher": "@.scan-type =~ /(?!RT).*/ && ('NRRD' in @.resources[*].label || 'NIFTI' in @.resources[*].label)"
                 },
                 {
                     "name": "scan-id",
@@ -261,7 +262,8 @@
                     "name": "scan",
                     "type": "Scan",
                     "required": true,
-                    "derived-from-wrapper-input": "session"
+                    "derived-from-wrapper-input": "session",
+                    "matcher": "@.scan-type =~ /(?!RT).*/ && ('NRRD' in @.resources[*].label || 'NIFTI' in @.resources[*].label)"
                 },
                 {
                     "name": "scan-id",
@@ -299,7 +301,8 @@
                     "name": "mask-scan",
                     "type": "Scan",
                     "derived-from-wrapper-input": "session",
-                    "required": true
+                    "required": true,
+                    "matcher": "@.scan-type =~ /RT.*/ && ('NRRD' in @.resources[*].label || 'NIFTI' in @.resources[*].label)"
                 },
                 {
                     "name": "mask-resource",
