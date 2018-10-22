@@ -2,7 +2,7 @@
     "name": "pyradiomics",
     "description": "Runs pyradiomics on lesion masks",
     "type": "docker",
-    "version": "2.1",
+    "version": "2.2",
     "schema-version": "1.0",
     "command-line": "run.sh /input/scan/#SCAN_FILE# /input/mask/#MASK_FILE# /output #PROJECT# #SESSION_ID# #SESSION_LABEL# #SCAN_ID# #MASK_FILE_URI#",
     "mounts": [
@@ -124,7 +124,7 @@
                     "type": "Scan",
                     "required": true,
                     "derived-from-wrapper-input": "session",
-                    "matcher": "@.scan-type =~ /(?!RT).*/ && ('NRRD' in @.resources[*].label || 'NIFTI' in @.resources[*].label)"
+                    "matcher": "@.scan-type =~ /(?!RT).*/ && 'NRRD' in @.resources[*].label"
                 },
                 {
                     "name": "scan-id",
@@ -140,7 +140,7 @@
                     "type": "Resource",
                     "required": true,
                     "derived-from-wrapper-input": "scan",
-                    "matcher": "@.label == 'NIFTI' || @.label == 'NRRD'",
+                    "matcher": "@.label == 'NRRD'",
                     "provides-files-for-command-mount": "scan-in"
                 },
                 {
@@ -169,7 +169,7 @@
                     "name": "mask-resource",
                     "type": "Resource",
                     "derived-from-wrapper-input": "mask-assessor",
-                    "matcher": "@.label == 'NRRD' || @.label == 'NIFTI'",
+                    "matcher": "@.label == 'NRRD'",
                     "provides-files-for-command-mount": "mask-in",
                     "required": true
                 },
@@ -178,7 +178,7 @@
                     "type": "File",
                     "derived-from-wrapper-input": "mask-resource",
                     "required": true,
-                    "matcher": "@.name =~ /.*?(nrrd|nii)/"
+                    "matcher": "@.name =~ /.*?nrrd/"
                 },
                 {
                     "name": "mask-file-uri",
@@ -263,7 +263,7 @@
                     "type": "Scan",
                     "required": true,
                     "derived-from-wrapper-input": "session",
-                    "matcher": "@.scan-type =~ /(?!RT).*/ && ('NRRD' in @.resources[*].label || 'NIFTI' in @.resources[*].label)"
+                    "matcher": "@.scan-type =~ /(?!RT).*/ && 'NRRD' in @.resources[*].label"
                 },
                 {
                     "name": "scan-id",
@@ -279,7 +279,7 @@
                     "type": "Resource",
                     "required": true,
                     "derived-from-wrapper-input": "scan",
-                    "matcher": "@.label == 'NIFTI' || @.label == 'NRRD'",
+                    "matcher": "@.label == 'NRRD'",
                     "provides-files-for-command-mount": "scan-in"
                 },
                 {
@@ -302,13 +302,13 @@
                     "type": "Scan",
                     "derived-from-wrapper-input": "session",
                     "required": true,
-                    "matcher": "@.scan-type =~ /RT.*/ && ('NRRD' in @.resources[*].label || 'NIFTI' in @.resources[*].label)"
+                    "matcher": "@.scan-type =~ /RT.*/ && 'NRRD' in @.resources[*].label"
                 },
                 {
                     "name": "mask-resource",
                     "type": "Resource",
                     "derived-from-wrapper-input": "mask-scan",
-                    "matcher": "@.label == 'NRRD' || @.label == 'NIFTI'",
+                    "matcher": "@.label == 'NRRD'",
                     "provides-files-for-command-mount": "mask-in",
                     "required": true
                 },
@@ -317,7 +317,7 @@
                     "type": "File",
                     "derived-from-wrapper-input": "mask-resource",
                     "required": true,
-                    "matcher": "@.name =~ /.*?(nrrd|nii)/"
+                    "matcher": "@.name =~ /.*?nrrd/"
                 },
                 {
                     "name": "mask-file-uri",
