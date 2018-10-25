@@ -2,9 +2,9 @@
     "name": "pyradiomics",
     "description": "Runs pyradiomics on lesion masks",
     "type": "docker",
-    "version": "2.3",
+    "version": "2.4",
     "schema-version": "1.0",
-    "image": "xnat/pyradiomics:2.3",
+    "image": "xnat/pyradiomics:2.4",
     "command-line": "run.sh /input/scan/#SCAN_FILE# /input/mask/#MASK_FILE# /output #PROJECT# #SESSION_ID# #SESSION_LABEL# #SCAN_ID# #MASK_FILE_URI#",
     "mounts": [
         {
@@ -79,7 +79,7 @@
     "xnat": [
         {
             "name": "pyradiomics-roi",
-            "label": "Pyradiomics (ROI Collection)",
+            "label": "Pyradiomics - one ROI Collection layer",
             "description": "Run pyradiomics using an ROI Collection assessor as the source of the lesion mask",
             "contexts": [
                 "xnat:imageSessionData"
@@ -218,7 +218,7 @@
         },
         {
             "name": "pyradiomics-rtstruct",
-            "label": "Pyradiomics (RTStruct scan)",
+            "label": "Pyradiomics - one RTStruct scan file",
             "description": "Run pyradiomics using an RTStruct scan as the source of the lesion mask",
             "contexts": [
                 "xnat:imageSessionData"
