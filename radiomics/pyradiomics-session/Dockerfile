@@ -1,0 +1,8 @@
+FROM python:3.7.1-alpine3.8
+
+RUN pip install --no-cache-dir \
+        docopt \
+        jsonpath \
+        requests
+COPY launch-pyradiomics-containers.py /usr/local/bin
+LABEL org.nrg.commands="[{\"inputs\": [{\"required\": true, \"name\": \"PROJECT\", \"user-settable\": false}, {\"required\": true, \"name\": \"SESSION_ID\", \"user-settable\": false}], \"name\": \"pyradiomics-all-rtstruct\", \"command-line\": \"launch-pyradiomics-containers.py \$XNAT_HOST \$XNAT_USER \$XNAT_PASS #SESSION_ID# #PROJECT#\", \"outputs\": [], \"image\": \"xnat/pyradiomics-all-rtstruct:1.0\", \"override-entrypoint\": true, \"version\": \"1.0\", \"schema-version\": \"1.0\", \"xnat\": [{\"description\": \"Launch pyradiomics containers on all NRRD files in an RTStruct scan\", \"contexts\": [\"xnat:imageSessionData\"], \"name\": \"pyradiomics-all-rtstruct-session\", \"output-handlers\": [], \"label\": \"Launch Pyradiomics (ALL RTStruct NRRD files)\", \"external-inputs\": [{\"required\": true, \"type\": \"Session\", \"name\": \"session\", \"description\": \"Input session\"}], \"derived-inputs\": [{\"provides-value-for-command-input\": \"PROJECT\", \"name\": \"project\", \"derived-from-xnat-object-property\": \"project-id\", \"required\": true, \"user-settable\": false, \"derived-from-wrapper-input\": \"session\", \"type\": \"string\"}, {\"provides-value-for-command-input\": \"SESSION_ID\", \"name\": \"session-id\", \"derived-from-xnat-object-property\": \"id\", \"required\": true, \"user-settable\": false, \"derived-from-wrapper-input\": \"session\", \"type\": \"string\"}]}], \"mounts\": [], \"type\": \"docker\", \"description\": \"Launch pyradiomics containers on all NRRD files in an RTStruct scan\"}]"

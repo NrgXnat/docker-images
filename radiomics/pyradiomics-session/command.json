@@ -1,0 +1,63 @@
+{
+    "name": "pyradiomics-all-rtstruct",
+    "description": "Launch pyradiomics containers on all NRRD files in an RTStruct scan",
+    "type": "docker",
+    "version": "1.0",
+    "schema-version": "1.0",
+    "image": "xnat/pyradiomics-all-rtstruct:1.0",
+    "command-line": "launch-pyradiomics-containers.py $XNAT_HOST $XNAT_USER $XNAT_PASS #SESSION_ID# #PROJECT#",
+    "override-entrypoint": true,
+    "mounts": [],
+    "inputs": [
+        {
+            "name": "PROJECT",
+            "user-settable": false,
+            "required": true
+        },
+        {
+            "name": "SESSION_ID",
+            "user-settable": false,
+            "required": true
+        }
+    ],
+    "outputs": [],
+    "xnat": [
+        {
+            "name": "pyradiomics-all-rtstruct-session",
+            "label": "Launch Pyradiomics (ALL RTStruct NRRD files)",
+            "description": "Launch pyradiomics containers on all NRRD files in an RTStruct scan",
+            "contexts": [
+                "xnat:imageSessionData"
+            ],
+            "external-inputs": [
+                {
+                    "name": "session",
+                    "description": "Input session",
+                    "type": "Session",
+                    "required": true
+                }
+            ],
+            "derived-inputs": [
+                {
+                    "name": "project",
+                    "type": "string",
+                    "derived-from-wrapper-input": "session",
+                    "derived-from-xnat-object-property": "project-id",
+                    "provides-value-for-command-input": "PROJECT",
+                    "user-settable": false,
+                    "required": true
+                },
+                {
+                    "name": "session-id",
+                    "type": "string",
+                    "derived-from-wrapper-input": "session",
+                    "derived-from-xnat-object-property": "id",
+                    "provides-value-for-command-input": "SESSION_ID",
+                    "user-settable": false,
+                    "required": true
+                }
+            ],
+            "output-handlers": []
+        }
+    ]
+}
