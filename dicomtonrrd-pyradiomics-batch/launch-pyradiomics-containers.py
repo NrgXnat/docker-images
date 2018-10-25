@@ -30,6 +30,9 @@ def die(message="ERROR", exit=1):
     print(message)
     sys.exit(exit)
 
+def false_or_empty(l):
+    return l is False or len(l) == 0
+
 version = "1.0"
 
 args = docopt(__doc__, version=version)
@@ -58,19 +61,14 @@ try:
 except:
     die("ERROR: Improper response from /commands/available", r.text)
 
-pyradiomicsWrapperId = 0
-for commandAvailable in commandsAvailable:
-    if commandAvailable["wrapper-name"] == "pyradiomics-rtstruct":
-        if pyradiomicsWrapperId == 0:
-            pyradiomicsWrapperId = commandAvailable["wrapper-id"]
-            print("Found pyradiomics wrapper ID: {}.".format(pyradiomicsWrapperId))
-        else:
-            anotherPyradiomicsWrapperId = commandAvailable["wrapper-id"]
-            pyradiomicsWrapperId = max(pyradiomicsWrapperId, anotherPyradiomicsWrapperId)
+pyradiomicsWrapperIds = jsonpath(commandsAvailable, '$[?(@["wrapper-name"] == "pyradiomics-rtstruct")].wrapper-id')
+die_if(false_or_empty(pyradiomicsWrapperIds), message="ERROR: Could not find pyradiomics-rtstruct as an available command on project {}.".format(project))
 
-            print("Found another pyradiomics wrapper ID: {}. Keeping max ID: {}.".format(anotherPyradiomicsWrapperId, pyradiomicsWrapperId))
-
-die_if(pyradiomicsWrapperId == 0, message="ERROR: Could not find pyradiomics-rtstruct as an available command on project {}.".format(project))
+pyradiomicsWrapperId = max(pyradiomicsWrapperIds)
+if len(pyradiomicsWrapperIds) > 1:
+    print("Found multiple wrapper ids for pyradiomics: {}.\nChoosing max id: {}.".format(pyradiomicsWrapperIds, pyradiomicsWrapperId))
+else:
+    print("Found pyradiomics wrapper id: {}.".format(pyradiomicsWrapperId))
 
 # Get the launch UI to find all the rt struct masks
 print("\nGetting container launch UI for pyradiomics.")
@@ -84,16 +82,16 @@ except:
 
 # Do a jsonpath search to find nrrd mask files
 print("Searching launch UI to find mask files.")
-maskFiles = jsonpath(launchUi, '$.input-values[?(@.name == "session")].values[0].children[?(@.name == "mask-scan")].values[0].children[?(@.name == "mask-resource")].values[0].children[?(@.name == "mask-file")].values[*].value')
+maskFiles = jsonpath(launchUi, '$.inputs.mask-file.ui.NRRD.values[*].value')
 
-die_if(maskFiles is False, message="ERROR: No nrrd mask files found in container launch UI for session {}. Do you need to adjust the matcher?".format(session))
+die_if(false_or_empty(maskFiles), message="ERROR: No nrrd mask files found in container launch UI for session {}. Do you need to adjust the matcher?".format(session))
 
-print("Found mask files: [{}].".format(", ".join(maskFiles)))
+print("Found mask files: {}.".format(maskFiles))
 
 # Launch container with each of the mask files
 print("\nBulk launching containers for each of the mask files.")
-launchArgs = [{"session": session, "mask-file": maskFile} for maskFile in maskFiles]
-r = s.post(host + '/xapi/projects/{}/wrappers/{}/bulklaunch'.format(project, pyradiomicsWrapperId), json=launchArgs)
+r = s.post(host + '/xapi/projects/{}/wrappers/{}/bulklaunch'.format(project, pyradiomicsWrapperId),
+            json=[{"session": session, "mask-file": maskFile} for maskFile in maskFiles])
 die_if(not r.ok, message="ERROR: Launching failed.", exit=r.text)
 
 print("Success!")

@@ -4,7 +4,7 @@
     "type": "docker",
     "version": "1.0",
     "schema-version": "1.0",
-    "image": "xnat/dicomtonrrd-pyradiomics-batch:1.0",
+    "image": "xnat/dicomtonrrd-pyradiomics-batch:1.1",
     "command-line": "launch-pyradiomics-containers.py $XNAT_HOST $XNAT_USER $XNAT_PASS #SESSION_ID# #PROJECT#",
     "override-entrypoint": true,
     "mounts": [],
