@@ -17,10 +17,18 @@ Options:
     PROJECT             Project name
 """
 
-import sys
 import requests
 from docopt import docopt
 from jsonpath import jsonpath
+
+def die_if(condition, message="ERROR", exit=1):
+    if condition:
+        die(message=message, exit=exit)
+
+def die(message="ERROR", exit=1):
+    import sys
+    print(message)
+    sys.exit(exit)
 
 version = "1.0"
 
@@ -37,23 +45,18 @@ s.auth = (username, password)
 
 print("Attempting to connect to XNAT at {}.".format(host))
 r = s.get(host + "/data/JSESSION")
-if not r.ok:
-    print("ERROR: Connection failed.")
-    sys.exit(r.text)
+die_if(not r.ok, message="ERROR: Connection failed.", exit=r.text)
 print("OK")
 
 # Find the pyradiomics wrapper ID
 print("\nFinding pyradiomics wrapper ID.")
 r = s.get(host + '/xapi/commands/available', params={"project": project, "xsiType": "xnat:imageSessionData"})
-if not r.ok:
-    print("ERROR: Could not search for available commands.")
-    sys.exit(r.text)
+die_if(not r.ok, message="ERROR: Could not search for available commands.", exit=r.text)
 
 try:
     commandsAvailable = r.json()
 except:
-    print("ERROR: Improper response from /commands/available")
-    sys.exit(r.text)
+    die("ERROR: Improper response from /commands/available", r.text)
 
 pyradiomicsWrapperId = 0
 for commandAvailable in commandsAvailable:
@@ -67,30 +70,23 @@ for commandAvailable in commandsAvailable:
 
             print("Found another pyradiomics wrapper ID: {}. Keeping max ID: {}.".format(anotherPyradiomicsWrapperId, pyradiomicsWrapperId))
 
-if pyradiomicsWrapperId == 0:
-    print("ERROR: Could not find pyradiomics-rtstruct as an available command on project {}.".format(project))
-    sys.exit(1)
+die_if(pyradiomicsWrapperId == 0, message="ERROR: Could not find pyradiomics-rtstruct as an available command on project {}.".format(project))
 
 # Get the launch UI to find all the rt struct masks
 print("\nGetting container launch UI for pyradiomics.")
 r = s.get(host + '/xapi/projects/{}/wrappers/{}/launch'.format(project, pyradiomicsWrapperId), params={"session": session})
-if not r.ok:
-    print("ERROR: Could not get container launch UI.")
-    sys.exit(r.text)
+die_if(not r.ok, message="ERROR: Could not get container launch UI.", exit=r.text)
 
 try:
     launchUi = r.json()
 except:
-    print("ERROR: Improper response from /projects/{}/wrappers/{}/launch?session={}".format(project, pyradiomicsWrapperId, session))
-    sys.exit(r.text)
+    die(message="ERROR: Improper response from /projects/{}/wrappers/{}/launch?session={}".format(project, pyradiomicsWrapperId, session), exit=r.text)
 
 # Do a jsonpath search to find nrrd mask files
 print("Searching launch UI to find mask files.")
 maskFiles = jsonpath(launchUi, '$.input-values[?(@.name == "session")].values[0].children[?(@.name == "mask-scan")].values[0].children[?(@.name == "mask-resource")].values[0].children[?(@.name == "mask-file")].values[*].value')
 
-if maskFiles is False:
-    print("ERROR: No nrrd mask files found in container launch UI for session {}. Do you need to adjust the matcher?".format(session))
-    sys.exit(1)
+die_if(maskFiles is False, message="ERROR: No nrrd mask files found in container launch UI for session {}. Do you need to adjust the matcher?".format(session))
 
 print("Found mask files: [{}].".format(", ".join(maskFiles)))
 
@@ -98,9 +94,6 @@ print("Found mask files: [{}].".format(", ".join(maskFiles)))
 print("\nBulk launching containers for each of the mask files.")
 launchArgs = [{"session": session, "mask-file": maskFile} for maskFile in maskFiles]
 r = s.post(host + '/xapi/projects/{}/wrappers/{}/bulklaunch'.format(project, pyradiomicsWrapperId), json=launchArgs)
-
-if not r.ok:
-    print("ERROR: Launching failed.")
-    sys.exit(r.text)
+die_if(not r.ok, message="ERROR: Launching failed.", exit=r.text)
 
 print("Success!")
