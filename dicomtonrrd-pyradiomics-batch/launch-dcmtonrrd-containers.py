@@ -97,20 +97,23 @@ except:
 
 # Do a jsonpath search to find scan
 print("Searching session json to find scans.")
-imageScans = jsonpath(sessionJson, '$.items[0].children[?(@.field == "scans/scan")].items[*].data_fields[?(@.modality != "RTSTRUCT")].ID')
-rtstructScans = jsonpath(sessionJson, '$.items[0].children[?(@.field == "scans/scan")].items[*].data_fields[?(@.modality == "RTSTRUCT")].ID')
+imageScans = jsonpath(sessionJson, '$.items[0].children[?(@.field == "scans/scan")].items[?(@.data_fields.modality != "RTSTRUCT")].data_fields.ID')
+rtstructScans = jsonpath(sessionJson, '$.items[0].children[?(@.field == "scans/scan")].items[?(@.data_fields.modality == "RTSTRUCT")].data_fields.ID')
+
+die_if(imageScans == False, message='No image scans found.', exit=sessionJson)
+die_if(rtstructScans == False, message='No rtstruct scans found.', exit=sessionJson)
 
 print("Found image scans: [{}].".format(", ".join(imageScans)))
 print("Found rtstruct scans: [{}].".format(", ".join(rtstructScans)))
 
 # Launch container with each of the scans
 print("\nBulk launching containers for each of the image scans.")
-launchArgs = [{"scan": scan} for scan in imageScans]
+launchArgs = [{"scan": '/experiments/' + session + '/scans/' + scan} for scan in imageScans]
 r = s.post(host + '/xapi/projects/{}/wrappers/{}/bulklaunch'.format(project, dcmtonrrdWrapperId), json=launchArgs)
 die_if(not r.ok, message="ERROR: Launching failed.", exit=r.text)
 
 print("\nBulk launching containers for each of the rtstruct scans.")
-launchArgs = [{"scan": scan} for scan in rtstructScans]
+launchArgs = [{"scan": '/experiments/' + session + '/scans/' + scan} for scan in rtstructScans]
 r = s.post(host + '/xapi/projects/{}/wrappers/{}/bulklaunch'.format(project, dcmtonrrdRtstructWrapperId), json=launchArgs)
 die_if(not r.ok, message="ERROR: Launching failed.", exit=r.text)
 
