@@ -2,10 +2,10 @@
     "name": "pyradiomics",
     "description": "Runs pyradiomics on lesion masks",
     "type": "docker",
-    "version": "2.4",
+    "version": "2.6",
     "schema-version": "1.0",
-    "image": "xnat/pyradiomics:2.4",
-    "command-line": "run.sh /input/scan/#SCAN_FILE# /input/mask/#MASK_FILE# /output #PROJECT# #SESSION_ID# #SESSION_LABEL# #SCAN_ID# #MASK_FILE_URI#",
+    "image": "xnat/pyradiomics:2.5",
+    "command-line": "run.sh /input/scan/#SCAN_FILE# '/input/mask/#MASK_FILE#' /output #PROJECT# #SESSION_ID# '#SESSION_LABEL#' #SCAN_ID# '#MASK_FILE_URI#'",
     "mounts": [
         {
             "name": "scan-in",
