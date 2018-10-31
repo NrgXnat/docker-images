@@ -36,26 +36,47 @@ from lxml.builder import ElementMaker
 # order of this data structure.
 assessorNameMapAsTuples = (
     (
-        ("general_info", "generalInfo"),
+        ("diagnostics", "diagnostics"),
         (
             ("Image", "scanId"),
             ("Mask", "maskFile"),
+            ("Versions_PyRadiomics",    "versions_PyRadiomics"),
+            ("Versions_Numpy",          "versions_Numpy"),
+            ("Versions_SimpleITK",      "versions_SimpleITK"),
+            ("Versions_PyWavelet",      "versions_PyWavelet"),
+            ("Versions_Python",         "versions_Python"),
+            ("Configuration_Settings",          "configuration_Settings"),
+            ("Configuration_EnabledImageTypes", "configuration_EnabledImageTypes"),
+            ("Image-original_Hash",     "imageOriginal_Hash"),
+            ("Image-original_Spacing",  "imageOriginal_Spacing"),
+            ("Image-original_Size",     "imageOriginal_Size"),
+            ("Image-original_Mean",     "imageOriginal_Mean"),
+            ("Image-original_Minimum",  "imageOriginal_Minimum"),
+            ("Image-original_Maximum",  "imageOriginal_Maximum"),
+            ("Mask-original_Hash",              "maskOriginal_Hash"),
+            ("Mask-original_Spacing",           "maskOriginal_Spacing"),
+            ("Mask-original_Size",              "maskOriginal_Size"),
+            ("Mask-original_BoundingBox",       "maskOriginal_BoundingBox"),
+            ("Mask-original_VoxelNum",          "maskOriginal_VoxelNum"),
+            ("Mask-original_VolumeNum",         "maskOriginal_VolumeNum"),
+            ("Mask-original_CenterOfMassInd",   "maskOriginal_CenterOfMassInd"),
+            ("Mask-original_CenterOfMass",      "maskOriginal_CenterOfMass"),
+            ("Image-interpolated_Spacing",  "imageInterpolated_Spacing"),
+            ("Image-interpolated_Size",     "imageInterpolated_Size"),
+            ("Image-interpolated_Mean",     "imageInterpolated_Mean"),
+            ("Image-interpolated_Minimum",  "imageInterpolated_Minimum"),
+            ("Image-interpolated_Maximum",  "imageInterpolated_Maximum"),
+            ("Mask-interpolated_Spacing",       "maskInterpolated_Spacing"),
+            ("Mask-interpolated_Size",          "maskInterpolated_Size"),
+            ("Mask-interpolated_BoundingBox",   "maskInterpolated_BoundingBox"),
+            ("Mask-interpolated_VoxelNum",      "maskInterpolated_VoxelNum"),
+            ("Mask-interpolated_VolumeNum",     "maskInterpolated_VolumeNum"),
+            ("Mask-interpolated_CenterOfMassI", "maskInterpolated_CenterOfMassI"),
+            ("Mask-interpolated_CenterOfMass",  "maskInterpolated_CenterOfMass"),
+            ("Mask-interpolated_Mean",          "maskInterpolated_Mean"),
+            ("Mask-interpolated_Minimum",       "maskInterpolated_Minimum"),
+            ("Mask-interpolated_Maximum",       "maskInterpolated_Maximum"),
             ("Label", "label"),
-            ("", "filter"),
-            ("BoundingBox", "boundingBox"),
-            ("CenterOfMassIndex", "centerOfMassIndex"),
-            ("CenterOfMass", "centerOfMass"),
-            ("EnabledImageTypes", "enabledImageTypes"),
-            ("GeneralSettings", "generalSettings"),
-            ("ImageHash", "imageHash"),
-            ("ImageSpacing", "imageSpacing"),
-            ("MaskHash", "maskHash"),
-            ("NumpyVersion", "numpyVersion"),
-            ("PyWaveletVersion", "pyWaveletVersion"),
-            ("SimpleITKVersion", "simpleITKVersion"),
-            ("Version", "pyradiomicsVersion"),
-            ("VolumeNum", "volumeNum"),
-            ("VoxelNum", "voxelNum")
         )
     ),
     (
@@ -85,20 +106,18 @@ assessorNameMapAsTuples = (
     (
         ("shape", "shape"),
         (
-            ("Volume", "volume"),
+            ("VoxelVolume", "voxelVolume"),
+            ("MeshVolume", "meshVolume"),
             ("SurfaceArea", "surfaceArea"),
             ("SurfaceVolumeRatio", "surfaceVolumeRatio"),
             ("Sphericity", "sphericity"),
-            ("Compactness1", "compactness1"),
-            ("Compactness2", "compactness2"),
-            ("SphericalDisproportion", "sphericalDisproportion"),
             ("Maximum3DDiameter", "maximum3DDiameter"),
             ("Maximum2DDiameterSlice", "maximum2DDiameterSlice"),
             ("Maximum2DDiameterColumn", "maximum2DDiameterColumn"),
             ("Maximum2DDiameterRow", "maximum2DDiameterRow"),
-            ("MajorAxis", "majorAxis"),
-            ("MinorAxis", "minorAxis"),
-            ("LeastAxis", "leastAxis"),
+            ("MajorAxisLength", "majorAxisLength"),
+            ("MinorAxisLength", "minorAxisLength"),
+            ("LeastAxisLength", "leastAxisLength"),
             ("Elongation", "elongation"),
             ("Flatness", "flatness")
         )
@@ -126,25 +145,8 @@ assessorNameMapAsTuples = (
             ("Idn", "inverseDifferenceNormalized"),
             ("InverseVariance", "inverseVariance"),
             ("MaximumProbability", "maximumProbability"),
-            ("SumAverage", "sumAverage"),
             ("SumEntropy", "sumEntropy"),
             ("SumSquares", "sumSquares"),
-            ("SmallAreaEmphasis", "smallAreaEmphasis"),
-            ("LargeAreaEmphasis", "largeAreaEmphasis"),
-            ("GrayLevelNonUniformity", "grayLevelNonUniformity"),
-            ("GrayLevelNonUniformityNormalized", "grayLevelNonUniformityNormalized"),
-            ("SizeZoneNonUniformity", "sizeZoneNonUniformity"),
-            ("SizeZoneNonUniformityNormalized", "sizeZoneNonUniformityNormalized"),
-            ("ZonePercentage", "zonePercentage"),
-            ("GrayLevelVariance", "grayLevelVariance"),
-            ("ZoneVariance", "zoneVariance"),
-            ("ZoneEntropy", "zoneEntropy"),
-            ("LowGrayLevelZoneEmphasis", "lowGrayLevelZoneEmphasis"),
-            ("HighGrayLevelZoneEmphasis", "highGrayLevelZoneEmphasis"),
-            ("SmallAreaLowGrayLevelEmphasis", "smallAreaLowGrayLevelEmphasis"),
-            ("SmallAreaHighGrayLevelEmphasis", "smallAreaHighGrayLevelEmphasis"),
-            ("LargeAreaLowGrayLevelEmphasis", "largeAreaLowGrayLevelEmphasis"),
-            ("LargeAreaHighGrayLevelEmphasis", "largeAreaHighGrayLevelEmphasis")
         )
     ),
     (
@@ -303,8 +305,9 @@ for row in reader:
         #       general_info_<stat>. We want those too.
 
         filterName, model, csvStatName = col.split('_')
-        if filterName == "general" and model == "info":
-            model = "general_info"
+        if filterName == "diagnostics":
+            csvStatName = model + '_' + csvStatName
+            model = "diagnostics"
         elif filterName != "original":
             continue
 
