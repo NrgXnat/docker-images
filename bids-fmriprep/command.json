@@ -1,0 +1,75 @@
+{
+    "name": "bids-fmriprep",
+    "description": "Runs the fMRIprep BIDS App",
+    "version": "1.1",
+    "schema-version": "1.0",
+    "type": "docker",
+    "command-line": "fmriprep /input /output participant --fs-license-file /tmp/#LICENSE_FILE#",
+    "override-entrypoint": true,
+    "image": "poldracklab/fmriprep:0.10.0",
+    "mounts": [
+        {
+            "name": "in",
+            "writable": "false",
+            "path": "/input"
+        },
+        {
+            "name": "out",
+            "writable": "true",
+            "path": "/output"
+        },
+        {
+            "name": "tmp",
+            "writable": "false",
+            "path": "/tmp"
+        }
+    ],
+    "inputs": [
+        {
+            "name": "license_path",
+            "description": "Full path to FreeSurfer license file on server running container.",
+            "type": "string",
+            "required": true,
+            "replacement-key": "#LICENSE_PATH#"
+        },
+        {
+            "name": "license",
+            "description": "FreeSurfer license file name.",
+            "type": "string",
+            "required": true,
+            "default-value": "license.txt",
+            "replacement-key": "#LICENSE_FILE#"
+        }
+    ],
+    "outputs": [{
+        "name": "output",
+        "description": "Output Prep files",
+        "mount": "out",
+        "required": true
+    }],
+    "xnat": [{
+        "name": "bids-fmriprep-session",
+        "description": "Run the fMRIprep BIDS App with a session mounted",
+        "contexts": ["xnat:imageSessionData"],
+        "external-inputs": [
+            {
+                "name": "session",
+                "description": "Input session",
+                "type": "Session",
+                "required": true,
+                "provides-files-for-command-mount": "in",
+                "via-setup-command": "xnat/xnat2bids-setup:1.0:xnat2bids",
+                "load-children": false
+            },
+            {}
+        ],
+        "derived-inputs": [],
+        "output-handlers": [{
+            "name": "output-resource",
+            "accepts-command-output": "output",
+            "as-a-child-of-wrapper-input": "session",
+            "type": "Resource",
+            "label": "fmriprep"
+        }]
+    }]
+}
