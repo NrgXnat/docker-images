@@ -1,0 +1,50 @@
+{
+    "name": "dcm2niix-subjects-batch",
+    "description": "Launch dcm2niix containers on a batch of subjects",
+    "type": "docker",
+    "version": "1.0",
+    "schema-version": "1.0",
+    "image": "xnat/batch-launch:1.0",
+    "command-line": "batch-launch.py subjects $XNAT_HOST $XNAT_USER $XNAT_PASS dcm2niix-sessions-batch-subject #PROJECT# #PROJECT#",
+    "override-entrypoint": true,
+    "mounts": [],
+    "inputs": [
+        {
+            "name": "PROJECT",
+            "user-settable": false,
+            "required": true
+        }
+    ],
+    "outputs": [],
+    "xnat": [
+        {
+            "name": "dcm2niix-subjects-batch-project",
+            "label": "dcm2niix batch",
+            "description": "Launch dcm2niix-sessions-batch-subject on all subjects in a project",
+            "contexts": [
+                "xnat:projectData"
+            ],
+            "external-inputs": [
+                {
+                    "name": "project",
+                    "description": "Input project",
+                    "type": "Project",
+                    "required": true,
+                    "load-children": false
+                }
+            ],
+            "derived-inputs": [
+                {
+                    "name": "project-id",
+                    "type": "string",
+                    "derived-from-wrapper-input": "project",
+                    "derived-from-xnat-object-property": "id",
+                    "provides-value-for-command-input": "PROJECT",
+                    "user-settable": false,
+                    "required": true
+                }
+            ],
+            "output-handlers": []
+        }
+    ]
+}

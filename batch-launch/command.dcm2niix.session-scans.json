@@ -1,0 +1,64 @@
+{
+    "name": "dcm2niix-scans-batch",
+    "description": "Launch dcm2niix containers on a batch of scans",
+    "type": "docker",
+    "version": "1.0",
+    "schema-version": "1.0",
+    "image": "xnat/batch-launch:1.0",
+    "command-line": "batch-launch.py scans $XNAT_HOST $XNAT_USER $XNAT_PASS dcm2niix-scan #SESSION_ID# #PROJECT#",
+    "override-entrypoint": true,
+    "mounts": [],
+    "inputs": [
+        {
+            "name": "PROJECT",
+            "user-settable": false,
+            "required": true
+        },
+        {
+            "name": "SESSION_ID",
+            "user-settable": false,
+            "required": true
+        }
+    ],
+    "outputs": [],
+    "xnat": [
+        {
+            "name": "dcm2niix-scans-batch-session",
+            "label": "dcm2niix batch",
+            "description": "Launch dcm2niix-scan on all scans in a session",
+            "contexts": [
+                "xnat:imageSessionData"
+            ],
+            "external-inputs": [
+                {
+                    "name": "session",
+                    "description": "Input session",
+                    "type": "Session",
+                    "required": true,
+                    "load-children": false
+                }
+            ],
+            "derived-inputs": [
+                {
+                    "name": "project",
+                    "type": "string",
+                    "derived-from-wrapper-input": "session",
+                    "derived-from-xnat-object-property": "project-id",
+                    "provides-value-for-command-input": "PROJECT",
+                    "user-settable": false,
+                    "required": true
+                },
+                {
+                    "name": "session-id",
+                    "type": "string",
+                    "derived-from-wrapper-input": "session",
+                    "derived-from-xnat-object-property": "id",
+                    "provides-value-for-command-input": "SESSION_ID",
+                    "user-settable": false,
+                    "required": true
+                }
+            ],
+            "output-handlers": []
+        }
+    ]
+}

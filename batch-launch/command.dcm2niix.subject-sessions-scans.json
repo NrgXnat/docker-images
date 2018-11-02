@@ -1,0 +1,64 @@
+{
+    "name": "dcm2niix-sessions-batch",
+    "description": "Launch dcm2niix containers on a batch of sessions",
+    "type": "docker",
+    "version": "1.0",
+    "schema-version": "1.0",
+    "image": "xnat/batch-launch:1.0",
+    "command-line": "batch-launch.py sessions $XNAT_HOST $XNAT_USER $XNAT_PASS dcm2niix-scans-batch-session #SUBJECT_ID# #PROJECT#",
+    "override-entrypoint": true,
+    "mounts": [],
+    "inputs": [
+        {
+            "name": "PROJECT",
+            "user-settable": false,
+            "required": true
+        },
+        {
+            "name": "SUBJECT_ID",
+            "user-settable": false,
+            "required": true
+        }
+    ],
+    "outputs": [],
+    "xnat": [
+        {
+            "name": "dcm2niix-sessions-batch-subject",
+            "label": "dcm2niix batch",
+            "description": "Launch dcm2niix-scans-batch-session on all sessions in a subject",
+            "contexts": [
+                "xnat:subjectData"
+            ],
+            "external-inputs": [
+                {
+                    "name": "subject",
+                    "description": "Input subject",
+                    "type": "Subject",
+                    "required": true,
+                    "load-children": false
+                }
+            ],
+            "derived-inputs": [
+                {
+                    "name": "project",
+                    "type": "string",
+                    "derived-from-wrapper-input": "subject",
+                    "derived-from-xnat-object-property": "project-id",
+                    "provides-value-for-command-input": "PROJECT",
+                    "user-settable": false,
+                    "required": true
+                },
+                {
+                    "name": "subject-id",
+                    "type": "string",
+                    "derived-from-wrapper-input": "subject",
+                    "derived-from-xnat-object-property": "id",
+                    "provides-value-for-command-input": "SUBJECT_ID",
+                    "user-settable": false,
+                    "required": true
+                }
+            ],
+            "output-handlers": []
+        }
+    ]
+}
