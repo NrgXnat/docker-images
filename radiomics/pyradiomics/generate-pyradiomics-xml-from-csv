@@ -45,7 +45,7 @@ assessorNameMapAsTuples = (
             ("Versions_SimpleITK",      "versions_SimpleITK"),
             ("Versions_PyWavelet",      "versions_PyWavelet"),
             ("Versions_Python",         "versions_Python"),
-            ("Configuration_Settings",          "configuration_Settings"),
+            #("Configuration_Settings",          "configuration_Settings"),
             ("Configuration_EnabledImageTypes", "configuration_EnabledImageTypes"),
             ("Image-original_Hash",     "imageOriginal_Hash"),
             ("Image-original_Spacing",  "imageOriginal_Spacing"),
@@ -76,7 +76,7 @@ assessorNameMapAsTuples = (
             ("Mask-interpolated_Mean",          "maskInterpolated_Mean"),
             ("Mask-interpolated_Minimum",       "maskInterpolated_Minimum"),
             ("Mask-interpolated_Maximum",       "maskInterpolated_Maximum"),
-            ("Label", "label"),
+ #           ("Label", "label"),
         )
     ),
     (
@@ -96,7 +96,7 @@ assessorNameMapAsTuples = (
             ("MeanAbsoluteDeviation", "meanAbsoluteDeviation"),
             ("RobustMeanAbsoluteDeviation", "robustMeanAbsoluteDeviation"),
             ("RootMeanSquared", "rootMeanSquared"),
-            ("StandardDeviation", "standardDeviation"),
+#            ("StandardDeviation", "standardDeviation"),
             ("Skewness", "skewness"),
             ("Kurtosis", "kurtosis"),
             ("Variance", "variance"),
@@ -277,18 +277,18 @@ for row in reader:
         'maskFile': maskFileUri,
         'filter': 'original'
     }
-    # general_info_cols = ['Image', 'Mask']
+    # diagnostics_cols = ['Image', 'Mask']
 
-    # # The "general_info" columns
-    # for col, value in row.filter(like="general_info_").dropna().iteritems():
-    #     general_info_cols.append(col)
+    # # The "diagnostics" columns
+    # for col, value in row.filter(like="diagnostics_").dropna().iteritems():
+    #     diagnostics_cols.append(col)
     #     pyradiomicsPropertyName = col.lstrip('general_info_')
-    #     assessorPropertyName = pyradiomicsCsvStatNamesToAssessorNames['general_info'].get(pyradiomicsPropertyName)
-    #     generalInfo[assessorPropertyName] = value
+    #     assessorPropertyName = pyradiomicsCsvStatNamesToAssessorNames['diagnostics'].get(pyradiomicsPropertyName)
+    #     diagnostics[assessorPropertyName] = value
 
     # Now we go through all the other columns and match filter type and stat type
     # We build a big nested dict structure to hold all the stats
-    measuresForFilter = {"generalInfo": generalInfo}
+    measuresForFilter = {"diagnostics": generalInfo}
     for col, value in row.items():
         if value == None:
             continue
@@ -300,9 +300,9 @@ for row in reader:
         # We want to pick up two distinct cases:
         #  1. When filter == "original". All other filters are ignored
         #       until and unless we decide to start storing others as well.
-        #  2. If the column is a general info column, it does not follow the
+        #  2. If the column is a diagnostics column, it does not follow the
         #       same <filter>_<model>_<stat> pattern, but is instead called
-        #       general_info_<stat>. We want those too.
+        #       diagnostics_<stat>. We want those too.
 
         filterName, model, csvStatName = col.split('_')
         if filterName == "diagnostics":

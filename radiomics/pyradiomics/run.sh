@@ -30,6 +30,14 @@ echo "Session label: ${session_label}"
 echo "Scan ID: ${scan_id}"
 echo "Mask File URI: ${mask_file_uri}"
 
+if [[ $mask = *" "* ]]
+then
+	echo "Mask name: \"${mask}\" may not contain spaces."
+	echo "Halting execution."
+	exit 1
+fi
+ 
+
 # # Begin constructing CSV batch file
 # batch_file="/tmp/batch.csv"
 # echo "Image,Mask,Label" > ${batch_file}
