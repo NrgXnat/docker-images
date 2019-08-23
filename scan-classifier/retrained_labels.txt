@@ -1,0 +1,12 @@
+DWI
+Bold
+SWI
+ASL
+Fieldmap
+T1w
+Flair
+TSE
+T2star
+T2w
+FLASH
+minIP

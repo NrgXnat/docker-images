@@ -1,0 +1,124 @@
+{
+  "name": "brain-scan-type-classifier-v2",
+  "label": null,
+  "description": "Runs brain scan type classifier on session's scans.",
+  "version": "1.0",
+  "schema-version": "1.0",
+  "info-url": null,
+  "image": "radiologicskate/brain-scan-type-classifier",
+  "type": "docker",
+  "index": null,
+  "working-directory": "/run",
+  "command-line": "python Classifier_wholeSession.py /input /working #SESSION_ID# #SCANS#",
+  "mounts": [
+    {
+      "name": "input",
+      "writable": false,
+      "path": "/input"
+    },
+    {
+      "name": "work",
+      "writable": true,
+      "path": "/working"
+    }
+  ],
+  "environment-variables": {},
+  "ports": {},
+  "inputs": [
+    {
+      "name": "SESSION_ID",
+      "description": "Session id",
+      "type": "string",
+      "matcher": null,
+      "default-value": null,
+      "required": true,
+      "replacement-key": null,
+      "command-line-flag": null,
+      "command-line-separator": null,
+      "true-value": null,
+      "false-value": null
+    },
+    {
+      "name": "SCANS",
+      "description": "Scan ids",
+      "type": "string",
+      "matcher": null,
+      "default-value": null,
+      "required": true,
+      "replacement-key": null,
+      "command-line-flag": null,
+      "command-line-separator": null,
+      "true-value": null,
+      "false-value": null,
+      "multiple-delimiter": "quoted-space"
+    }
+  ],
+  "xnat": [
+    {
+      "name": "scan-classifier",
+      "label": "Run brain scan type classifier on a session",
+      "description": "Run brain scan type classifier with a session mounted",
+      "contexts": [
+        "xnat:imageSessionData"
+      ],
+      "external-inputs": [
+        {
+          "name": "session",
+          "label": "Session",
+          "description": "Input session",
+          "type": "Session",
+          "matcher": null,
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "sensitive": null,
+          "provides-value-for-command-input": null,
+          "provides-files-for-command-mount": "input",
+          "via-setup-command": null,
+          "user-settable": null,
+          "load-children": true
+        }
+      ],
+      "derived-inputs": [
+        {
+          "name": "session-id",
+          "label": "Session ID",
+          "description": null,
+          "type": "string",
+          "matcher": null,
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "sensitive": null,
+          "provides-value-for-command-input": "SESSION_ID",
+          "provides-files-for-command-mount": null,
+          "user-settable": false,
+          "load-children": true,
+          "derived-from-wrapper-input": "session",
+          "derived-from-xnat-object-property": "id",
+          "via-setup-command": null,
+          "multiple": false
+        },
+        {
+          "name": "scan",
+          "label": "Scan",
+          "description": null,
+          "type": "Scan",
+          "matcher": "'DICOM' in @.resources[*].label || 'secondary' in @.resources[*].label",
+          "default-value": null,
+          "required": false,
+          "replacement-key": null,
+          "sensitive": null,
+          "provides-value-for-command-input": "SCANS",
+          "provides-files-for-command-mount": null,
+          "user-settable": true,
+          "load-children": true,
+          "derived-from-wrapper-input": "session",
+          "derived-from-xnat-object-property": "id",
+          "via-setup-command": null,
+          "multiple": true
+        }
+      ]
+    }
+  ]
+}
