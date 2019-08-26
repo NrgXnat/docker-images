@@ -104,7 +104,7 @@
           "label": "Scan",
           "description": null,
           "type": "Scan",
-          "matcher": "'DICOM' in @.resources[*].label || 'secondary' in @.resources[*].label",
+          "matcher": "('DICOM' in @.resources[*].label || 'secondary' in @.resources[*].label)",
           "default-value": null,
           "required": false,
           "replacement-key": null,
