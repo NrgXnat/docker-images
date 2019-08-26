@@ -1,30 +1,32 @@
 import gdcm
 import sys
+import shutil
 
 def decompress(inFile, outFile):
-  print("Decompressing %s to %s" % (inFile, outFile))
-  reader = gdcm.ImageReader()
-  reader.SetFileName( inFile )
+  print("Extract (or copy) %s to %s" % (inFile, outFile))
+  try:
+    reader = gdcm.ImageReader()
+    reader.SetFileName( inFile )
+    if not reader.Read():
+      raise Exception("Unable to read %s with gdcm.ImageReader()" % inFile)
 
-  if not reader.Read():
-    sys.stderr.write("Unable to read %s" % inFile)
-    sys.exit(1)
+    change = gdcm.ImageChangeTransferSyntax()
+    change.SetTransferSyntax( gdcm.TransferSyntax(gdcm.TransferSyntax.ImplicitVRLittleEndian) )
+    change.SetInput( reader.GetImage() )
+    if not change.Change():
+      raise Exception("Unable to change %s with gdcm.ImageChangeTransferSyntax()" % inFile)
 
-  change = gdcm.ImageChangeTransferSyntax()
-  change.SetTransferSyntax( gdcm.TransferSyntax(gdcm.TransferSyntax.ImplicitVRLittleEndian) )
-  change.SetInput( reader.GetImage() )
-  if not change.Change():
-    sys.stderr.write("Unable to change %s" % inFile)
-    sys.exit(1)
+    writer = gdcm.ImageWriter()
+    writer.SetFileName( outFile )
+    writer.SetFile( reader.GetFile() )
+    writer.SetImage( change.GetOutput() )
+    if not writer.Write():
+      raise Exception("Unable to write %s with gdcm.ImageWriter()" % outFile)
 
-  writer = gdcm.ImageWriter()
-  writer.SetFileName( outFile )
-  writer.SetFile( reader.GetFile() )
-  writer.SetImage( change.GetOutput() )
-
-  if not writer.Write():
-    sys.stderr.write("Unable to write %s" % outFile)
-    sys.exit(1)
+  except Exception as e:
+    sys.stderr.write("%s, copying instead" % str(e))
+    if inFile is not outFile:
+        shutil.copyfile(inFile, outFile)
 
 if __name__ == "__main__":
   inFile = sys.argv[1] # input filename
