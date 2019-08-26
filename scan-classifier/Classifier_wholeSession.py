@@ -2,7 +2,6 @@
 
 import os, sys, errno, shutil, uuid
 import math
-import scipy.misc
 import glob
 import re
 import requests
@@ -14,16 +13,14 @@ import label_probability
 
 catalogXmlRegex = re.compile(r'.*\.xml$')
 
-def convert_to_jpg(selDicomDecompr, jpgFile):
-    print("Converting %s to %s" % (selDicomDecompr, jpgFile))
-    image = dicom.read_file(selDicomDecompr).pixel_array
-    scipy.misc.toimage(image, high = 255, low = 0, cmin=0.0, cmax=4096).save(jpgFile)
-
-
 def get_dicom_for_scanid(sessionDir, scanId):
     print("Locating DICOM files for scan %s" % scanId)
     for dirn in ["SCANS", "RAW"]:
-        for dcm in glob.iglob(os.path.join(sessionDir, dirn, scanId, "**"), recursive=True):
+        scanDir = os.path.join(sessionDir, dirn, scanId)
+        print("Checking %s" % scanDir)
+        if not os.path.isdir(scanDir):
+            continue
+        for dcm in glob.iglob(os.path.join(scanDir, "**"), recursive=True):
             if os.path.isdir(dcm):
                 continue
             try:
@@ -38,18 +35,19 @@ def get_dicom_for_scanid(sessionDir, scanId):
             except (dicom.errors.InvalidDicomError, IsADirectoryError):
                 # Skip, not a dicom
                 pass
+    #TODO add handling for DICOM files that are not stored in a directory matching their XNAT scanId
     raise Exception("No DICOM files found for %s" % scanId)
     
 
 def run_classifier(sessionDir, rawDir, jpgDir, sessionId, scanId, xnatSession):
     print("Classifying scan %s" % scanId)
-    # List of all DICOM files for scanId (excludes catalog xml)
+    # Select DICOM file for scanId (70% thru the brain)
     (selDicom, nDicomFiles) = get_dicom_for_scanid(sessionDir, scanId)
+    # Decompress it (just a copy if not compressed)
     selDicomDecompr = os.path.join(rawDir, os.path.basename(selDicom))
     DecompressDCM.decompress(selDicom, selDicomDecompr)
-    jpgFile = os.path.join(jpgDir, os.path.splitext(os.path.basename(selDicomDecompr))[0] + '.jpg')
-    convert_to_jpg(selDicomDecompr, jpgFile)
-    label = label_probability.classify(selDicomDecompr, jpgFile, scanId, nDicomFiles)
+    # Classify it
+    label = label_probability.classify(selDicomDecompr, jpgDir, scanId, nDicomFiles)
     print("Scan classification for %s scan %s is '%s'" % (sessionId, scanId, label))
     # Change value of series_class in XNAT
     url = ("/data/experiments/%s/scans/%s?xsiType=xnat:mrScanData&xnat:imageScanData/series_class=%s" % 
@@ -96,7 +94,7 @@ if __name__ == '__main__':
             run_classifier(sessionDir, rawDir, jpgDir, sessionId, scanId, xnatSession)
         except Exception as e:
             nFail += 1
-            sys.stderr.write("Error attempting to classify %s %s: %s" % (sessionId, scanId, str(e)))
+            sys.stderr.write("Error attempting to classify %s %s: %s\n" % (sessionId, scanId, str(e)))
 
     # Cleanup
     xnatSession.close_httpsession()

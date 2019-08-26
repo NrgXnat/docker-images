@@ -1,5 +1,6 @@
 import os, sys, errno
 import math
+import scipy.misc
 import tensorflow as tf
 import re
 import glob
@@ -8,12 +9,18 @@ from itertools import repeat, chain
 import warnings
 import pydicom as dicom
 
-def predictFromJpg(jpgFile):
+def predictFromPixelData(image, basename, jpgDir):
+    # Save as jpg
+    jpgFile = os.path.join(jpgDir, basename + ".jpg")
+    print("Converting dcm to %s" % jpgFile)
+    scipy.misc.toimage(image, high = 255, low = 0, cmin=0.0, cmax=4096).save(jpgFile)
+
     # Unpersists graph from file
     with tf.gfile.FastGFile("./retrained_graph.pb", 'rb') as f:
         graph_def = tf.GraphDef()
         graph_def.ParseFromString(f.read())
         tf.import_graph_def(graph_def, name='')
+
     # Read in the image_data
     jpgFileData = tf.gfile.FastGFile(jpgFile, 'rb').read()
     with tf.Session() as sess:
@@ -143,9 +150,12 @@ def getContrastLabel(ds):
 
     return contrast
 
-def classify(dcmFile, jpgFile, scanId, nDicomFiles):
-    #Get Dicom metadata and relevant features
+
+
+def classify(dcmFile, jpgDir, scanId, nDicomFiles):
+    # Read DICOM
     ds = dicom.read_file(dcmFile)
+
     try:
         modality=str(ds.Modality).lower()
     except:
@@ -163,7 +173,7 @@ def classify(dcmFile, jpgFile, scanId, nDicomFiles):
     
         if "primary" in imageType and not "derived" in imageType:
             # classification based on pixel info
-            labelP = predictFromJpg(jpgFile)
+            labelP = predictFromPixelData(ds.pixel_array, os.path.splitext(os.path.basename(dcmFile))[0], jpgDir)
             # classification based on dicom header
             labelH = predictFromDcmHeader(ds, nDicomFiles, len(labelP) == 0)
             # Combine
