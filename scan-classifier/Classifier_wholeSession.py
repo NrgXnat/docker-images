@@ -112,9 +112,9 @@ if __name__ == '__main__':
 
     # Make working dirs
     rawDir = os.path.join(workingDir, 'RAW')
-    os.makedirs(rawDir)
+    os.makedirs(rawDir, exist_ok = True)
     jpgDir = os.path.join(workingDir, 'JPG' )
-    os.makedirs(jpgDir)
+    os.makedirs(jpgDir, exist_ok = True)
 
     # Prep XNAT session
     XNAT_HOST = os.environ['XNAT_HOST']
