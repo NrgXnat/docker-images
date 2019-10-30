@@ -1,0 +1,242 @@
+{
+  "name": "perimeter-converter",
+  "label": "Perimeter u16 Converter",
+  "description": "Convert u16 into NIFTI and TIFF",
+  "version": "1.0",
+  "schema-version": "1.0",
+  "image": "radiologicskate/perimeter:latest",
+  "type": "docker",
+  "command-line": "python /usr/local/bin/run.py --input /input --outputTiff /output/tiff --outputNifti /output/nifti --sessionId #sessionId# --scanId #scanId# --host $XNAT_HOST --user $XNAT_USER --passwd $XNAT_PASS",
+  "override-entrypoint": true,
+  "mounts": [
+    {
+      "name": "input",
+      "writable": false,
+      "path": "/input"
+    },
+    {
+      "name": "outputTiffMount",
+      "writable": true,
+      "path": "/output/tiff"
+    },
+    {
+      "name": "outputNiftiMount",
+      "writable": true,
+      "path": "/output/nifti"
+    }
+  ],
+  "environment-variables": {},
+  "ports": {},
+  "inputs": [
+    {
+      "name": "inputResource",
+      "label": "u16 Directory",
+      "description": "The directory containing u16 files",
+      "type": "string",
+      "matcher": null,
+      "default-value": null,
+      "required": true,
+      "replacement-key": null,
+      "sensitive": null,
+      "command-line-flag": null,
+      "command-line-separator": null,
+      "true-value": null,
+      "false-value": null,
+      "select-values": [],
+      "multiple-delimiter": null
+    },
+    {
+      "name": "tiffResource",
+      "label": "TIFF output directory",
+      "description": "The directory for TIFF upload",
+      "type": "string",
+      "matcher": null,
+      "default-value": "TIFF",
+      "required": true,
+      "replacement-key": null,
+      "sensitive": null,
+      "command-line-flag": null,
+      "command-line-separator": null,
+      "true-value": null,
+      "false-value": null,
+      "select-values": [],
+      "multiple-delimiter": null
+    },
+    {
+      "name": "niftiResource",
+      "label": "NIFTI output directory",
+      "description": "The directory for NIFTI upload",
+      "type": "string",
+      "matcher": null,
+      "default-value": "NIFTI",
+      "required": true,
+      "replacement-key": null,
+      "sensitive": null,
+      "command-line-flag": null,
+      "command-line-separator": null,
+      "true-value": null,
+      "false-value": null,
+      "select-values": [],
+      "multiple-delimiter": null
+    },
+    {
+      "name": "sessionId",
+      "label": "sessionId",
+      "description": "sessionId",
+      "type": "string",
+      "matcher": null,
+      "default-value": null,
+      "required": true,
+      "replacement-key": null,
+      "sensitive": null,
+      "command-line-flag": null,
+      "command-line-separator": null,
+      "true-value": null,
+      "false-value": null,
+      "select-values": [],
+      "multiple-delimiter": null
+    },
+    {
+      "name": "scanId",
+      "label": "scanId",
+      "description": "scanId",
+      "type": "string",
+      "matcher": null,
+      "default-value": null,
+      "required": true,
+      "replacement-key": null,
+      "sensitive": null,
+      "command-line-flag": null,
+      "command-line-separator": null,
+      "true-value": null,
+      "false-value": null,
+      "select-values": [],
+      "multiple-delimiter": null
+    }
+  ],
+  "outputs": [
+    {
+      "name": "outputTiff",
+      "description": "TIFF output",
+      "required": true,
+      "mount": "outputTiffMount",
+      "path": null,
+      "glob": null
+    },
+    {
+      "name": "outputNifti",
+      "description": "NIFTI output",
+      "required": true,
+      "mount": "outputNiftiMount",
+      "path": null,
+      "glob": null
+    }
+  ],
+  "xnat": [
+    {
+      "name": "perimeter-converter-scan",
+      "label": "Perimeter u16 Converter",
+      "description": "Convert u16 scan resource into NIFTI and TIFF",
+      "contexts": [
+        "xnat:imageScanData"
+      ],
+      "external-inputs": [
+        {
+          "name": "scan",
+          "label": "Scan",
+          "description": "Scan",
+          "type": "Scan",
+          "matcher": null,
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "sensitive": null,
+          "provides-value-for-command-input": null,
+          "provides-files-for-command-mount": null,
+          "via-setup-command": null,
+          "user-settable": false,
+          "load-children": false
+        }
+      ],
+      "derived-inputs": [
+        {
+          "name": "resource",
+          "label": "u16 directory",
+          "description": "The directory containing the u16 files",
+          "type": "Resource",
+          "matcher": null,
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "sensitive": null,
+          "provides-value-for-command-input": "inputResource",
+          "provides-files-for-command-mount": "input",
+          "user-settable": true,
+          "load-children": true,
+          "derived-from-wrapper-input": "scan",
+          "derived-from-xnat-object-property": null,
+          "via-setup-command": null,
+          "multiple": false
+        },
+        {
+          "name": "session-id",
+          "label": "Session ID",
+          "description": "XNAT Session ID",
+          "type": "string",
+          "matcher": null,
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "sensitive": null,
+          "provides-value-for-command-input": "sessionId",
+          "provides-files-for-command-mount": null,
+          "user-settable": false,
+          "load-children": false,
+          "derived-from-wrapper-input": "scan",
+          "derived-from-xnat-object-property": "session-id",
+          "via-setup-command": null,
+          "multiple": false
+        },
+        {
+          "name": "scan-id",
+          "label": "Scan ID",
+          "description": "XNAT Scan ID",
+          "type": "string",
+          "matcher": null,
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "sensitive": null,
+          "provides-value-for-command-input": "scanId",
+          "provides-files-for-command-mount": null,
+          "user-settable": false,
+          "load-children": false,
+          "derived-from-wrapper-input": "scan",
+          "derived-from-xnat-object-property": "id",
+          "via-setup-command": null,
+          "multiple": false
+        }
+      ],
+      "output-handlers": [
+        {
+          "name": "output-tiff",
+          "accepts-command-output": "outputTiff",
+          "via-wrapup-command": null,
+          "as-a-child-of": "scan",
+          "type": "Resource",
+          "label": "#tiffResource#",
+          "format": null
+        },
+        {
+          "name": "output-nifti",
+          "accepts-command-output": "outputNifti",
+          "via-wrapup-command": null,
+          "as-a-child-of": "scan",
+          "type": "Resource",
+          "label": "#niftiResource#",
+          "format": null
+        }
+      ]
+    }
+  ]
+}

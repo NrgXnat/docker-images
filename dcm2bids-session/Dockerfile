@@ -18,10 +18,6 @@ RUN apt-get update && apt-get install -y \
     mv dcm2niix /usr/local/bin && \
     chmod a+x /usr/local/bin/dcm2niix && \
     rm dcm* && \
-    mkdir /src && cd /src && \
-    hg clone https://bitbucket.org/nrg_customizations/nrg_pipeline_dicomtobids && \
-    cp nrg_pipeline_dicomtobids/scripts/catalog/DicomToBIDS/scripts/dcm2bids_wholeSession.py . && \
-    rm -r nrg_pipeline_dicomtobids && \
     apt-get remove -y \
         curl \
         mercurial \
@@ -29,6 +25,8 @@ RUN apt-get update && apt-get install -y \
         && \
     apt-get autoremove -y && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+COPY nrg_pipeline_dicomtobids/scripts/catalog/DicomToBIDS/scripts/dcm2bids_wholeSession.py /src/dcm2bids_wholeSession.py
 
 WORKDIR /src
 

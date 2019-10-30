@@ -99,6 +99,8 @@ def bidsifySession(sessionDir):
     print("Checking for session structure in " + sessionDir)
 
     sessionBidsJsonPath = os.path.join(sessionDir, 'RESOURCES', 'BIDS', 'dataset_description.json')
+    # Copy over the dataset_description as BIDS requires this
+    shutil.copy2(sessionBidsJsonPath, outputDir)
 
     scansDir = os.path.join(sessionDir, 'SCANS')
     if not os.path.exists(scansDir):

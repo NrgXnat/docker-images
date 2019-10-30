@@ -1,0 +1,152 @@
+{
+    "name": "fake-complex",
+    "description": "Fake complex",
+    "type": "docker",
+    "version": "latest",
+    "schema-version": "1.0",
+    "image": "fakecomplex",
+    "command-line": "run.sh /input/scan/#SCAN_FILE# /output #PROJECT# #SESSION_ID# #SESSION_LABEL# #SCAN_ID#",
+    "mounts": [
+        {
+            "name": "scan-in",
+            "writable": false,
+            "path": "/input/scan"
+        },
+        {
+            "name": "out",
+            "writable": true,
+            "path": "/output"
+        }
+    ],
+    "inputs": [
+        {
+            "name": "SCAN_FILE",
+            "user-settable": false,
+            "required": true
+        },
+        {
+            "name": "PROJECT",
+            "user-settable": false,
+            "required": true
+        },
+        {
+            "name": "SESSION_ID",
+            "user-settable": false,
+            "required": true
+        },
+        {
+            "name": "SESSION_LABEL",
+            "user-settable": false,
+            "required": true
+        },
+        {
+            "name": "SCAN_ID",
+            "user-settable": false,
+            "required": true
+        }
+    ],
+    "outputs": [
+        {
+            "name": "csv",
+            "description": "Pyradiomics stats",
+            "mount": "out",
+            "path": "output.txt",
+            "required": true
+        }
+    ],
+    "xnat": [
+        {
+            "name": "pyradiomics-roi",
+            "label": "Pyradiomics - one ROI Collection layer",
+            "description": "Run pyradiomics using an ROI Collection assessor as the source of the lesion mask",
+            "contexts": [
+                "xnat:imageSessionData"
+            ],
+            "external-inputs": [
+                {
+                    "name": "session",
+                    "description": "Input session",
+                    "type": "Session",
+                    "required": true
+                }
+            ],
+            "derived-inputs": [
+                {
+                    "name": "project",
+                    "type": "string",
+                    "derived-from-wrapper-input": "session",
+                    "derived-from-xnat-object-property": "project-id",
+                    "provides-value-for-command-input": "PROJECT",
+                    "user-settable": false,
+                    "required": true
+                },
+                {
+                    "name": "session-id",
+                    "type": "string",
+                    "derived-from-wrapper-input": "session",
+                    "derived-from-xnat-object-property": "id",
+                    "provides-value-for-command-input": "SESSION_ID",
+                    "user-settable": false,
+                    "required": true
+                },
+                {
+                    "name": "session-label",
+                    "type": "string",
+                    "derived-from-wrapper-input": "session",
+                    "derived-from-xnat-object-property": "label",
+                    "provides-value-for-command-input": "SESSION_LABEL",
+                    "user-settable": false,
+                    "required": true
+                },
+                {
+                    "name": "scan",
+                    "type": "Scan",
+                    "required": true,
+                    "derived-from-wrapper-input": "session",
+                    "matcher": "@.modality =~ /(?!RT).*/ && 'DICOM' in @.resources[*].label"
+                },
+                {
+                    "name": "scan-id",
+                    "type": "string",
+                    "user-settable": false,
+                    "required": true,
+                    "derived-from-wrapper-input": "scan",
+                    "derived-from-xnat-object-property": "id",
+                    "provides-value-for-command-input": "SCAN_ID"
+                },
+                {
+                    "name": "scan-resource",
+                    "type": "Resource",
+                    "required": true,
+                    "derived-from-wrapper-input": "scan",
+                    "matcher": "@.label == 'DICOM'",
+                    "provides-files-for-command-mount": "scan-in"
+                },
+                {
+                    "name": "scan-file",
+                    "type": "File",
+                    "derived-from-wrapper-input": "scan-resource",
+                    "required": true
+                },
+                {
+                    "name": "scan-file-name",
+                    "type": "string",
+                    "derived-from-wrapper-input": "scan-file",
+                    "derived-from-xnat-object-property": "name",
+                    "provides-value-for-command-input": "SCAN_FILE",
+                    "user-settable": false,
+                    "required": true
+                }
+            ],
+            "output-handlers": [
+                {
+                    "name": "output-resource",
+                    "type": "Resource",
+                    "accepts-command-output": "csv",
+                    "as-a-child-of": "session",
+                    "label": "DATA"
+                }
+            ]
+        }
+    ]
+}

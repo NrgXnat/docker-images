@@ -1,0 +1,72 @@
+{
+  "name": "dcm2jpg",
+  "description": "Runs dcm2jpg conversion",
+  "version": "latest",
+  "schema-version": "1.0",
+  "image": "radiologicskate/dcm2jpg:latest",
+  "type": "docker",
+  "command-line": "/usr/local/bin/rundcm2jpg.sh /input /output",
+  "mounts": [
+    {
+      "name": "in",
+      "writable": false,
+      "path": "/input"
+    },
+    {
+      "name": "out",
+      "writable": true,
+      "path": "/output"
+    }
+  ],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output",
+      "description": "The command's output",
+      "required": true,
+      "mount": "out",
+      "path": null,
+      "glob": null
+    }
+  ],
+  "xnat": [
+    {
+      "name": "dcm2jpg-session",
+      "label": "dcm2jpg-session",
+      "description": "Run dcm2jpg conversion",
+      "contexts": [
+        "xnat:imageSessionData"
+      ],
+      "external-inputs": [
+        {
+          "name": "session",
+          "label": null,
+          "description": "Input session",
+          "type": "Session",
+          "matcher": null,
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "sensitive": null,
+          "provides-value-for-command-input": null,
+          "provides-files-for-command-mount": "in",
+          "via-setup-command": null,
+          "user-settable": null,
+          "load-children": false
+        }
+      ],
+      "derived-inputs": [],
+      "output-handlers": [
+        {
+          "name": "output-resource",
+          "accepts-command-output": "output",
+          "via-wrapup-command": null,
+          "as-a-child-of": "session",
+          "type": "Resource",
+          "label": "JPG",
+          "format": "JPG"
+        }
+      ]
+    }
+  ]
+}

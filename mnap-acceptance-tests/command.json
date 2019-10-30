@@ -1,0 +1,109 @@
+{
+    "name": "mnap-acceptance-tests",
+    "label": "MNAP Acceptance Tests",
+    "description": "Run MNAP acceptance tests",
+    "version": "1.0",
+    "type": "docker",
+    "schema-version": "1.0",
+    "image": "radiologicskate/mnap-acceptance-tests",
+    "command-line": "run.sh #PROJECT# #SUBJECT# #SESSION# #BOLDS# #BOLDIMG# #TESTS#",
+    "override-entrypoint": false,
+    "mounts": [],
+    "inputs": [
+        {
+            "name": "PROJECT",
+            "user-settable": false,
+            "required": true,
+            "command-line-flag": "-p",
+            "command-line-separator": " "
+        },
+        {
+            "name": "SUBJECT",
+            "user-settable": false,
+            "required": true,
+            "command-line-flag": "-s",
+            "command-line-separator": " "
+        },
+        {
+            "name": "SESSION",
+            "user-settable": false,
+            "required": true,
+            "command-line-flag": "-e",
+            "command-line-separator": " "
+        },
+        {
+            "name": "BOLDS",
+            "description": "Comma-separated list of BOLD run numbers",
+            "user-settable": true,
+            "required": true,
+            "command-line-flag": "-b",
+            "command-line-separator": " "
+        },  
+        {   
+            "name": "TESTS",
+            "description": "Comma-separated list of tests. Choose one or more from: hcp1,hcp2,hcp3,hcp4,hcp5,BOLDImages",
+            "user-settable": true,
+            "required": true,
+            "command-line-flag": "-t",
+            "command-line-separator": " "
+        },  
+        {   
+            "name": "BOLDIMG",
+            "description": "Comma-separated list of BOLD image names, use '{N}' to substitute for BOLD image number. E.g.: bold{N}_Atlas.dtseries.nii,seed_bold{N}_Atlas_g7_hpss_res-VWMWB_lpss_LR-Thal.dtseries.nii",
+            "user-settable": true,
+            "required": false,
+            "command-line-flag": "-i",
+            "command-line-separator": " "
+        }
+    ],
+    "outputs": [],
+    "xnat": [
+        {
+            "name": "mnap-acceptance-tests-session",
+            "label": "Session-level MNAP Acceptance Tests",
+            "description": "Run MNAP acceptance tests on a session",
+            "contexts": [
+                "xnat:imageSessionData"
+            ],
+            "external-inputs": [
+                {
+                    "name": "session",
+                    "description": "Session",
+                    "type": "Session",
+                    "required": true
+                }
+            ],
+            "derived-inputs": [
+                {
+                    "name": "project-id",
+                    "type": "string",
+                    "derived-from-wrapper-input": "session",
+                    "derived-from-xnat-object-property": "project-id",
+                    "provides-value-for-command-input": "PROJECT",
+                    "user-settable": false,
+                    "required": true
+                },
+                {
+                    "name": "session-label",
+                    "type": "string",
+                    "derived-from-wrapper-input": "session",
+                    "derived-from-xnat-object-property": "label",
+                    "provides-value-for-command-input": "SESSION",
+                    "user-settable": false,
+                    "required": true
+                },
+                {
+                  "name": "subject-id",
+                  "description": "Subject Accession ID",
+                  "type": "string",
+                  "derived-from-wrapper-input": "session",
+                  "derived-from-xnat-object-property": "subject-id",
+                  "provides-value-for-command-input": "SUBJECT",
+                  "required": true,
+                  "user-settable": false
+                }
+            ],
+            "output-handlers": []
+        }
+    ]
+}

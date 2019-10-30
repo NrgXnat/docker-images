@@ -1,0 +1,177 @@
+{
+  "name": "xnat-dicom-importer",
+  "label": "XNAT DICOM Importer",
+  "description": "Import DICOM data into XNAT",
+  "version": "1.0",
+  "schema-version": "1.0",
+  "image": "beholt/xnatuploadtool:20190701-2",
+  "type": "docker",
+  "command-line": "mkdir /tmp/input && cd /tmp/input && find /input -name '*zip' -maxdepth 1 -exec unzip '{}' \\; ; xnat-uploader-dicom -v --username $XNAT_USER --password $XNAT_PASS --host $XNAT_HOST #projectId# #nonDcmRes# --subjectlabel \"(#subjdcmtag#)\" --sessionlabel \"(#sesdcmtag#)\" /tmp/input",
+  "override-entrypoint": true,
+  "mounts": [
+    {
+      "name": "input",
+      "writable": false,
+      "path": "/input"
+    }
+  ],
+  "environment-variables": {},
+  "ports": {},
+  "inputs": [
+    {
+      "name": "projectId",
+      "label": "Project ID",
+      "description": "Project into which DICOM data will be imported",
+      "type": "string",
+      "matcher": null,
+      "default-value": null,
+      "required": true,
+      "replacement-key": null,
+      "sensitive": null,
+      "command-line-flag": "--project",
+      "command-line-separator": " ",
+      "true-value": null,
+      "false-value": null,
+      "select-values": [],
+      "multiple-delimiter": null
+    },
+    {
+      "name": "subjdcmtag",
+      "label": "Subject label DICOM tag",
+      "description": "The DICOM tag containing the subject label (omit parenthesis)",
+      "type": "string",
+      "matcher": null,
+      "default-value": "0010,0010",
+      "required": true,
+      "replacement-key": null,
+      "sensitive": null,
+      "command-line-flag": null,
+      "command-line-separator": null,
+      "true-value": null,
+      "false-value": null,
+      "select-values": [],
+      "multiple-delimiter": null
+    },
+    {
+      "name": "sesdcmtag",
+      "label": "Session label DICOM tag",
+      "description": "The DICOM tag containing the session label (omit parenthesis)",
+      "type": "string",
+      "matcher": null,
+      "default-value": "0010,0020",
+      "required": true,
+      "replacement-key": null,
+      "sensitive": null,
+      "command-line-flag": null,
+      "command-line-separator": null,
+      "true-value": null,
+      "false-value": null,
+      "select-values": [],
+      "multiple-delimiter": null
+    },
+    {
+      "name": "resourceLabel",
+      "label": "Import directory",
+      "description": "The directory containing the zip file(s) of the data you wish to import",
+      "type": "string",
+      "matcher": null,
+      "default-value": null,
+      "required": false,
+      "replacement-key": null,
+      "sensitive": null,
+      "command-line-flag": null,
+      "command-line-separator": null,
+      "true-value": null,
+      "false-value": null,
+      "select-values": [],
+      "multiple-delimiter": null
+    },
+    {
+      "name": "nonDcmRes",
+      "label": "Non-DICOM directory name",
+      "description": "Enter the name for a project-level resource that will be created to hold any non-DICOM files included in your upload. If none provided, these files will be ignored",
+      "type": "string",
+      "matcher": null,
+      "default-value": null,
+      "required": false,
+      "replacement-key": null,
+      "sensitive": null,
+      "command-line-flag": "--uploadnondicom",
+      "command-line-separator": " ",
+      "true-value": null,
+      "false-value": null,
+      "select-values": [],
+      "multiple-delimiter": null
+    }
+  ],
+  "outputs": [],
+  "xnat": [
+    {
+      "name": "xnat-dicom-importer-project",
+      "label": "XNAT Project DICOM Importer",
+      "description": "Import DICOM data into XNAT project",
+      "contexts": [
+        "xnat:projectData"
+      ],
+      "external-inputs": [
+        {
+          "name": "project",
+          "label": "Project",
+          "description": "Project into which DICOM data will be imported",
+          "type": "Project",
+          "matcher": null,
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "sensitive": null,
+          "provides-value-for-command-input": null,
+          "provides-files-for-command-mount": null,
+          "via-setup-command": null,
+          "user-settable": null,
+          "load-children": true
+        }
+      ],
+      "derived-inputs": [
+        {
+          "name": "id",
+          "label": "Project ID",
+          "description": "ID of project into which DICOM data will be imported",
+          "type": "string",
+          "matcher": null,
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "sensitive": null,
+          "provides-value-for-command-input": "projectId",
+          "provides-files-for-command-mount": null,
+          "user-settable": false,
+          "load-children": false,
+          "derived-from-wrapper-input": "project",
+          "derived-from-xnat-object-property": "id",
+          "via-setup-command": null,
+          "multiple": false
+        },
+        {
+          "name": "resource",
+          "label": "Import directory",
+          "description": "The directory containing the zip file(s) of the data you wish to import",
+          "type": "Resource",
+          "matcher": null,
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "sensitive": null,
+          "provides-value-for-command-input": "resourceLabel",
+          "provides-files-for-command-mount": "input",
+          "user-settable": true,
+          "load-children": true,
+          "derived-from-wrapper-input": "project",
+          "derived-from-xnat-object-property": null,
+          "via-setup-command": null,
+          "multiple": false
+        }
+      ],
+      "output-handlers": []
+    }
+  ]
+}

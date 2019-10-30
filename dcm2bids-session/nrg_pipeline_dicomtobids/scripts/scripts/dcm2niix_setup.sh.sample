@@ -1,0 +1,4 @@
+#!/bin/bash
+
+DCM2NIIX_HOME=/path/to/dcm2niix/directory
+export PATH=$DCM2NIIX_HOME:$PATH

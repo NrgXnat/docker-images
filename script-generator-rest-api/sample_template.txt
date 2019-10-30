@@ -1,0 +1,5 @@
+#!/bin/bash
+
+jses=`curl -u USERNAME:PASSWORD "HOST/data/JSESSION" -X POST 2>/dev/null`
+
+echo "I'm going to do things on project PROJECT_ID, subject SUBJECT_LABEL (SUBJECT_ID), session SESSION_LABEL (SESSION_ID), and scans [SCANS]"

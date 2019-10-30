@@ -1,0 +1,6 @@
+data/resources/catalog/DicomToBIDS/resources/dcm2nii.ini.i
+data/resources/catalog/DicomToBIDS/resources/dcm2bids_wholeSession.xml.i
+data/scripts/scripts/dcm2niix_setup.sh.sample.i
+data/resources/catalog/DicomToBIDS/resources/bidsmap.json.i
+data/resources/catalog/DicomToBIDS/DicomToBIDS.xml.i
+data/scripts/catalog/DicomToBIDS/scripts/dcm2bids_wholeSession.py.i

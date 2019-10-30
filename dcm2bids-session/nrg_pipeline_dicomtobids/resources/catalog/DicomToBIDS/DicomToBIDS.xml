@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Pipeline xmlns="http://nrg.wustl.edu/pipeline" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://nrg.wustl.edu/pipeline ..\schema\pipeline.xsd" >
+    <name>DicomToBIDS</name>
+    <location>DicomToBIDS</location>
+    <description>Creates NIFTI BIDS files from DICOM files using dcm2niix.</description>
+    <documentation>
+        <authors>
+            <author>
+                <lastname>Wallace</lastname>
+                <firstname>Lauren</firstname>
+                <contact>
+                    <email>laurenwallace@wustl.edu</email>
+                </contact>
+            </author>
+        </authors>
+        <version>20170414</version>
+        <input-parameters>
+            <parameter>
+                <name>overwrite</name>
+                <values>
+                    <csv>Y</csv>
+                </values>
+                <description>If a scan has a preexisting NIFTI resource, it can be deleted and a new one uploaded, or it can be left alone. Set this to Y to overwrite, or to N to leave existing resource in place.</description>
+            </parameter>
+        </input-parameters>
+    </documentation>
+    <outputFileNamePrefix>^concat(/Pipeline/parameters/parameter[name='logdir']/values/unique/text(),'/',/Pipeline/parameters/parameter[name='label']/values/unique/text())^</outputFileNamePrefix>
+    <parameters>
+        <parameter>
+            <name>workdir</name>
+            <values>
+                <unique>^concat(/Pipeline/parameters/parameter[name='builddir']/values/unique/text(),'/',/Pipeline/parameters/parameter[name='label']/values/unique/text())^</unique>
+            </values>
+        </parameter>
+        <parameter>
+            <name>logdir</name>
+            <values>
+                <unique>^concat(/Pipeline/parameters/parameter[name='workdir']/values/unique/text(),'/LOGS')^</unique>
+            </values>
+        </parameter>
+        <parameter>
+            <name>rawdir</name>
+            <values>
+                <unique>^concat(/Pipeline/parameters/parameter[name='workdir']/values/unique/text(),'/RAW')^</unique>
+            </values>
+        </parameter>
+        <parameter>
+            <name>niidir</name>
+            <values>
+                <unique>^concat(/Pipeline/parameters/parameter[name='workdir']/values/unique/text(),'/NIFTI')^</unique>
+            </values>
+        </parameter>
+    </parameters>
+    <steps>
+        <step id="MKDIR" description="Create directory structure" workdirectory="^/Pipeline/parameters/parameter[name='workdir']/values/unique/text()^">
+            <resource name="mkdir" location="commandlineTools" >
+                <argument id="dirname">
+                    <value>RAW</value>
+                </argument>
+            </resource>
+            <resource name="mkdir" location="commandlineTools" >
+                <argument id="dirname">
+                    <value>NIFTI</value>
+                </argument>
+            </resource>
+        </step>
+        <step id="RUN" description="Download all DICOMs. Convert each series into a 4d NIFTI file with BIDS supplements using dcm2niix. Upload NIFTI file." workdirectory="^/Pipeline/parameters/parameter[name='workdir']/values/unique/text()^">
+            <resource name="dcm2bids_wholeSession" location="DicomToBIDS/resources">
+                <argument id="host">
+                    <value>^/Pipeline/parameters/parameter[name='host']/values/unique/text()^</value>
+                </argument>
+                <argument id="user">
+                    <value>^/Pipeline/parameters/parameter[name='user']/values/unique/text()^</value>
+                </argument>
+                <argument id="password">
+                    <value>^/Pipeline/parameters/parameter[name='pwd']/values/unique/text()^</value>
+                </argument>
+                <argument id="session">
+                    <value>^/Pipeline/parameters/parameter[name='id']/values/unique/text()^</value>
+                </argument>
+				<argument id="project">
+                    <value>^/Pipeline/parameters/parameter[name='project']/values/unique/text()^</value>
+                </argument>
+				<argument id="subject">
+                    <value>^/Pipeline/parameters/parameter[name='subject']/values/unique/text()^</value>
+                </argument>
+                <argument id="workflowId">
+                    <value>^/Pipeline/parameters/parameter[name='workflowid']/values/unique/text()^</value>
+                </argument>
+                <argument id="overwrite">
+                    <value>^/Pipeline/parameters/parameter[name='overwrite']/values/unique/text()^</value>
+                </argument>
+                <argument id="upload-by-ref">
+                    <value>True</value>
+                </argument>
+                <argument id="niftidir">
+                    <value>NIFTI</value>
+                </argument>
+                <argument id="dicomdir">
+                    <value>RAW</value>
+                </argument>
+            </resource>
+        </step>
+        <step id="CLEANUP" description="Remove RAW directory" workdirectory="^/Pipeline/parameters/parameter[name='workdir']/values/unique/text()^">
+            <resource name="rm" location="commandlineTools" >
+                <argument id="r"/>
+                <argument id="f"/>
+                <argument id="file">
+                    <value>RAW</value>
+                </argument>
+            </resource>
+        </step>
+    </steps>
+</Pipeline>
