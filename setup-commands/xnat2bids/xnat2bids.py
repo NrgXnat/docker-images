@@ -35,6 +35,7 @@ class BidsScan(object):
         self.scanId = scanId
         self.bidsNameMap = bidsNameMap
         self.subject = bidsNameMap.get('sub')
+        self.session = bidsNameMap.get('ses')
         self.modality = bidsNameMap.get('modality')
         modalityLowercase = self.modality.lower()
         self.subDir = 'anat' if modalityLowercase in bidsAnatModalities else \
@@ -127,10 +128,9 @@ def bidsifySession(sessionDir):
         scanBidsJsonGlobList = glob(scanBidsDir + '/*.json')
         if len(scanBidsJsonGlobList) != 1:
             # Something went wrong here. We should only have one JSON file in this directory.
-            print("SKIPPING. Scan {} has {} JSON files in its BIDS directory. I expected to see one.".format(scanId, len(scanBidsJsonGlobList)))
+            print("WARNING. Scan {} has {} JSON files in its BIDS directory. I expected to see one and I'm using the first".format(scanId, len(scanBidsJsonGlobList)))
             for jsonFile in scanBidsJsonGlobList:
                 print(jsonFile)
-            continue
         scanBidsJsonFilePath = scanBidsJsonGlobList[0]
         scanBidsJsonFileName = os.path.basename(scanBidsJsonFilePath)
         scanBidsFileName = scanBidsJsonFileName.rstrip('.json')
@@ -180,6 +180,21 @@ def getSubjectForBidsScans(bidsScanList):
 
     return None
 
+def getSessionForBidsScans(bidsScanList):
+    print("")
+    print("Finding session for list of BIDS scans.")
+    sessions = list({bidsScan.session for bidsScan in bidsScanList if bidsScan.session})
+
+    if len(sessions) == 1:
+        print("Found session {}.".format(sessions[0]))
+        return sessions[0]
+    elif len(sessions) > 1:
+        print("ERROR: Found more than one sessions: {}.".format(", ".join(sessions)))
+    else:
+        print("ERROR: Found no sessions.")
+
+    return None
+
 def copyScanBidsFiles(destDirBase, bidsScanList):
     # First make all the "anat", "func", etc. subdirectories that we will need
     for subDir in {scan.subDir for scan in bidsScanList}:
@@ -209,7 +224,12 @@ if sessionBidsScans:
     if not subject:
         # We would have already printed an error message, so no need to print anything here
         sys.exit(1)
-    bidsSubjectMap = {subject: BidsSubject(subject, bidsScans=sessionBidsScans)}
+    session = getSessionForBidsScans(sessionBidsScans)
+    if not session:
+        bidsSubjectMap = {subject: BidsSubject(subject, bidsScans=sessionBidsScans)}
+    else:
+        bidsSession = BidsSession(session, sessionBidsScans)
+        bidsSubjectMap = {subject: BidsSubject(subject, bidsSession=bidsSession)}
 else:
     # Ok, we didn't find any BIDS scan directories in inputDir. We may be looking at a collection of session directories.
     print("")
