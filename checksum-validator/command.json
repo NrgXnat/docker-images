@@ -5,13 +5,52 @@
   "schema-version": "1.0",
   "image": "radiologicskate/checksum-validator:latest",
   "type": "docker",
-  "command-line": "bash /usr/local/bin/validate.sh #SESSION_ID# #SESSION_LABEL# #USER# #SCAN_IDS#",
+  "command-line": "python validate.py --sessionId #SESSION_ID# --sessionLabel #SESSION_LABEL# --assignTo #USER# --checksumResource #CHECKSUM_RES# #SCAN_IDS#",
   "override-entrypoint": true,
   "mounts": [
+    {
+      "name": "input",
+      "writable": false,
+      "path": "#SESSION_DIR#"
+    }
   ],
   "environment-variables": {},
   "ports": {},
   "inputs": [
+    {
+      "name": "SCAN_IDS",
+      "label": "Series IDs",
+      "description": null,
+      "type": "string",
+      "matcher": null,
+      "default-value": null,
+      "required": false,
+      "replacement-key": null,
+      "sensitive": null,
+      "command-line-flag": "--series",
+      "command-line-separator": " ",
+      "true-value": null,
+      "false-value": null,
+      "select-values": [],
+      "multiple-delimiter": "flag"
+    },
+    {
+      "name": "USER",
+      "label": "User to whom query will be assigned",
+      "description": "Enter the username for the user to whom queries ought to be assigned",
+      "type": "string",
+      "matcher": null,
+      "default-value": null,
+      "required": true,
+      "replacement-key": null,
+      "sensitive": null,
+      "command-line-flag": null,
+      "command-line-separator": null,
+      "true-value": null,
+      "false-value": null,
+      "select-values": [],
+      "multiple-delimiter": null
+    },
     {
       "name": "SESSION_ID",
       "label": "Session ID",
@@ -47,28 +86,11 @@
       "multiple-delimiter": null
     },
     {
-      "name": "SCAN_IDS",
-      "label": "Scan IDs",
+      "name": "CHECKSUM_RES",
+      "label": "Resource containing checksum txt files",
       "description": null,
       "type": "string",
-      "matcher": null,
-      "default-value": null,
-      "required": false,
-      "replacement-key": null,
-      "sensitive": null,
-      "command-line-flag": null,
-      "command-line-separator": null,
-      "true-value": null,
-      "false-value": null,
-      "select-values": [],
-      "multiple-delimiter": "quoted-space"
-    },
-    {
-      "name": "USER",
-      "label": "User to whom query will be assigned",
-      "description": "Enter the username for the user to whom queries ought to be assigned",
-      "type": "string",
-      "matcher": null,
+      "matcher": "@.label == 'DICOM'",
       "default-value": null,
       "required": true,
       "replacement-key": null,
@@ -81,11 +103,10 @@
       "multiple-delimiter": null
     }
   ],
-  "outputs": [
-  ],
+  "outputs": [],
   "xnat": [
     {
-      "name": "validate-checksum-demo",
+      "name": "validate-checksum",
       "label": "Validate uploaded DICOM with checksum",
       "description": "Validate uploaded DICOM with checksum",
       "contexts": [
@@ -103,7 +124,7 @@
           "replacement-key": null,
           "sensitive": null,
           "provides-value-for-command-input": null,
-          "provides-files-for-command-mount": null,
+          "provides-files-for-command-mount": "input",
           "via-setup-command": null,
           "user-settable": null,
           "load-children": true
@@ -123,7 +144,7 @@
           "provides-value-for-command-input": "SESSION_ID",
           "provides-files-for-command-mount": null,
           "user-settable": false,
-          "load-children": true,
+          "load-children": false,
           "derived-from-wrapper-input": "session",
           "derived-from-xnat-object-property": "id",
           "via-setup-command": null,
@@ -142,15 +163,34 @@
           "provides-value-for-command-input": "SESSION_LABEL",
           "provides-files-for-command-mount": null,
           "user-settable": false,
-          "load-children": true,
+          "load-children": false,
           "derived-from-wrapper-input": "session",
           "derived-from-xnat-object-property": "label",
           "via-setup-command": null,
           "multiple": false
         },
         {
-          "name": "scan",
-          "label": "Scan",
+          "name": "session-dir",
+          "label": null,
+          "description": "The session's archive dir",
+          "type": "string",
+          "matcher": null,
+          "default-value": null,
+          "required": true,
+          "replacement-key": "#SESSION_DIR#",
+          "sensitive": null,
+          "provides-value-for-command-input": null,
+          "provides-files-for-command-mount": null,
+          "user-settable": false,
+          "load-children": false,
+          "derived-from-wrapper-input": "session",
+          "derived-from-xnat-object-property": "directory",
+          "via-setup-command": null,
+          "multiple": false
+        },
+        {
+          "name": "series",
+          "label": "Series",
           "description": null,
           "type": "Scan",
           "matcher": "('DICOM' in @.resources[*].label || 'secondary' in @.resources[*].label)",
@@ -166,10 +206,47 @@
           "derived-from-xnat-object-property": "id",
           "via-setup-command": null,
           "multiple": true
+        },
+        {
+          "name": "checksum-resource",
+          "label": "Resource containing checksum txt files",
+          "description": null,
+          "type": "Resource",
+          "matcher": null,
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "sensitive": null,
+          "provides-value-for-command-input": null,
+          "provides-files-for-command-mount": null,
+          "user-settable": true,
+          "load-children": true,
+          "derived-from-wrapper-input": "session",
+          "derived-from-xnat-object-property": null,
+          "via-setup-command": null,
+          "multiple": false
+        },
+        {
+          "name": "checksum-resource-dir",
+          "label": "Directory path for resource containing checksum txt files",
+          "description": null,
+          "type": "string",
+          "matcher": null,
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "sensitive": null,
+          "provides-value-for-command-input": "CHECKSUM_RES",
+          "provides-files-for-command-mount": null,
+          "user-settable": false,
+          "load-children": false,
+          "derived-from-wrapper-input": "checksum-resource",
+          "derived-from-xnat-object-property": "directory",
+          "via-setup-command": null,
+          "multiple": false
         }
       ],
-      "output-handlers": [
-      ]
+      "output-handlers": []
     }
   ]
 }
