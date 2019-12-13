@@ -10,6 +10,7 @@ parser.add_argument("--sessionId", help="Session ID", required=True)
 parser.add_argument("--sessionLabel", help="Session Label", required=True)
 parser.add_argument("--assignTo", help="Assign query to this user", required=True)
 parser.add_argument("--checksumResource", help="Checksum file resource directory", required=True)
+parser.add_argument("--checksumSubdir", help="Checksum file subdirectory within checksumResource", required=False, default="")
 parser.add_argument("--series", action="append", help="DICOM series XNAT ID", required=False)
 
 args = parser.parse_args()
@@ -19,6 +20,7 @@ label       = args.sessionLabel
 assignTo    = args.assignTo
 series      = args.series
 resdir      = args.checksumResource
+subdir      = args.checksumSubdir
 
 def create_query(xnatSession, category, title, description):
     uri = "/data/experiments/%s/issues" % sesid
@@ -60,7 +62,7 @@ def validate(s, xnatSession):
         print("Reading %s for actual checksum" % sfile)
         actual = md5(sfile)
     sfilename = os.path.basename(sfile)
-    csfile = os.path.join(resdir, "%s.txt" % os.path.splitext(sfilename)[0])
+    csfile = os.path.join(resdir, subdir, "%s.txt" % os.path.splitext(sfilename)[0])
     print("Reading %s for expected checksum" % csfile)
     with open(csfile, 'r') as file:
         expected = file.read()
