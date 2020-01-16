@@ -9,7 +9,7 @@ parser = argparse.ArgumentParser(description="Run checksum validation")
 parser.add_argument("--sessionId", help="Session ID", required=True)
 parser.add_argument("--sessionLabel", help="Session Label", required=True)
 parser.add_argument("--assignTo", help="Assign query to this user", required=True)
-parser.add_argument("--checksumResource", help="Checksum file resource directory", required=True)
+parser.add_argument("--checksumResource", help="Checksum file resource directory", required=False)
 parser.add_argument("--checksumSubdir", help="Checksum file subdirectory within checksumResource", required=False, default="")
 parser.add_argument("--series", action="append", help="DICOM series XNAT ID", required=False)
 
@@ -63,12 +63,16 @@ def validate(s, xnatSession):
         actual = md5(sfile)
     sfilename = os.path.basename(sfile)
     csfile = os.path.join(resdir, subdir, "%s.txt" % os.path.splitext(sfilename)[0])
+    if not os.path.exists(csfile):
+        msg = "Checksum file for %s (%s) not in expected location %s" % (s, sfilename, csfile)
+        print(msg)
+        return false, msg
     print("Reading %s for expected checksum" % csfile)
     with open(csfile, 'r') as file:
         expected = file.read()
     print("Expect checksum for %s: %s" % (sfilename, expected))
     print("Actual checksum for %s: %s" % (sfilename, actual))
-    return expected == actual, sfilename
+    return expected == actual, "%s (%s)" % (s, sfilename)
 
 try:
     # Set up session
@@ -76,6 +80,13 @@ try:
     user    = os.environ['XNAT_USER']
     passwd  = os.environ['XNAT_PASS']
     xnatSession = XnatSession(username=user, password=passwd, host=host)
+
+    # Handle no checksum data (or unlocateable)
+    if not resdir:
+        create_query(xnatSession, "Missing data", "Unable to locate DICOM checksums", \
+            "Unable to locate DICOM checksum files for %s" % label)
+        print("Validation failed: no checksums")
+        sys.exit()
 
     # Handle no series
     if args.series is None or len(args.series) == 0:
@@ -87,10 +98,10 @@ try:
     # Perform validation
     failures = []
     for s in series:
-        success, sfilename = validate(s, xnatSession)
+        success, msg = validate(s, xnatSession)
         if not success:
             print("Checksum validation failed on series %s" % s)
-            failures.append("%s (%s)" % (s, sfilename))
+            failures.append(msg)
 
     # Create query if needed
     if len(failures) > 0:
