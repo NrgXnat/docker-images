@@ -1,11 +1,11 @@
 {
   "name": "dcm2bids",
   "description": "Runs dcm2niix on a session's scans, and uploads the nifti and bids json",
-  "version": "2.0",
+  "version": "2.1",
   "schema-version": "1.0",
-  "image": "radiologicskate/dcm2bids-session:2.0",
+  "image": "radiologicskate/dcm2bids-session:2.1",
   "type": "docker",
-  "command-line": "python dcm2bids_wholeSession.py #SESSION_ID# #SESSION_LABEL# #SUBJECT# #PROJECT# #OVERWRITE# --host $XNAT_HOST --user $XNAT_USER --pass $XNAT_PASS --upload-by-ref False --dicomdir /dicom --niftidir /nifti",
+  "command-line": "python dcm2bids_wholeSession.py #SESSION_ID# #SESSION_LABEL# #SUBJECT# #PROJECT# #OVERWRITE# #SKIP# --host $XNAT_HOST --user $XNAT_USER --pass $XNAT_PASS --upload-by-ref False --dicomdir /dicom --niftidir /nifti",
   "override-entrypoint": true,
   "mounts": [
     {
@@ -104,6 +104,23 @@
       "command-line-separator": null,
       "true-value": null,
       "false-value": null,
+      "select-values": [],
+      "multiple-delimiter": null
+    },
+    {
+      "name": "skipUnusable",
+      "label": null,
+      "description": "Skip BIDS conversion of unusable scans?",
+      "type": "boolean",
+      "matcher": null,
+      "default-value": "false",
+      "required": false,
+      "replacement-key": "#SKIP#",
+      "sensitive": null,
+      "command-line-flag": "--skipUnusable",
+      "command-line-separator": null,
+      "true-value": "True",
+      "false-value": "False",
       "select-values": [],
       "multiple-delimiter": null
     }

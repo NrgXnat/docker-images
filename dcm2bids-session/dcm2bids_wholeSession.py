@@ -98,6 +98,7 @@ parser.add_argument("--niftidir", help="Root output directory for NIFTI files", 
 parser.add_argument("--overwrite", help="Overwrite NIFTI files if they exist")
 parser.add_argument("--upload-by-ref", help="Upload \"by reference\". Only use if your host can read your file system.")
 parser.add_argument("--workflowId", help="Pipeline workflow ID")
+parser.add_argument("--skipUnusable", help="Skip scans with quality=unusable")
 parser.add_argument('--version', action='version', version='%(prog)s 1')
 
 args, unknown_args = parser.parse_known_args()
@@ -111,6 +112,7 @@ dicomdir = args.dicomdir
 niftidir = args.niftidir
 workflowId = args.workflowId
 uploadByRef = isTrue(args.upload_by_ref)
+skipUnusable = isTrue(args.skipUnusable)
 dcm2niixArgs = unknown_args if unknown_args is not None else []
 
 imgdir = niftidir + "/IMG"
@@ -167,16 +169,30 @@ try:
     # Get list of scan ids
     print
     print "Get scan list for session ID %s." % session
-    r = get(host + "/data/experiments/%s/scans" % session, params={"format": "json"})
+    r = get(host + "/data/experiments/%s/scans" % session, params={"format": "json", "columns": "ID,quality,series_description,type"})
     scanRequestResultList = r.json()["ResultSet"]["Result"]
-    scanIDList = [scan['ID'] for scan in scanRequestResultList]
-    seriesDescList = [scan['series_description'] for scan in scanRequestResultList]  # { id: sd for (scan['ID'], scan['series_description']) in scanRequestResultList }
+    if skipUnusable:
+        scanIDList = []
+        seriesDescList = []
+        typeList = []
+        for scan in scanRequestResultList:
+            if scan['quality'] == "unusable":
+                print "Skiping %s because its quality=unusable" % scan['ID']
+                continue
+            scanIDList.append(scan['ID'])
+            seriesDescList.append(scan['series_description'])
+            typeList.append(scan['type'])
+    else: 
+        scanIDList = [scan['ID'] for scan in scanRequestResultList]
+        seriesDescList = [scan['series_description'] for scan in scanRequestResultList]  # { id: sd for (scan['ID'], scan['series_description']) in scanRequestResultList }
+        typeList = [scan['type'] for scan in scanRequestResultList]
+
     print 'Found scans %s.' % ', '.join(scanIDList)
     print 'Series descriptions %s' % ', '.join(seriesDescList)
     
     # Fall back on scan type if series description field is empty
     if set(seriesDescList) == set(['']):
-        seriesDescList = [scan['type'] for scan in scanRequestResultList]
+        seriesDescList = typeList
         print 'Fell back to scan types %s' % ', '.join(seriesDescList)
     
     # Get site- and project-level configs
