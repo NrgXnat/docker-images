@@ -189,7 +189,7 @@ def copyScanBidsFiles(destDirBase, bidsScanList):
         for f in scan.sourceFiles:
             shutil.copy(f, destDir)
 
-version = "1.0"
+version = "1.1"
 args = docopt(__doc__, version=version)
 
 inputDir = args['<inputDir>']
@@ -200,6 +200,11 @@ print("Output dir: {}".format(outputDir))
 
 # First check if the input directory is a session directory
 sessionBidsScans = bidsifySession(inputDir)
+
+# BIDS specification 1.2.1: Every BIDS dataset MUST include the dataset_description.json file 
+sessionBidsJsonPath = os.path.join(inputDir, 'RESOURCES', 'BIDS', 'dataset_description.json')
+if os.path.exists(sessionBidsJsonPath):
+    shutil.copy(sessionBidsJsonPath, outputDir)
 
 bidsSubjectMap = {}
 if sessionBidsScans:
