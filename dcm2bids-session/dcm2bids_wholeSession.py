@@ -10,6 +10,7 @@ import time
 import zipfile
 import tempfile
 import re
+import csv
 import dicom as dicomLib
 from shutil import copy as fileCopy
 from nipype.interfaces.dcm2nii import Dcm2nii
@@ -18,6 +19,7 @@ import requests.packages.urllib3
 requests.packages.urllib3.disable_warnings()
 
 from xnatSession import XnatSession
+import xnatbidsfns
 
 def cleanServer(server):
     server.strip()
@@ -82,6 +84,7 @@ def zipdir(dirPath=None, zipFilePath=None, includeDirInZip=True):
             # Here to allow for inserting an empty directory.  Still TBD/TODO.
             outFile.writestr(zipInfo, "")
     outFile.close()
+
 
 BIDSVERSION = "1.0.1"
 
@@ -238,6 +241,7 @@ try:
     print "Bids base name is %s" % base
     
     # Cheat and reverse scanid and seriesdesc lists so numbering is in the right order
+    scansTsv = []
     for scanid, seriesdesc in zip(reversed(scanIDList), reversed(seriesDescList)):
         print
         print 'Beginning process for scan %s.' % scanid
@@ -269,6 +273,14 @@ try:
             bidsname = "_".join(splitname)
         else:
             bidsname = match
+
+        bidsname = base + bidsname
+        print "Base " + base + " series " + seriesdesc + " match " + bidsname
+        bidssubdir = xnatbidsfns.getSubdir(xnatbidsfns.generateBidsNameMap(bidsname)['modality'])
+        if bidssubdir is None:
+            print "Scan %s is assigned bidsname %s, which does NOT map to a bids subdirectory. Skipping" % (scanid, bidsname)
+            continue
+        bidsfilename = os.path.join(bidssubdir, bidsname)
     
         # Get scan resources
         print "Get scan resources for scan %s." % scanid
@@ -280,6 +292,8 @@ try:
         # Do initial checks to determine if scan should be skipped
         hasNifti = any([res["label"] == "NIFTI" for res in scanResources])  # Store this for later
         if hasNifti and not overwrite:
+            # Add entry to scans.tsv
+            scansTsv.append([bidsfilename, session, scanid])
             print "Scan %s has a preexisting NIFTI resource, and I am running with overwrite=False. Skipping." % scanid
             continue
     
@@ -434,9 +448,6 @@ try:
             os.remove(os.path.join(scanImgDir, f))
     
         # Convert the differences
-        bidsname = base + bidsname
-        print "Base " + base + " series " + seriesdesc + " match " + bidsname
-    
         print 'Converting scan %s to NIFTI...' % scanid
         # Do some stuff to execute dcm2niix as a subprocess
     
@@ -560,6 +571,9 @@ try:
     
                     # Do file rename
                     os.rename(os.path.join(dir, echo), os.path.join(dir, echoname))
+
+                    # Add to scansTsv
+                    scansTsv.append([os.path.join(bidssubdir, echoname), session, scanid])
     
                     # When file count rolls over increment echo and continue
                     if filenumber == filesinecho:
@@ -568,7 +582,10 @@ try:
     
                     # Increment file count each time one is renamed
                     filenumber += 1
-    
+        else:
+            # Add to scansTsv
+            scansTsv.append([bidsfilename, session, scanid])
+
         ##########
         # Upload results
         print
@@ -740,6 +757,22 @@ try:
     # Upload
     h = {"content-type": "text/plain"}
     r = xnatSession.httpsess.put(host + "/data/experiments/%s/resources/BIDS/files/CHANGES" % session, data=changes, params=queryArgs, headers=h)
+    r.raise_for_status()
+
+    # Generate scans.tsv
+    tsvname = '{}scans.tsv'.format(base)
+    tsvfile = os.path.join(builddir, tsvname)
+    with open(tsvfile, 'w') as tsv:
+        writer = csv.writer(tsv, delimiter='\t')
+        writer.writerow(['filename', 'xnat_session_id', 'xnat_scan_id'])
+        for row in scansTsv:
+            writer.writerow(row)
+
+    queryArgs = {"format": "BIDS", "content": "BIDS", "tags": "BIDS"}
+    if workflowId is not None:
+        queryArgs["event_id"] = workflowId
+    files = {'file': open(tsvfile, 'rb')}
+    r = xnatSession.httpsess.put(host + "/data/experiments/%s/resources/BIDS/files/%s" % (session, tsvname), params=queryArgs, files=files)
     r.raise_for_status()
     
     print 'All done with session-level metadata.'
