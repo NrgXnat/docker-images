@@ -21,14 +21,11 @@ import os
 import sys
 import json
 import shutil
+import pathlib
+import csv
 from glob import glob
 from docopt import docopt
-
-bidsAnatModalities = ['t1w', 't2w', 't1rho', 't1map', 't2map', 't2star', 'flair', 'flash', 'pd', 'pdmap', 'pdt2', 'inplanet1', 'inplanet2', 'angio', 'defacemask', 'swimagandphase']
-bidsFuncModalities = ['bold', 'physio', 'stim', 'sbref']
-bidsDwiModalities = ['dwi', 'dti']
-bidsBehavioralModalities = ['beh']
-bidsFieldmapModalities = ['phasemap', 'magnitude1']
+import xnatbidsfns
 
 class BidsScan(object):
     def __init__(self, scanId, bidsNameMap, *args):
@@ -38,18 +35,14 @@ class BidsScan(object):
         self.session = bidsNameMap.get('ses')
         self.modality = bidsNameMap.get('modality')
         modalityLowercase = self.modality.lower()
-        self.subDir = 'anat' if modalityLowercase in bidsAnatModalities else \
-                      'func' if modalityLowercase in bidsFuncModalities else \
-                      'dwi' if modalityLowercase in bidsDwiModalities else \
-                      'beh' if modalityLowercase in bidsBehavioralModalities else \
-                      'fmap' if modalityLowercase in bidsFieldmapModalities else \
-                      None
+        self.subDir = xnatbidsfns.getSubdir(self.modality)
         self.sourceFiles = list(args)
 
 class BidsSession(object):
-    def __init__(self, sessionLabel, bidsScans=[]):
+    def __init__(self, sessionLabel, inputDir, bidsScans=[]):
         self.sessionLabel = sessionLabel
         self.bidsScans = bidsScans
+        self.inputDir = inputDir
 
 class BidsSubject(object):
     def __init__(self, subjectLabel, bidsSession=None, bidsScans=[]):
@@ -74,34 +67,13 @@ class BidsSubject(object):
     def hasScans(self):
         return bool(self.bidsScans is not None and self.bidsScans is not [])
 
-def generateBidsNameMap(bidsFileName):
-
-    # The BIDS file names will look like
-    # sub-<participant_label>[_ses-<session_label>][_acq-<label>][_ce-<label>][_rec-<label>][_run-<index>][_mod-<label>]_<modality_label>
-    # (that example is for anat. There may be other fields and labels in the other file types.)
-    # So we split by underscores to get the individual field values.
-    # However, some of the values may contain underscores themselves, so we have to check that each entry (save the last)
-    #   contains a -.
-    underscoreSplitListRaw = bidsFileName.split('_')
-    underscoreSplitList = []
-
-    for splitListEntryRaw in underscoreSplitListRaw[:-1]:
-        if '-' not in splitListEntryRaw:
-            underscoreSplitList[-1] = underscoreSplitList[-1] + splitListEntryRaw
-        else:
-            underscoreSplitList.append(splitListEntryRaw)
-
-    bidsNameMap = dict(splitListEntry.split('-') for splitListEntry in underscoreSplitList)
-    bidsNameMap['modality'] = underscoreSplitListRaw[-1]
-
-    return bidsNameMap
 
 def bidsifySession(sessionDir):
     print("Checking for session structure in " + sessionDir)
 
     sessionBidsJsonPath = os.path.join(sessionDir, 'RESOURCES', 'BIDS', 'dataset_description.json')
     # Copy over the dataset_description as BIDS requires this
-    shutil.copy2(sessionBidsJsonPath, outputDir)
+    shutil.copy(sessionBidsJsonPath, outputDir)
 
     scansDir = os.path.join(sessionDir, 'SCANS')
     if not os.path.exists(scansDir):
@@ -134,7 +106,7 @@ def bidsifySession(sessionDir):
         scanBidsJsonFilePath = scanBidsJsonGlobList[0]
         scanBidsJsonFileName = os.path.basename(scanBidsJsonFilePath)
         scanBidsFileName = scanBidsJsonFileName.rstrip('.json')
-        scanBidsNameMap = generateBidsNameMap(scanBidsFileName)
+        scanBidsNameMap = xnatbidsfns.generateBidsNameMap(scanBidsFileName)
 
         print("BIDS JSON file name: {}".format(scanBidsJsonFileName))
         print("Name map: {}".format(scanBidsNameMap))
@@ -195,6 +167,11 @@ def getSessionForBidsScans(bidsScanList):
 
     return None
 
+def relativePath(f):
+    p = pathlib.Path(f)
+    o = pathlib.Path(outputDir)
+    return str(p.relative_to(o))
+
 def copyScanBidsFiles(destDirBase, bidsScanList):
     # First make all the "anat", "func", etc. subdirectories that we will need
     for subDir in {scan.subDir for scan in bidsScanList}:
@@ -205,6 +182,14 @@ def copyScanBidsFiles(destDirBase, bidsScanList):
         destDir = os.path.join(destDirBase, scan.subDir)
         for f in scan.sourceFiles:
             shutil.copy(f, destDir)
+
+def copyTsv(inputSessionDir, destDir):
+    scansTsvList = glob(os.path.join(inputSessionDir, 'RESOURCES', 'BIDS', '*_scans.tsv'))
+    if len(scansTsvList) != 1:
+        print("WARNING: Unable to locate scans.tsv")
+        return
+    scansTsv = scansTsvList[0]
+    shutil.copy(scansTsv, destDir)
 
 version = "1.0"
 args = docopt(__doc__, version=version)
@@ -228,7 +213,7 @@ if sessionBidsScans:
     if not session:
         bidsSubjectMap = {subject: BidsSubject(subject, bidsScans=sessionBidsScans)}
     else:
-        bidsSession = BidsSession(session, sessionBidsScans)
+        bidsSession = BidsSession(session, inputDir, sessionBidsScans)
         bidsSubjectMap = {subject: BidsSubject(subject, bidsSession=bidsSession)}
 else:
     # Ok, we didn't find any BIDS scan directories in inputDir. We may be looking at a collection of session directories.
@@ -236,7 +221,8 @@ else:
     print("Checking subdirectories of {}.".format(inputDir))
 
     for subSessionDir in os.listdir(inputDir):
-        subSessionBidsScans = bidsifySession(os.path.join(inputDir, subSessionDir))
+        inputDirSession = os.path.join(inputDir, subSessionDir)
+        subSessionBidsScans = bidsifySession(inputDirSession)
         if subSessionBidsScans:
             subject = getSubjectForBidsScans(subSessionBidsScans)
             if not subject:
@@ -244,7 +230,7 @@ else:
                 continue
 
             print("Adding BIDS session {} to list for subject {}.".format(subSessionDir, subject))
-            bidsSession = BidsSession(subSessionDir, subSessionBidsScans)
+            bidsSession = BidsSession(subSessionDir, inputDirSession, subSessionBidsScans)
             if subject not in bidsSubjectMap:
                 bidsSubjectMap[subject] = BidsSubject(subject, bidsSession=bidsSession)
             else:
@@ -280,7 +266,14 @@ for bidsSubject in bidsSubjectMap.itervalues():
             sessionDir = os.path.join(subjectDir, "ses-" + bidsSession.sessionLabel)
             os.mkdir(sessionDir)
             copyScanBidsFiles(sessionDir, bidsSession.bidsScans)
+            copyTsv(bidsSession.inputDir, sessionDir)
+
     else:
         copyScanBidsFiles(subjectDir, bidsSubject.bidsScans)
+        if bidsSubject.bidsSession:
+            idir = bidsSubject.bidsSession.inputDir
+        else:
+            idir = inputDir
+        copyTsv(idir, subjectDir)
 
 print("Done.")
