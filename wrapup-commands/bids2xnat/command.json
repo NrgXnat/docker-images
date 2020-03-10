@@ -1,0 +1,8 @@
+{
+    "name": "bids2xnat",
+    "description": "bids2xnat wrapup command. Transforms a BIDS formatted directory into XNAT storage with BIDS and NIFTI resources.",
+    "version": "1.2",
+    "type": "docker-wrapup",
+    "image": "radiologicskate/bids2xnat-wrapup:1.2",
+    "command-line": "bids2xnat.py /input /output"
+}
