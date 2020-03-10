@@ -18,7 +18,7 @@ from collections import OrderedDict
 import requests.packages.urllib3
 requests.packages.urllib3.disable_warnings()
 
-from xnatSession import XnatSession
+from xnatjsession import XnatSession
 import xnatbidsfns
 
 def cleanServer(server):
@@ -68,22 +68,20 @@ def zipdir(dirPath=None, zipFilePath=None, includeDirInZip=True):
         if not includeDirInZip:
             archivePath = archivePath.replace(dirToZip + os.path.sep, "", 1)
         return os.path.normcase(archivePath)
-    outFile = zipfile.ZipFile(zipFilePath, "w",
-        compression=zipfile.ZIP_DEFLATED)
-    for (archiveDirPath, dirNames, fileNames) in os.walk(dirPath):
-        for fileName in fileNames:
-            filePath = os.path.join(archiveDirPath, fileName)
-            outFile.write(filePath, trimPath(filePath))
-        # Make sure we get empty directories as well
-        if not fileNames and not dirNames:
-            zipInfo = zipfile.ZipInfo(trimPath(archiveDirPath) + "/")
-            # some web sites suggest doing
-            # zipInfo.external_attr = 16
-            # or
-            # zipInfo.external_attr = 48
-            # Here to allow for inserting an empty directory.  Still TBD/TODO.
-            outFile.writestr(zipInfo, "")
-    outFile.close()
+    with zipfile.ZipFile(zipFilePath, "w", compression=zipfile.ZIP_DEFLATED) as outFile:
+        for (archiveDirPath, dirNames, fileNames) in os.walk(dirPath):
+            for fileName in fileNames:
+                filePath = os.path.join(archiveDirPath, fileName)
+                outFile.write(filePath, trimPath(filePath))
+            # Make sure we get empty directories as well
+            if not fileNames and not dirNames:
+                zipInfo = zipfile.ZipInfo(trimPath(archiveDirPath) + "/")
+                # some web sites suggest doing
+                # zipInfo.external_attr = 16
+                # or
+                # zipInfo.external_attr = 48
+                # Here to allow for inserting an empty directory.  Still TBD/TODO.
+                outFile.writestr(zipInfo, "")
 
 
 BIDSVERSION = "1.0.1"

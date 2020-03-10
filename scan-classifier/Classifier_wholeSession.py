@@ -7,7 +7,7 @@ import re
 import requests
 import pydicom as dicom
 
-from xnatSession import XnatSession
+from xnatjsession import XnatSession
 import DecompressDCM
 import label_probability
 

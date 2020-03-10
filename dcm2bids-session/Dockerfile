@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y \
         dicom \
         nipype \
         requests \
-        xnatbidsfns \
+        xnatbidsfns xnatjsession \
         && \
     rm -r ${HOME}/.cache/pip && \
     curl -L https://github.com/rordenlab/dcm2niix/releases/download/v1.0.20180622/dcm2niix_27-Jun-2018_lnx.zip  > dcm2niix.zip && \
@@ -29,7 +29,6 @@ RUN apt-get update && apt-get install -y \
 
 #COPY nrg_pipeline_dicomtobids/scripts/catalog/DicomToBIDS/scripts/dcm2bids_wholeSession.py /src/dcm2bids_wholeSession.py
 COPY dcm2bids_wholeSession.py /src/dcm2bids_wholeSession.py
-COPY xnatSession.py /src/xnatSession.py
 
 WORKDIR /src
 

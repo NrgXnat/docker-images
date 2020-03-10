@@ -98,7 +98,10 @@ def bidsifySession(sessionDir):
             continue
 
         scanBidsJsonGlobList = glob(scanBidsDir + '/*.json')
-        if len(scanBidsJsonGlobList) != 1:
+        if len(scanBidsJsonGlobList) == 0:
+            print("SKIPPING. Scan {} does not have a BIDS json file.")
+            continue
+        elif len(scanBidsJsonGlobList) > 1:
             # Something went wrong here. We should only have one JSON file in this directory.
             print("WARNING. Scan {} has {} JSON files in its BIDS directory. I expected to see one and I'm using the first".format(scanId, len(scanBidsJsonGlobList)))
             for jsonFile in scanBidsJsonGlobList:
