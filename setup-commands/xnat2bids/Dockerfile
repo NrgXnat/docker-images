@@ -1,4 +1,4 @@
-FROM python:2.7.14-alpine3.6
+FROM python:3.8
 
 RUN pip install \
         docopt pathlib xnatbidsfns \

@@ -23,6 +23,7 @@ import json
 import shutil
 import pathlib
 import csv
+import traceback
 from glob import glob
 from docopt import docopt
 import xnatbidsfns
@@ -70,10 +71,6 @@ class BidsSubject(object):
 
 def bidsifySession(sessionDir):
     print("Checking for session structure in " + sessionDir)
-
-    sessionBidsJsonPath = os.path.join(sessionDir, 'RESOURCES', 'BIDS', 'dataset_description.json')
-    # Copy over the dataset_description as BIDS requires this
-    shutil.copy(sessionBidsJsonPath, outputDir)
 
     scansDir = os.path.join(sessionDir, 'SCANS')
     if not os.path.exists(scansDir):
@@ -138,6 +135,12 @@ def bidsifySession(sessionDir):
 
     print("")
     print("Done checking all scans.")
+
+    if bidsScans:
+        sessionBidsJsonPath = os.path.join(sessionDir, 'RESOURCES', 'BIDS', 'dataset_description.json')
+        # Copy over the dataset_description as BIDS requires this
+        shutil.copy(sessionBidsJsonPath, outputDir)
+
     return bidsScans
 
 def getSubjectForBidsScans(bidsScanList):
@@ -186,13 +189,110 @@ def copyScanBidsFiles(destDirBase, bidsScanList):
         for f in scan.sourceFiles:
             shutil.copy(f, destDir)
 
-def copyTsv(inputSessionDir, destDir):
-    scansTsvList = glob(os.path.join(inputSessionDir, 'RESOURCES', 'BIDS', '*_scans.tsv'))
-    if len(scansTsvList) != 1:
-        print("WARNING: Unable to locate scans.tsv")
-        return
-    scansTsv = scansTsvList[0]
-    shutil.copy(scansTsv, destDir)
+def manualBidsReorganization():
+    # First check if the input directory is a session directory
+    sessionBidsScans = bidsifySession(inputDir)
+    
+    bidsSubjectMap = {}
+    if sessionBidsScans:
+        subject = getSubjectForBidsScans(sessionBidsScans)
+        if not subject:
+            # We would have already printed an error message, so no need to print anything here
+            sys.exit(1)
+        session = getSessionForBidsScans(sessionBidsScans)
+        if not session:
+            bidsSubjectMap = {subject: BidsSubject(subject, bidsScans=sessionBidsScans)}
+        else:
+            bidsSession = BidsSession(session, inputDir, sessionBidsScans)
+            bidsSubjectMap = {subject: BidsSubject(subject, bidsSession=bidsSession)}
+    else:
+        # Ok, we didn't find any BIDS scan directories in inputDir. We may be looking at a collection of session directories.
+        print("")
+        print("Checking subdirectories of {}.".format(inputDir))
+    
+        for subSessionDir in os.listdir(inputDir):
+            inputDirSession = os.path.join(inputDir, subSessionDir)
+            subSessionBidsScans = bidsifySession(inputDirSession)
+            if subSessionBidsScans:
+                subject = getSubjectForBidsScans(subSessionBidsScans)
+                if not subject:
+                    print("SKIPPING. Could not determine subject for session {}.".format(subSessionDir))
+                    continue
+    
+                print("Adding BIDS session {} to list for subject {}.".format(subSessionDir, subject))
+                bidsSession = BidsSession(subSessionDir, inputDirSession, subSessionBidsScans)
+                if subject not in bidsSubjectMap:
+                    bidsSubjectMap[subject] = BidsSubject(subject, bidsSession=bidsSession)
+                else:
+                    bidsSubjectMap[subject].addBidsSession(bidsSession)
+    
+            else:
+                print("No BIDS data found in session {}.".format(subSessionDir))
+    
+    print("")
+    
+    if not bidsSubjectMap:
+        print("No BIDS data found anywhere in inputDir {}.".format(inputDir))
+        sys.exit(1)
+    
+    print("")
+    allHaveSessions = True
+    allHaveScans = True
+    for bidsSubject in bidsSubjectMap.values():
+        allHaveSessions = allHaveSessions and bidsSubject.hasSessions()
+        allHaveScans = allHaveScans and bidsSubject.hasScans()
+    
+    if not (allHaveSessions ^ allHaveScans):
+        print("ERROR: Somehow we have a mix of subjects with explicit sessions and subjects without explicit sessions. We must have either all subjects with sessions, or all subjects without. They cannot be mixed.")
+        sys.exit(1)
+    
+    print("Copying BIDS data.")
+    for bidsSubject in bidsSubjectMap.values():
+        subjectDir = os.path.join(outputDir, "sub-" + bidsSubject.subjectLabel)
+        os.mkdir(subjectDir)
+    
+        if allHaveSessions:
+            for bidsSession in bidsSubject.bidsSessions:
+                sessionDir = os.path.join(subjectDir, "ses-" + bidsSession.sessionLabel)
+                os.mkdir(sessionDir)
+                copyScanBidsFiles(sessionDir, bidsSession.bidsScans)
+        else:
+            copyScanBidsFiles(subjectDir, bidsSubject.bidsScans)
+    
+    print("Done.")
+
+def reorganizeWithTsv(tsvfile):
+    print("Copying session-level BIDS files to output dir")
+    dd = os.path.join(os.path.dirname(tsvfile), 'dataset_description.json')
+    if os.path.isfile(dd):
+        print("Copying {} to {}".format(dd, outputDir))
+        shutil.copy(dd, outputDir)
+    path = pathlib.Path(tsvfile)
+    ii = path.parts.index('RESOURCES')
+    sessionDir = os.path.join(*path.parts[:ii])
+    print("Copying scan-level BIDS files to output dir per {}".format(tsvfile))
+    sessionOutDir = None
+    with open(tsvfile, 'r') as tsv:
+        reader = csv.DictReader(tsv, delimiter='\t')
+        for row in reader:
+            # Copying scan-level BIDS files to output dir
+            scanId = row['xnat_scan_id']
+            scanSubdir, scanFname = pathlib.Path(row['filename']).parts
+            if sessionOutDir is None:
+                scanBidsNameMap = xnatbidsfns.generateBidsNameMap(scanFname)
+                sessionOutDir = os.path.join(outputDir, "sub-" + scanBidsNameMap.get("sub"))
+                if "ses" in scanBidsNameMap:
+                    sessionOutDir = os.path.join(sessionOutDir, "ses-" + scanBidsNameMap.get("ses"))
+                os.makedirs(sessionOutDir, exist_ok = True)
+                print("Copying {} to {}".format(tsvfile, sessionOutDir))
+                shutil.copy(tsvfile, sessionOutDir)
+            scanOutDir = os.path.join(sessionOutDir, scanSubdir)
+            os.makedirs(scanOutDir, exist_ok = True) 
+            for f in glob(os.path.join(sessionDir, 'SCANS', scanId, 'NIFTI', scanFname + '.nii.*')) + \
+                     glob(os.path.join(sessionDir, 'SCANS', scanId, 'BIDS', scanFname + '.json')):
+                print("Copying {} to {}".format(f, scanOutDir))
+                shutil.copy(f, scanOutDir)
+
 
 version = "1.0"
 args = docopt(__doc__, version=version)
@@ -203,80 +303,17 @@ outputDir = args['<outputDir>']
 print("Input dir: {}".format(inputDir))
 print("Output dir: {}".format(outputDir))
 
-# First check if the input directory is a session directory
-sessionBidsScans = bidsifySession(inputDir)
-
-bidsSubjectMap = {}
-if sessionBidsScans:
-    subject = getSubjectForBidsScans(sessionBidsScans)
-    if not subject:
-        # We would have already printed an error message, so no need to print anything here
-        sys.exit(1)
-    session = getSessionForBidsScans(sessionBidsScans)
-    if not session:
-        bidsSubjectMap = {subject: BidsSubject(subject, bidsScans=sessionBidsScans)}
-    else:
-        bidsSession = BidsSession(session, inputDir, sessionBidsScans)
-        bidsSubjectMap = {subject: BidsSubject(subject, bidsSession=bidsSession)}
+# If we have scan.tsv file(s), use these, otherwise, perform manual reorganization
+scansTsvList = glob(os.path.join(inputDir, '**', 'RESOURCES', 'BIDS', '*_scans.tsv'), recursive=True)
+if len(scansTsvList) == 0:
+    manualBidsReorganization()
 else:
-    # Ok, we didn't find any BIDS scan directories in inputDir. We may be looking at a collection of session directories.
-    print("")
-    print("Checking subdirectories of {}.".format(inputDir))
-
-    for subSessionDir in os.listdir(inputDir):
-        inputDirSession = os.path.join(inputDir, subSessionDir)
-        subSessionBidsScans = bidsifySession(inputDirSession)
-        if subSessionBidsScans:
-            subject = getSubjectForBidsScans(subSessionBidsScans)
-            if not subject:
-                print("SKIPPING. Could not determine subject for session {}.".format(subSessionDir))
-                continue
-
-            print("Adding BIDS session {} to list for subject {}.".format(subSessionDir, subject))
-            bidsSession = BidsSession(subSessionDir, inputDirSession, subSessionBidsScans)
-            if subject not in bidsSubjectMap:
-                bidsSubjectMap[subject] = BidsSubject(subject, bidsSession=bidsSession)
-            else:
-                bidsSubjectMap[subject].addBidsSession(bidsSession)
-
-        else:
-            print("No BIDS data found in session {}.".format(subSessionDir))
-
-print("")
-
-if not bidsSubjectMap:
-    print("No BIDS data found anywhere in inputDir {}.".format(inputDir))
-    sys.exit(1)
-
-print("")
-allHaveSessions = True
-allHaveScans = True
-for bidsSubject in bidsSubjectMap.itervalues():
-    allHaveSessions = allHaveSessions and bidsSubject.hasSessions()
-    allHaveScans = allHaveScans and bidsSubject.hasScans()
-
-if not (allHaveSessions ^ allHaveScans):
-    print("ERROR: Somehow we have a mix of subjects with explicit sessions and subjects without explicit sessions. We must have either all subjects with sessions, or all subjects without. They cannot be mixed.")
-    sys.exit(1)
-
-print("Copying BIDS data.")
-for bidsSubject in bidsSubjectMap.itervalues():
-    subjectDir = os.path.join(outputDir, "sub-" + bidsSubject.subjectLabel)
-    os.mkdir(subjectDir)
-
-    if allHaveSessions:
-        for bidsSession in bidsSubject.bidsSessions:
-            sessionDir = os.path.join(subjectDir, "ses-" + bidsSession.sessionLabel)
-            os.mkdir(sessionDir)
-            copyScanBidsFiles(sessionDir, bidsSession.bidsScans)
-            copyTsv(bidsSession.inputDir, sessionDir)
-
-    else:
-        copyScanBidsFiles(subjectDir, bidsSubject.bidsScans)
-        if bidsSubject.bidsSession:
-            idir = bidsSubject.bidsSession.inputDir
-        else:
-            idir = inputDir
-        copyTsv(idir, subjectDir)
-
-print("Done.")
+    success = True
+    for tsv in scansTsvList:
+        try:
+            print('Reorganizing into BIDS structure per {}'.format(tsv))
+            reorganizeWithTsv(tsv)
+        except Exception:
+            traceback.print_exc()
+            success = False
+   
