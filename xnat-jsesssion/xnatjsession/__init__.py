@@ -73,10 +73,11 @@ class XnatSession():
         return True
     
     def close_httpsession(self):
-        # Logs out of session for cleanup
-        self.httpsess.delete(self.host + '/data/JSESSION', timeout=(30, self.timeout))
-        self.logger.debug('[SESSION] Deleting XNAT session')
-        self.httpsess.close()
+        if self.httpsess is not None:
+            # Logs out of session for cleanup
+            self.httpsess.delete(self.host + '/data/JSESSION', timeout=(30, self.timeout))
+            self.logger.debug('[SESSION] Deleting XNAT session')
+            self.httpsess.close()
         return True
 
     def setup_logger(self):

@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="xnatjsession", 
-    version="0.1",
+    version="0.2",
     author="Brian Holt",
     author_email="beholt@radiologics.com",
     description="Utility functions for using XNAT JSESSION",

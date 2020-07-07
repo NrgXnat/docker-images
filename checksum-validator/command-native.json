@@ -1,11 +1,11 @@
 {
-  "name": "validate-checksum",
-  "description": "Validate uploaded DICOM with checksum",
+  "name": "validate-checksum-native",
+  "description": "Validate native format OTIS images with checksum",
   "version": "1.0",
   "schema-version": "1.0",
   "image": "radiologicskate/checksum-validator:1.0",
   "type": "docker",
-  "command-line": "python validate.py --dicom --sessionId #SESSION_ID# --sessionLabel #SESSION_LABEL# --assignTo #USER# #CHECKSUM_RES# #CHECKSUM_SUBDIR# #SCAN_IDS#",
+  "command-line": "python validate.py --sessionId #SESSION_ID# --sessionLabel #SESSION_LABEL# --assignTo #USER# #RES# #SUBDIR#",
   "override-entrypoint": true,
   "mounts": [
     {
@@ -17,23 +17,6 @@
   "environment-variables": {},
   "ports": {},
   "inputs": [
-    {
-      "name": "SCAN_IDS",
-      "label": "Series IDs",
-      "description": null,
-      "type": "string",
-      "matcher": null,
-      "default-value": null,
-      "required": false,
-      "replacement-key": null,
-      "sensitive": null,
-      "command-line-flag": "--series",
-      "command-line-separator": " ",
-      "true-value": null,
-      "false-value": null,
-      "select-values": [],
-      "multiple-delimiter": "flag"
-    },
     {
       "name": "USER",
       "label": "User to whom query will be assigned",
@@ -86,8 +69,8 @@
       "multiple-delimiter": null
     },
     {
-      "name": "CHECKSUM_RES",
-      "label": "Resource containing checksum txt files",
+      "name": "RES",
+      "label": "Resource containing native format image zip and checksum txt",
       "description": null,
       "type": "string",
       "matcher": null,
@@ -103,8 +86,8 @@
       "multiple-delimiter": null
     },
     {
-      "name": "CHECKSUM_SUBDIR",
-      "label": "Subdirectory within resource containing checksum txt files",
+      "name": "SUBDIR",
+      "label": "Subdirectory within resource",
       "description": null,
       "type": "string",
       "matcher": null,
@@ -123,9 +106,9 @@
   "outputs": [],
   "xnat": [
     {
-      "name": "validate-checksum",
-      "label": "Validate uploaded DICOM with checksum",
-      "description": "Validate uploaded DICOM with checksum",
+      "name": "validate-checksum-native",
+      "label": "Validate uploaded native image zip with checksum",
+      "description": "Validate uploaded native image zip with checksum",
       "contexts": [
         "xnat:imageSessionData"
       ],
@@ -206,27 +189,8 @@
           "multiple": false
         },
         {
-          "name": "series",
-          "label": "Series",
-          "description": null,
-          "type": "Scan",
-          "matcher": "('DICOM' in @.resources[*].label || 'secondary' in @.resources[*].label)",
-          "default-value": null,
-          "required": false,
-          "replacement-key": null,
-          "sensitive": null,
-          "provides-value-for-command-input": "SCAN_IDS",
-          "provides-files-for-command-mount": null,
-          "user-settable": true,
-          "load-children": true,
-          "derived-from-wrapper-input": "session",
-          "derived-from-xnat-object-property": "id",
-          "via-setup-command": null,
-          "multiple": true
-        },
-        {
-          "name": "checksum-resource",
-          "label": "Resource containing checksum txt files",
+          "name": "resource",
+          "label": "Resource containing native format image zip and checksum txt file",
           "description": null,
           "type": "Resource",
           "matcher": null,
@@ -244,8 +208,8 @@
           "multiple": false
         },
         {
-          "name": "checksum-resource-dir",
-          "label": "Directory path for resource containing checksum txt files",
+          "name": "resource-dir",
+          "label": "Directory path for resource containing native format image zip and checksum txt file",
           "description": null,
           "type": "string",
           "matcher": null,
@@ -253,11 +217,11 @@
           "required": false,
           "replacement-key": null,
           "sensitive": null,
-          "provides-value-for-command-input": "CHECKSUM_RES",
+          "provides-value-for-command-input": "RES",
           "provides-files-for-command-mount": null,
           "user-settable": false,
           "load-children": false,
-          "derived-from-wrapper-input": "checksum-resource",
+          "derived-from-wrapper-input": "resource",
           "derived-from-xnat-object-property": "directory",
           "via-setup-command": null,
           "multiple": false

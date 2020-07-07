@@ -1,0 +1,8 @@
+# see https://packaging.python.org/tutorials/packaging-projects/
+# make edits, bump version in setup.py
+python2 setup.py sdist bdist_wheel
+python3 setup.py sdist bdist_wheel
+# may need to add path to twine
+PATH=$PATH:/Users/$USER/.local/bin
+# rm old version in dist/
+python3 -m twine upload dist/*
