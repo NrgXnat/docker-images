@@ -3,6 +3,7 @@ import sys
 import os
 import hashlib
 import glob
+import re
 from xnatjsession import XnatSession
 
 parser = argparse.ArgumentParser(description="Run checksum validation")
@@ -83,7 +84,7 @@ def compare_checksums(actual, csfile, datafile, fname):
         return False, msg
     print("Reading %s for expected checksum" % csfile)
     with open(csfile, 'r') as file:
-        expected = file.read()
+        expected = re.sub(r'\s+', '', file.read())
     if not actual:
         print("Reading %s for actual checksum" % datafile)
         actual = md5(datafile)
@@ -134,10 +135,11 @@ try:
        # Perform validation and create query if needed
        success, msg = validate_native(xnatSession)
        if not success:
-           create_query(xnatSession, "Wrong data", "Checksum validation failed", \
-               "Checksum validation failed: %s" % msg)
+            print(msg)
+            create_query(xnatSession, "Wrong data", "Checksum validation failed", \
+                "Checksum validation failed: %s" % msg)
        else:
-           print("Checksum validation passed")
+            print("Checksum validation passed")
     
 # All done
 finally:
