@@ -69,7 +69,7 @@ class BidsSubject(object):
         return bool(self.bidsScans is not None and self.bidsScans is not [])
 
 
-def bidsifySession(sessionDir):
+def bidsifySession(sessionDir, multiple = False):
     print("Checking for session structure in " + sessionDir)
 
     scansDir = os.path.join(sessionDir, 'SCANS')
@@ -136,12 +136,19 @@ def bidsifySession(sessionDir):
     print("")
     print("Done checking all scans.")
 
-    if bidsScans:
+    if bidsScans and not multiple:
         sessionBidsJsonPath = os.path.join(sessionDir, 'RESOURCES', 'BIDS', 'dataset_description.json')
-        # Copy over the dataset_description as BIDS requires this
-        shutil.copy(sessionBidsJsonPath, outputDir)
+        copyDatasetDescription(sessionBidsJsonPath)
 
     return bidsScans
+
+def copyDatasetDescription(json):
+    if not os.path.isfile(json):
+        # Use a dummy file
+        json = os.path.join(os.path.normpath('/root'), 'dataset_description.json')
+    # Copy over the dataset_description as BIDS requires this
+    print("Copying {} to {}".format(json, outputDir))
+    shutil.copy(json, outputDir)
 
 def getSubjectForBidsScans(bidsScanList):
     print("")
@@ -207,20 +214,22 @@ def manualBidsReorganization():
             bidsSubjectMap = {subject: BidsSubject(subject, bidsSession=bidsSession)}
     else:
         # Ok, we didn't find any BIDS scan directories in inputDir. We may be looking at a collection of session directories.
+        copyDatasetDescription(os.path.join(inputDir, 'resources', 'BIDS', 'dataset_description.json'))
         print("")
         print("Checking subdirectories of {}.".format(inputDir))
     
         for subSessionDir in os.listdir(inputDir):
             inputDirSession = os.path.join(inputDir, subSessionDir)
-            subSessionBidsScans = bidsifySession(inputDirSession)
+            subSessionBidsScans = bidsifySession(inputDirSession, True)
             if subSessionBidsScans:
                 subject = getSubjectForBidsScans(subSessionBidsScans)
                 if not subject:
                     print("SKIPPING. Could not determine subject for session {}.".format(subSessionDir))
                     continue
     
-                print("Adding BIDS session {} to list for subject {}.".format(subSessionDir, subject))
-                bidsSession = BidsSession(subSessionDir, inputDirSession, subSessionBidsScans)
+                session = getSessionForBidsScans(subSessionBidsScans)
+                print("Adding BIDS session {} to list for subject {}.".format(session, subject))
+                bidsSession = BidsSession(session, inputDirSession, subSessionBidsScans)
                 if subject not in bidsSubjectMap:
                     bidsSubjectMap[subject] = BidsSubject(subject, bidsSession=bidsSession)
                 else:
@@ -263,10 +272,7 @@ def manualBidsReorganization():
 
 def reorganizeWithTsv(tsvfile):
     print("Copying session-level BIDS files to output dir")
-    dd = os.path.join(os.path.dirname(tsvfile), 'dataset_description.json')
-    if os.path.isfile(dd):
-        print("Copying {} to {}".format(dd, outputDir))
-        shutil.copy(dd, outputDir)
+    copyDatasetDescription(os.path.join(os.path.dirname(tsvfile), 'dataset_description.json'))
     path = pathlib.Path(tsvfile)
     ii = path.parts.index('RESOURCES')
     sessionDir = os.path.join(*path.parts[:ii])

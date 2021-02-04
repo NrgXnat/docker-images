@@ -1,0 +1,18 @@
+{
+  "Name": "Dummy Dataset Description for XNAT",
+  "BIDSVersion": "1.1.1",
+  "License": "N/A",
+  "Authors": [
+    "Radiologics"
+  ],
+  "Acknowledgements": "N/A",
+  "HowToAcknowledge": "N/A",
+  "Funding": [
+    "N/A"
+  ],
+  "ReferencesAndLinks": [
+    "N/A"
+  ],
+  "DatasetDOI": "N/A"
+}
+
