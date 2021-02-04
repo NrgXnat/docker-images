@@ -10,6 +10,8 @@ parser = argparse.ArgumentParser(description="Run checksum validation")
 
 parser.add_argument("--sessionId", help="Session ID", required=True)
 parser.add_argument("--sessionLabel", help="Session Label", required=True)
+parser.add_argument("--project", help="Project", required=True)
+parser.add_argument("--subject", help="Subject", required=True)
 parser.add_argument("--assignTo", help="Assign query to this user", required=True)
 parser.add_argument("--checksumResource", help="Checksum file resource directory", required=False)
 parser.add_argument("--checksumSubdir", help="Checksum file subdirectory within checksumResource", required=False, default="")
@@ -20,6 +22,8 @@ args = parser.parse_args()
 
 sesid       = args.sessionId
 label       = args.sessionLabel
+project     = args.project
+subject     = args.subject
 assignTo    = args.assignTo
 series      = args.series
 resdir      = args.checksumResource
@@ -38,6 +42,22 @@ def create_query(xnatSession, category, title, description):
                                                                 response.reason,
                                                                 response.text))
 
+def mark_native_files_valid(xnatSession, valid):
+    uri = "/data/projects/%s/subjects/%s/experiments/%s" % (project, subject, sesid)
+    if valid:
+        v = "true"
+    else:
+        v = "false"
+    print("Setting nativeValid to %s" % v)
+    uri += "?xnat%3AexperimentData%2Ffields%2Ffield%5Bname%3DnativeValid%5D%2Ffield=" + v
+    xnatSession.renew_httpsession()
+    response = xnatSession.httpsess.put(url = xnatSession.host + uri)
+    if response.status_code != 200:
+        raise Exception("Error setting nativeValid" % (uri,
+                                                       response.status_code,
+                                                       response.reason,
+                                                       response.text))
+
 def get_dicom_file(s, xnatSession):
     uri = "/data/experiments/%s/scans/%s/files" % (sesid, s)
     params = {"file_format": "DICOM", "locator": "absolutePath"}
@@ -45,9 +65,9 @@ def get_dicom_file(s, xnatSession):
     response = xnatSession.httpsess.get(url = xnatSession.host + uri, params = params)
     if response.status_code != 200:
         raise Exception("Error getting DICOM file (%s): %s %s %s" % (uri,
-                                                                response.status_code,
-                                                                response.reason,
-                                                                response.text))
+                                                                     response.status_code,
+                                                                     response.reason,
+                                                                     response.text))
     res = response.json()["ResultSet"]["Result"][0]
     return res["absolutePath"], res["digest"]
 
@@ -134,6 +154,7 @@ try:
     else:
        # Perform validation and create query if needed
        success, msg = validate_native(xnatSession)
+       mark_native_files_valid(xnatSession, success)
        if not success:
             print(msg)
             create_query(xnatSession, "Wrong data", "Checksum validation failed", \
