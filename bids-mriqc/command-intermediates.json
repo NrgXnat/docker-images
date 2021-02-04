@@ -1,6 +1,6 @@
 {
-  "name": "bids-mriqc",
-  "description": "Runs the MRIQC BIDS App",
+  "name": "bids-mriqc-intermediates",
+  "description": "Runs the MRIQC BIDS App, saving intermediates",
   "version": "1.1",
   "schema-version": "1.0",
   "image": "poldracklab/mriqc:0.15.2",
@@ -53,13 +53,21 @@
       "mount": "out",
       "path": null,
       "glob": null
+    },
+    {
+      "name": "working",
+      "description": "Working QC files",
+      "required": true,
+      "mount": "work",
+      "path": null,
+      "glob": null
     }
   ],
   "xnat": [
     {
-      "name": "bids-mriqc-project",
+      "name": "bids-mriqc-project-intermediates",
       "label": null,
-      "description": "Run the MRIQC BIDS App with a project mounted",
+      "description": "Run the MRIQC BIDS App with a project mounted, saving intermediates",
       "contexts": [
         "xnat:projectData"
       ],
@@ -91,13 +99,22 @@
           "type": "Resource",
           "label": "MRIQC",
           "format": null
+        },
+        {
+          "name": "working-resource",
+          "accepts-command-output": "working",
+          "via-wrapup-command": null,
+          "as-a-child-of": "project",
+          "type": "Resource",
+          "label": "MRIQC-wrk",
+          "format": null
         }
       ]
     },
     {
-      "name": "bids-mriqc-session",
+      "name": "bids-mriqc-session-intermediates",
       "label": null,
-      "description": "Run the MRIQC BIDS App with a session mounted",
+      "description": "Run the MRIQC BIDS App with a session mounted, saving intermediates",
       "contexts": [
         "xnat:imageSessionData"
       ],
@@ -128,6 +145,15 @@
           "as-a-child-of": "session",
           "type": "Resource",
           "label": "MRIQC",
+          "format": null
+        },
+        {
+          "name": "working-resource",
+          "accepts-command-output": "working",
+          "via-wrapup-command": null,
+          "as-a-child-of": "session",
+          "type": "Resource",
+          "label": "MRIQC-wrk",
           "format": null
         }
       ]
