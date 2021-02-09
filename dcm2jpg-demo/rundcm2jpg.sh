@@ -23,16 +23,11 @@ echo "Session label: ${label}"
 echo "Scans: ${scan_id_list}"
 echo "Config settings: $conf1 and \"$conf2\""
 
-dcmdir=$outdir/dcmInput
-mkdir -p $dcmdir
-
-echo "Locating DICOM files"
-cd $indir
-find . -path '*/SCANS/*/DICOM/*' -not -path '*/RESOURCES/*' -not -name '*.xml' -exec cp --parent \{\} $dcmdir/ \;
-cd -
+echo "Here's some STDERR for viewing pleasure" 1>&2
 
 echo "Beginning dcm2jpg"
-/dcm4che-5.11.1/bin/dcm2jpg $dcmdir $outdir
-rm -rf $dcmdir
+for d in $indir/SCANS/*/DICOM; do
+    /dcm4che-5.11.1/bin/dcm2jpg $d $outdir | grep -Ev '(xml|org.dcm4che3)'
+done
 
 echo "Processing complete"
