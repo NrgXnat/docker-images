@@ -1,5 +1,5 @@
 import argparse
-import os
+import os, re
 import xnat
 import pandas as pd
 from sys import stderr
@@ -27,7 +27,7 @@ def getOrCreate(label):
         print("Creating subject {}".format(label))
         xobject = connection.classes.SubjectData(parent=project, label=label)
     else:
-        raise Exception("ERROR: no subject with label {} and create=False".format(label))
+        raise Exception("ERROR: create=False and no existing subject with label {}".format(label))
     return xobject
 
 
@@ -35,11 +35,12 @@ def populateVariables(xobject, row):
     print("Populating custom variables for subject {}".format(xobject.label))
     params = {}
     for key in row.keys():
-        if row[key] and not pd.isna(row[key]):
+        if not pd.isna(row[key]):
             #xobject.fields[key.lower()] = row[key]
-            var = "xnat:subjectData/fields/field[name={}]/field".format(key.lower())
+            var = "xnat:subjectData/fields/field[name={}]/field".format(removeSpecialChars(key.lower()))
             params[var] = row[key]
-    connection.put(xobject.uri, data = params)
+    r = connection.put(xobject.uri, data = params)
+    r.raise_for_status()
 
 
 def readIntoDataframe(spreadsheet):
@@ -50,21 +51,29 @@ def readIntoDataframe(spreadsheet):
     return df
 
 
+def removeSpecialChars(string):
+    return re.sub("[^0-9a-zA-Z_]+", "", string)
+
+
+df = readIntoDataframe(args.spreadsheet)
+if not args.labelColumn in df.columns:
+    printErr("ERROR: no column header matches the identifier you specified {}. Columns are {}".format(args.labelColumn, list(df.columns)))
+    exit(1)
+
+errors = False
 try:
-    errors = False
     connection = xnat.connect(os.environ['XNAT_HOST'], user=os.environ['XNAT_USER'], password=os.environ['XNAT_PASS'])
     project = connection.projects[args.project]
-    df = readIntoDataframe(args.spreadsheet)
     for index, row in df.iterrows():
         try:
-            xobject = getOrCreate(str(row[args.labelColumn]))
+            xobject = getOrCreate(removeSpecialChars(str(row[args.labelColumn])))
             populateVariables(xobject, row)
         except Exception as e:
             printErr(str(e))
             errors = True
-
-    if errors:
-        raise Exception("Errors encountered during processing, please review the stderr log")
-        
 finally:
     connection.disconnect()
+    
+if errors:
+    print("Errors encountered during processing, please review the stderr log")
+    exit(1)

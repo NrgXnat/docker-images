@@ -6,7 +6,7 @@
   "schema-version": "1.0",
   "image": "radiologicskate/spreadsheet-uploader:1.0",
   "type": "docker",
-  "command-line": "python /usr/local/bin/upload.py #SPREADSHEET# #PROJECT# #LABEL_COLUMN# #CREATE#",
+  "command-line": "python /usr/local/bin/upload.py #SPREADSHEET# #PROJECT# --labelColumn '#LABEL_COLUMN#' #CREATE#",
   "override-entrypoint": true,
   "mounts": [
     {
@@ -38,7 +38,7 @@
     {
       "name": "SPREADSHEET",
       "label": "Spreadsheet",
-      "description": "Spreadsheet containing subject data, first row is expected to be a header",
+      "description": "Spreadsheet containing subject data. The first row is expected to be a header",
       "type": "file",
       "matcher": null,
       "default-value": null,
@@ -62,8 +62,8 @@
       "required": true,
       "replacement-key": null,
       "sensitive": null,
-      "command-line-flag": "--labelColumn",
-      "command-line-separator": " ",
+      "command-line-flag": null,
+      "command-line-separator": null,
       "true-value": null,
       "false-value": null,
       "select-values": [],
