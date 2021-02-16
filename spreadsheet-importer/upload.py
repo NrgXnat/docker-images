@@ -57,7 +57,7 @@ def removeSpecialChars(string):
 
 df = readIntoDataframe(args.spreadsheet)
 if not args.labelColumn in df.columns:
-    printErr("ERROR: no column header matches the identifier you specified {}. Columns are {}".format(args.labelColumn, list(df.columns)))
+    printErr("ERROR: no column header matching \"{}\", which you specified as the identifier. Columns are {}".format(args.labelColumn, list(df.columns)))
     exit(1)
 
 errors = False
