@@ -1,17 +1,22 @@
 {
   "name": "validate-checksum-native",
   "description": "Validate native format OTIS images with checksum",
-  "version": "1.1",
+  "version": "1.2",
   "schema-version": "1.0",
-  "image": "radiologicskate/checksum-validator:1.1",
+  "image": "radiologicskate/checksum-validator:1.2",
   "type": "docker",
-  "command-line": "python validate.py --sessionId #SESSION_ID# --sessionLabel #SESSION_LABEL# --project #PROJECT# --subject #SUBJECT# --assignTo #USER# #RES# #SUBDIR#",
+  "command-line": "python validate.py --sessionId #SESSION_ID# --sessionLabel #SESSION_LABEL# --project #PROJECT# --subject #SUBJECT# --workdir /work --assignTo #USER# #RES# #SUBDIR#",
   "override-entrypoint": true,
   "mounts": [
     {
       "name": "input",
       "writable": false,
       "path": "#SESSION_DIR#"
+    },
+    {
+      "name": "work",
+      "writable": true,
+      "path": "/work"
     }
   ],
   "environment-variables": {},
@@ -265,7 +270,7 @@
           "label": "Resource containing native format image zip and checksum txt file",
           "description": null,
           "type": "Resource",
-          "matcher": null,
+          "matcher": "@.label=='OTIS'",
           "default-value": null,
           "required": false,
           "replacement-key": null,

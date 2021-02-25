@@ -4,6 +4,7 @@ import os
 import hashlib
 import glob
 import re
+import zipfile as zf
 from xnatjsession import XnatSession
 
 parser = argparse.ArgumentParser(description="Run checksum validation")
@@ -15,6 +16,7 @@ parser.add_argument("--subject", help="Subject", required=True)
 parser.add_argument("--assignTo", help="Assign query to this user", required=True)
 parser.add_argument("--checksumResource", help="Checksum file resource directory", required=False)
 parser.add_argument("--checksumSubdir", help="Checksum file subdirectory within checksumResource", required=False, default="")
+parser.add_argument("--workdir", help="Working directory", required=False, default="/tmp")
 parser.add_argument("--series", action="append", help="DICOM series XNAT ID", required=False)
 parser.add_argument("--dicom", action="store_true", help="Validate DICOM checksum (instead of native zip)", required=False)
 
@@ -28,6 +30,7 @@ assignTo    = args.assignTo
 series      = args.series
 resdir      = args.checksumResource
 subdir      = args.checksumSubdir
+workdir     = args.workdir
 dicom       = args.dicom
 
 def create_query(xnatSession, category, title, description):
@@ -85,16 +88,26 @@ def validate_dicom(s, xnatSession):
     csfile = os.path.join(resdir, subdir, "%s.txt" % os.path.splitext(sfilename)[0])
     return compare_checksums(actual, csfile, sfile, "%s (%s)" % (s, sfilename))
 
-def validate_native(xnatSession):
-    zipfiles = glob.glob(os.path.join(resdir, subdir, '*.zip'))
+def find_zip(basedir):
+    zipfiles = glob.glob(os.path.join(basedir, '*.zip'))
     if len(zipfiles) != 1:
         msg = "Expected precisely one native format zip file in \"%s\", found: %s" \
-            % (os.path.basename(resdir), zipfiles)
-        print(msg)
-        return False, msg
-    zipfile = zipfiles[0]
-    csfile  = zipfile.replace('.zip','.txt')
-    return compare_checksums(None, csfile, zipfile, os.path.basename(zipfile))
+            % (os.path.basename(basedir), zipfiles)
+        raise Exception(msg)
+    return zipfiles[0]
+
+def validate_native(xnatSession):
+    try: 
+        zipfile = find_zip(os.path.join(resdir, subdir))
+        if "Combined.zip" in zipfile:
+            # extract
+            with zf.ZipFile(zipfile, 'r') as zip_ref:
+                zip_ref.extractall(workdir)
+            zipfile = find_zip(workdir)
+        csfile  = zipfile.replace('.zip','.txt')
+        return compare_checksums(None, csfile, zipfile, os.path.basename(zipfile))
+    except Exception as e:
+        return False, str(e)
 
 def compare_checksums(actual, csfile, datafile, fname):
     if not os.path.exists(csfile):
