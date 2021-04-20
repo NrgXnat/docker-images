@@ -1,0 +1,171 @@
+{
+  "name": "Deface",
+  "label": "Deface Structural Scans",
+  "description": "Applies the Facemasking algorithm developed at WashU to the structural scans",
+  "version": "1.0",
+  "schema-version": "1.0",
+  "image": "mohanar/facemasking:v1.12",
+  "type": "docker",
+  "working-directory": "/output",
+  "command-line": "/opt/facemasking_launch_script/mask-session.sh #PROJECT# #SUBJECT# #SESSION# #SCANTYPES#  #USE_BET# #INVASIVENESS# #THRESHOLD#",
+  "mounts": [
+    {
+      "name": "in",
+      "writable": false,
+      "path": "/input"
+    },
+    {
+      "name": "out",
+      "writable": true,
+      "path": "/output"
+    }
+  ],
+  "environment-variables": {},  
+  "inputs": [
+    {
+      "name": "project",
+      "description": "Project ID",
+      "type": "string",
+      "required": true,
+      "replacement-key": "#PROJECT#",
+      "command-line-flag": "",
+      "command-line-separator": ""
+    },
+   {
+      "name": "subject",
+      "description": "Subject ID",
+      "type": "string",
+      "required": true,
+      "replacement-key": "#SUBJECT#",
+      "command-line-flag": "",
+      "command-line-separator": ""
+    },    
+   {
+      "name": "session_label",
+      "description": "Session ID",
+      "type": "string",
+      "required": true,
+      "replacement-key": "#SESSION#",
+      "command-line-flag": "",
+      "command-line-separator": ""
+    },    
+   {
+      "name": "scantypes",
+      "description": "Comma seperated list of Structural Scan Types",
+      "type": "string",
+      "required": true,
+      "replacement-key": "#SCANTYPES#",
+      "command-line-flag": "",
+      "command-line-separator": ""
+    },    
+   {
+      "name": "usebet",
+      "description": "Use BET",
+      "type": "string",
+      "default-value":"1",
+      "required": true,
+      "replacement-key": "#USE_BET#",
+      "command-line-flag": "",
+      "command-line-separator": ""
+    },    
+   {
+      "name": "invasiveness",
+      "description": "Invasiveness",
+      "type": "string",
+      "default-value":"1.0",
+      "required": true,
+      "replacement-key": "#INVASIVENESS#",
+      "command-line-flag": "",
+      "command-line-separator": ""
+    },    
+    {
+      "name": "threshold",
+      "description": "Threshold",
+      "type": "string",
+      "default-value":"-1",
+      "required": true,
+      "replacement-key": "#THRESHOLD#",
+      "command-line-flag": "",
+      "command-line-separator": ""
+    }
+  ],
+  "xnat": [
+    {
+      "name": "facemasking",
+      "label": null,
+      "description": "NRG Facemasking",
+      "contexts": [
+        "xnat:imageSessionData"
+      ],
+      "external-inputs": [
+        {
+          "name": "session",
+          "description": "Input session",
+          "type": "Session",
+          "matcher": null,
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "provides-value-for-command-input": null,
+          "provides-files-for-command-mount": "in",
+          "via-setup-command": null,
+          "user-settable": null,
+          "load-children": true
+        }
+      ],
+      "derived-inputs": [
+        {
+          "name": "label",
+          "description": "Session label",
+          "type": "string",
+          "matcher": null,
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "provides-value-for-command-input": "session_label",
+          "provides-files-for-command-mount": null,
+          "user-settable": null,
+          "load-children": true,
+          "derived-from-wrapper-input": "session",
+          "derived-from-xnat-object-property": "label",
+          "via-setup-command": null
+        },
+        {
+          "name": "xnat_project",
+          "description": "Project in which session is stored",
+          "type": "string",
+          "matcher": null,
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "sensitive": null,
+          "provides-value-for-command-input": "project",
+          "provides-files-for-command-mount": null,
+          "user-settable": null,
+          "load-children": true,
+          "derived-from-wrapper-input": "session",
+          "derived-from-xnat-object-property": "project-id",
+          "via-setup-command": null
+        },
+        {
+          "name": "subjectid",
+          "description": "Subject Accession ID",
+          "type": "string",
+          "matcher": null,
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "sensitive": null,
+          "provides-value-for-command-input": "subject",
+          "provides-files-for-command-mount": null,
+          "user-settable": null,
+          "load-children": true,
+          "derived-from-wrapper-input": "session",
+          "derived-from-xnat-object-property": "subject-id",
+          "via-setup-command": null
+        }
+      ]
+    }
+  ],
+  "reserve-memory": 15000
+}

@@ -1,0 +1,33 @@
+HOW-TO Deploy the FaceMasking container
+
+a) Facemasking container is available at:
+
+https://hub.docker.com/r/mohanar/facemasking latest tag is v1.12
+
+Add the container to the XNAT site
+
+b) The command json to add to the XNAT site for the facemasking container is at:
+
+https://bitbucket.org/radiologics/radiologics_containers/src/master/FaceMasking/container_xnat_json/facemasking_container.json
+
+c) Upload an MR Session which has Structural data. For the sake of this document, let the scan-types for the structural data be 
+
+T1w and T2w
+
+(only one  structural scan is enough for testing)
+
+d) Add the container to the project (Actions -> Project Settings -> Commands -> Enable Deface)
+
+e) Launch the container for a session uploaded in Step c). 
+
+For the input argument, scantypes, let the input value be T1w, T2w (Comma seperated list of Structural Scan Types)
+
+f) After the container completes, you expect to see:
+
+i) For the structural scans, RESOURCES:
+
+DICOM_ORIG and DICOM
+
+ii) If you view the DICOM scans, you should see the nose and ears blurred. 
+
+
