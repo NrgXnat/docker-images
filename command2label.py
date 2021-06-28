@@ -17,6 +17,7 @@ for commandFile in argsList:
     with open(commandFile) as f:
         commandObj = json.load(f)
     commandStr = json.dumps(commandObj) \
+                        .replace('\\', r'\\') \
                         .replace('"', r'\"') \
                         .replace('$', r'\$')
     commandStrList.append(commandStr)
