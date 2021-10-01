@@ -1,12 +1,12 @@
 {
-  "name": "spreadsheet-uploader",
-  "label": "spreadsheet-uploader",
+  "name": "spreadsheet-importer",
+  "label": "spreadsheet-importer",
   "description": "Populate subject data from spreadsheet",
-  "version": "1.0",
+  "version": "1.1",
   "schema-version": "1.0",
-  "image": "radiologicskate/spreadsheet-uploader:1.0",
+  "image": "radiologicskate/spreadsheet-importer:1.1",
   "type": "docker",
-  "command-line": "python /usr/local/bin/upload.py #SPREADSHEET# #PROJECT# --labelColumn '#LABEL_COLUMN#' #CREATE#",
+  "command-line": "python /usr/local/bin/import.py #SPREADSHEET# #PROJECT# --labelColumn '#LABEL_COLUMN#' #CREATE# #LUT#",
   "override-entrypoint": true,
   "mounts": [
     {
@@ -38,7 +38,7 @@
     {
       "name": "SPREADSHEET",
       "label": "Spreadsheet",
-      "description": "Spreadsheet containing subject data. The first row is expected to be a header",
+      "description": "Spreadsheet containing subject data. The first row is expected to be a header. (CSV or Excel files only)",
       "type": "file",
       "matcher": null,
       "default-value": null,
@@ -85,6 +85,23 @@
       "false-value": "",
       "select-values": [],
       "multiple-delimiter": null
+    },
+    {
+      "name": "LUT",
+      "label": "Look-up table",
+      "description": "Two-column spreadsheet containing a mapping from your subject spreadsheet's header variable names (first column) to XNAT variable names (second column). A sample row might be: histologic_diagnosis,group. The first row is ignored (expected to be a header). See https://wiki.xnat.org/display/XAPI/XNAT+REST+XML+Path+Shortcuts#XNATRESTXMLPathShortcuts-xnat:subjectData for XNAT's subject variables. Any variables not in this LUT will be imported as custom variables in XNAT.",
+      "type": "file",
+      "matcher": null,
+      "default-value": null,
+      "required": false,
+      "replacement-key": null,
+      "sensitive": null,
+      "command-line-flag": "--lut",
+      "command-line-separator": " ",
+      "true-value": null,
+      "false-value": null,
+      "select-values": [],
+      "multiple-delimiter": null
     }
   ],
   "outputs": [
@@ -99,8 +116,8 @@
   ],
   "xnat": [
     {
-      "name": "spreadsheet-uploader",
-      "label": "Spreadsheet uploader",
+      "name": "spreadsheet-importer",
+      "label": "Spreadsheet importer",
       "description": "Populate subject data from spreadsheet",
       "contexts": [
         "xnat:projectData"
