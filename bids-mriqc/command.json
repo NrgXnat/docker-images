@@ -114,7 +114,7 @@
           "sensitive": null,
           "provides-value-for-command-input": null,
           "provides-files-for-command-mount": "in",
-          "via-setup-command": "radiologicskate/xnat2bids-setup:1.3:xnat2bids",
+          "via-setup-command": "radiologicskate/xnat2bids-setup:1.4:xnat2bids",
           "user-settable": null,
           "load-children": false
         }
