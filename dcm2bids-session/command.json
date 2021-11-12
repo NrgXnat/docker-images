@@ -1,11 +1,11 @@
 {
   "name": "dcm2bids",
   "description": "Runs dcm2niix on a session's scans, and uploads the nifti and bids json",
-  "version": "2.5",
+  "version": "2.6",
   "schema-version": "1.0",
-  "image": "radiologicsit/dcm2bids-session:2.5",
+  "image": "radiologicsit/dcm2bids-session:2.6",
   "type": "docker",
-  "command-line": "python dcm2bids_wholeSession.py #SESSION_ID# #SESSION_LABEL# #SUBJECT# #PROJECT# #OVERWRITE# #SKIP# --host $XNAT_HOST --user $XNAT_USER --pass $XNAT_PASS --upload-by-ref False --dicomdir /dicom --niftidir /nifti",
+  "command-line": "python dcm2bids_wholeSession.py #SESSION_ID# #SESSION_LABEL# #SUBJECT# #PROJECT# #OVERWRITE# #SKIP# #FIELD# --host $XNAT_HOST --user $XNAT_USER --pass $XNAT_PASS --upload-by-ref False --dicomdir /dicom --niftidir /nifti",
   "override-entrypoint": true,
   "mounts": [
     {
@@ -109,7 +109,7 @@
     },
     {
       "name": "skipUnusable",
-      "label": null,
+      "label": "Skip unusable",
       "description": "Skip BIDS conversion of unusable scans?",
       "type": "boolean",
       "matcher": null,
@@ -122,6 +122,27 @@
       "true-value": "True",
       "false-value": "False",
       "select-values": [],
+      "multiple-delimiter": null
+    },
+    {
+      "name": "field",
+      "label": "Scan-level field for mapping",
+      "description": "If your site/project bidsmap config uses e.g., \"xnat_field\": \"T1\", then \"T1\" should be the value of your selection here.",
+      "type": "select-one",
+      "matcher": null,
+      "default-value": "series_description",
+      "required": true,
+      "replacement-key": "#FIELD#",
+      "sensitive": null,
+      "command-line-flag": "--field",
+      "command-line-separator": null,
+      "true-value": null,
+      "false-value": null,
+      "select-values": [
+        "series_description",
+        "type",
+        "series_class"
+      ],
       "multiple-delimiter": null
     }
   ],

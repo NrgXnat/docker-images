@@ -100,6 +100,12 @@ parser.add_argument("--overwrite", help="Overwrite NIFTI files if they exist")
 parser.add_argument("--upload-by-ref", help="Upload \"by reference\". Only use if your host can read your file system.")
 parser.add_argument("--workflowId", help="Pipeline workflow ID")
 parser.add_argument("--skipUnusable", help="Skip scans with quality=unusable")
+parser.add_argument('--field',
+                    default='series_description',
+                    const='series_description',
+                    nargs='?',
+                    choices=['series_description', 'type', 'series_class'],
+                    help='Field to use (default: %(default)s)')
 parser.add_argument('--version', action='version', version='%(prog)s 1')
 
 args, unknown_args = parser.parse_known_args()
@@ -114,6 +120,11 @@ niftidir = args.niftidir
 workflowId = args.workflowId
 uploadByRef = isTrue(args.upload_by_ref)
 skipUnusable = isTrue(args.skipUnusable)
+fieldName = args.field
+if fieldName == 'series_class':
+    fieldShortcut = 'xnat:imagescandata/series_class'
+else:
+    fieldShortcut = fieldName
 dcm2niixArgs = unknown_args if unknown_args is not None else []
 
 imgdir = niftidir + "/IMG"
@@ -170,31 +181,23 @@ try:
     # Get list of scan ids
     print
     print "Get scan list for session ID %s." % session
-    r = get(host + "/data/experiments/%s/scans" % session, params={"format": "json", "columns": "ID,quality,series_description,type"})
+    r = get(host + "/data/experiments/%s/scans" % session, params={"format": "json", "columns": "ID,quality,series_description,type,xnat:imagescandata/series_class"})
     scanRequestResultList = r.json()["ResultSet"]["Result"]
     if skipUnusable:
         scanIDList = []
-        seriesDescList = []
-        typeList = []
+        fieldList = []
         for scan in scanRequestResultList:
             if scan['quality'] == "unusable":
                 print "Skiping %s because its quality=unusable" % scan['ID']
                 continue
             scanIDList.append(scan['ID'])
-            seriesDescList.append(scan['series_description'])
-            typeList.append(scan['type'])
+            fieldList.append(scan[fieldShortcut])
     else: 
         scanIDList = [scan['ID'] for scan in scanRequestResultList]
-        seriesDescList = [scan['series_description'] for scan in scanRequestResultList]  # { id: sd for (scan['ID'], scan['series_description']) in scanRequestResultList }
-        typeList = [scan['type'] for scan in scanRequestResultList]
+        fieldList = [scan[fieldShortcut] for scan in scanRequestResultList]  # { id: sd for (scan['ID'], scan['series_description']) in scanRequestResultList }
 
     print 'Found scans %s.' % ', '.join(scanIDList)
-    print 'Series descriptions %s' % ', '.join(seriesDescList)
-    
-    # Fall back on scan type if series description field is empty
-    if set(seriesDescList) == set(['']):
-        seriesDescList = typeList
-        print 'Fell back to scan types %s' % ', '.join(seriesDescList)
+    print '%s %s' % (fieldName, ', '.join(fieldList))
     
     # Get site- and project-level configs
     bidsmaplist = []
@@ -220,13 +223,20 @@ try:
     else:
         print "Could not read project BIDS map"
     
-    # print "BIDS map: " + json.dumps(bidsmaplist)
+    print "BIDS map: " + json.dumps(bidsmaplist)
     
     # Collapse human-readable JSON to dict for processing
-    bidsnamemap = {x['series_description'].lower(): x['bidsname'] for x in bidsmaplist if 'series_description' in x and 'bidsname' in x}
+    key = 'xnat_field'
+    bidsnamemap = {x[key].lower(): x['bidsname'] for x in bidsmaplist if key in x and 'bidsname' in x}
+    if not bidsnamemap:
+        # legacy
+        key = 'series_description'
+        bidsnamemap = {x[key].lower(): x['bidsname'] for x in bidsmaplist if key in x and 'bidsname' in x}
+
+    #print "bidsnamemap: " + json.dumps(bidsnamemap)
     
     # Map all series descriptions to BIDS names (case insensitive)
-    resolved = [bidsnamemap[x.lower()] for x in seriesDescList if x.lower() in bidsnamemap]
+    resolved = [bidsnamemap[x.lower()] for x in fieldList if x.lower() in bidsnamemap]
     
     # Count occurrences
     bidscount = collections.Counter(resolved)
@@ -240,13 +250,13 @@ try:
     
     # Cheat and reverse scanid and seriesdesc lists so numbering is in the right order
     scansTsv = []
-    for scanid, seriesdesc in zip(reversed(scanIDList), reversed(seriesDescList)):
+    for scanid, seriesdesc in zip(reversed(scanIDList), reversed(fieldList)):
         print
         print 'Beginning process for scan %s.' % scanid
         os.chdir(builddir)
     
         print 'Assigning BIDS name for scan %s.' % scanid
-    
+
         if seriesdesc.lower() not in bidsnamemap:
             print "Series " + seriesdesc + " not found in BIDSMAP"
             # bidsname = "Z"
