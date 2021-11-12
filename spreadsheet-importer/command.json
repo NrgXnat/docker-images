@@ -6,7 +6,7 @@
   "schema-version": "1.0",
   "image": "radiologicskate/spreadsheet-importer:1.1",
   "type": "docker",
-  "command-line": "python /usr/local/bin/import.py #SPREADSHEET# #PROJECT# --labelColumn '#LABEL_COLUMN#' #CREATE# #LUT#",
+  "command-line": "python /usr/local/bin/import.py #SPREADSHEET# #PROJECT# --labelColumn '#LABEL_COLUMN#' #CREATE# #LUT# --exclude '#EXCLUDE#'",
   "override-entrypoint": true,
   "mounts": [
     {
@@ -98,6 +98,23 @@
       "sensitive": null,
       "command-line-flag": "--lut",
       "command-line-separator": " ",
+      "true-value": null,
+      "false-value": null,
+      "select-values": [],
+      "multiple-delimiter": null
+    },
+    {
+      "name": "EXCLUDE",
+      "label": "Columns to exclude",
+      "description": "Comma-separated list of headers of any columns you wish to exclude from import",
+      "type": "string",
+      "matcher": null,
+      "default-value": null,
+      "required": false,
+      "replacement-key": null,
+      "sensitive": null,
+      "command-line-flag": null,
+      "command-line-separator": null,
       "true-value": null,
       "false-value": null,
       "select-values": [],
