@@ -17,6 +17,7 @@ class XnatSession():
             self.lastrenew = None
             self.logger = None
             self.logfile = None
+            self.verify = True
 
             # Set up logging
             self.setup_logger()
@@ -27,6 +28,9 @@ class XnatSession():
             else:
                 self.username = kwargs['username']
                 self.password = kwargs['password']
+
+            if 'verify' in kwargs and kwargs['verify'] is not None:
+                self.verify = kwargs['verify']
 
             self.host = kwargs['host']
             self.timeout = 120
@@ -49,33 +53,33 @@ class XnatSession():
 
             # Renew expired session, or set up new session
             self.httpsess = requests.Session()
-    
+
             # Retry logic
             retry = Retry(connect=5, backoff_factor=0.5)
             adapter = HTTPAdapter(max_retries=retry)
             self.httpsess.mount('http://', adapter)
             self.httpsess.mount('https://', adapter)
-    
+
             # Log in and generate xnat session
             response = self.httpsess.post(self.host + '/data/JSESSION', auth=(self.username, self.password),
-                                          timeout=(30, self.timeout))
+                                          timeout=(30, self.timeout), verify=self.verify)
             if response.status_code != 200:
                 self.logger.error("[SESSION] Renewal failed, no session acquired: %d %s" % (response.status_code,
                                                                                             response.reason))
                 exit(1)
-    
+
             self.lastrenew = datetime.datetime.now()
         else:
             # self.logger.debug('[SESSION] Reusing existing https session until %s' % (self.lastrenew +
             #                                                                         self.sessiontimeout))
             return True
-    
+
         return True
-    
+
     def close_httpsession(self):
         if self.httpsess is not None:
             # Logs out of session for cleanup
-            self.httpsess.delete(self.host + '/data/JSESSION', timeout=(30, self.timeout))
+            self.httpsess.delete(self.host + '/data/JSESSION', timeout=(30, self.timeout), verify=self.verify)
             self.logger.debug('[SESSION] Deleting XNAT session')
             self.httpsess.close()
         return True
