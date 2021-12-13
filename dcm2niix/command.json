@@ -3,7 +3,7 @@
     "description": "Runs dcm2niix",
     "label": "dcm2niix",
     "info-url": "https://github.com/rordenlab/dcm2niix",
-    "version": "1.5",
+    "version": "1.6",
     "schema-version": "1.0",
     "type": "docker",
     "image": "xnat/dcm2niix",
