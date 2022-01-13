@@ -1,0 +1,123 @@
+{
+  "name": "hotel-splitter",
+  "label": "hotel-splitter",
+  "description": "Split hotel image sessions into single subject image sessions",
+  "version": "1.0",
+  "schema-version": "1.0",
+  "type": "docker",
+  "info-url": "https://github.com/abcsFrederick/pydicom_split",
+  "image": "pydicom_split:1.0",
+  "index": "",
+  "hash": "",
+  "working-directory": "/usr/src/app",
+  "command-line": "python xnat_run_pydicom_split.py /input -u $XNAT_USER -p $XNAT_PASS -s $XNAT_HOST --output_directory /output #PROJECT_ID# #SESSION_ID# #HOTELSESSIONLABELID#",
+  "reserve-memory": "",
+  "limit-memory": "",
+  "limit-cpu": "",
+  "override-entrypoint": true,
+  "runtime": "" ,
+  "ipc-mode": "",
+  "shm-size": "",
+  "network": "",
+  "container-name": "",
+  "container-labels": {},
+  "generic-resources": {},
+  "ulimits": {},
+  "mounts": [
+    {
+      "name": "input-mount",
+      "writable": false,
+      "path": "/input"
+    },
+    {
+      "name": "output-mount",
+      "writable": true,
+      "path": "/output"
+    }
+  ],
+  "environment-variables": {},
+  "ports": {},
+  "inputs": [
+    {
+            "name": "project_id",
+            "description": "XNAT id of the project",
+            "type": "string",
+            "required": true,
+            "replacement-key": "#PROJECT_ID#",
+            "command-line-flag": "--project_id"
+    },
+    {
+            "name": "hotel_session_label",
+            "description": "XNAT label of the hotel session",
+            "type": "string",
+            "required": true,
+            "replacement-key": "#SESSION_ID#",
+            "command-line-flag": "--session_id"
+    },
+    {
+            "name": "hotel_keyword",
+            "description": "Keyword which identifies a hotel vs single subject session. This will be removed from the single subject session label.",
+            "type": "string",
+            "required": false,
+            "replacement-key": "#HOTELSESSIONLABELID#",
+            "command-line-flag": "--hotel_session_label_identifier",
+            "default-value": "Hotel"
+    }
+  ],
+  "outputs": [
+    {
+            "name": "qc_snapshots_output",
+            "description": "The QC snapshots of the split hotel session.",
+            "required": true,
+            "mount": "output-mount",
+            "path": "qc-snapshots",
+            "glob": null
+        }
+  ],
+  "xnat": [
+        {
+            "name": "hotel-session-splitter",
+            "description": "Split hotel image sessions into single subject image sessions",
+            "label": "Hotel Session Splitter",
+            "contexts": ["xnat:imageSessionData"],
+            "external-inputs": [
+                {
+                    "name": "session",
+                    "description": "Hotel session input",
+                    "type": "Session",
+                    "required": true,
+                    "provides-files-for-command-mount": "input-mount",
+                    "load-children": true
+                }
+            ],
+            "derived-inputs": [
+              {
+                    "name": "project-id",
+                    "description": "XNAT Project ID",
+                    "type": "string",
+                    "derived-from-wrapper-input": "session",
+                    "derived-from-xnat-object-property": "project-id",
+                    "provides-value-for-command-input": "project_id"
+              },
+              {
+                    "name": "hotel-session-label",
+                    "description": "The hotel session's label",
+                    "type": "string",
+                    "derived-from-wrapper-input": "session",
+                    "derived-from-xnat-object-property": "label",
+                    "provides-value-for-command-input": "hotel_session_label"
+              }
+            ],
+            "output-handlers": [
+              {
+                    "name": "split-session-qc-snapshots-resource",
+                    "label": "split-session-qc-snapshots-resource",
+                    "type": "Resource",
+                    "accepts-command-output": "qc_snapshots_output",
+                    "via-wrapup-command": null,
+                    "as-a-child-of-wrapper-input": "session"
+                }
+            ]
+        }
+    ]
+}
