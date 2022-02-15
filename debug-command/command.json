@@ -2,7 +2,7 @@
     "name": "debug",
     "description": "Runs a user-provided command",
     "label": "debug",
-    "version": "1.5",
+    "version": "1.6",
     "schema-version": "1.0",
     "type": "docker",
     "command-line": "#COMMAND# > /output/#OUTFILE#",
@@ -67,6 +67,32 @@
                     "name": "output-resource",
                     "accepts-command-output": "output",
                     "as-a-child-of-wrapper-input": "project",
+                    "type": "Resource",
+                    "label": "DEBUG_OUTPUT"
+                }
+            ]
+        },
+        {
+            "name": "debug-project-asset",
+            "description": "Run the debug container with a project-asset mounted",
+            "label": "Debug",
+            "contexts": ["xnat:abstractProjectAsset"],
+            "external-inputs": [
+                {
+                    "name": "project-asset",
+                    "description": "Input project asset",
+                    "type": "ProjectAsset",
+                    "required": true,
+                    "provides-files-for-command-mount": "in",
+                    "load-children": false
+                }
+            ],
+            "derived-inputs": [],
+            "output-handlers": [
+                {
+                    "name": "output-resource",
+                    "accepts-command-output": "output",
+                    "as-a-child-of-wrapper-input": "project-asset",
                     "type": "Resource",
                     "label": "DEBUG_OUTPUT"
                 }
