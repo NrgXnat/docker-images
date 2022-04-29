@@ -10,7 +10,7 @@
   "index": "",
   "hash": "",
   "working-directory": "/usr/src/app",
-  "command-line": "python xnat_run_pydicom_split.py /input -u $XNAT_USER -p $XNAT_PASS -s $XNAT_HOST --output_directory /output #PROJECT_ID# #SESSION_ID# #HOTELSESSIONLABELID#",
+  "command-line": "python xnat_run_pydicom_split.py /input -u $XNAT_USER -p $XNAT_PASS -s $XNAT_HOST --output_directory /output #PROJECT_ID# #SESSION_LABEL#",
   "reserve-memory": "",
   "limit-memory": "",
   "limit-cpu": "",
@@ -51,17 +51,8 @@
             "description": "XNAT label of the hotel session",
             "type": "string",
             "required": true,
-            "replacement-key": "#SESSION_ID#",
-            "command-line-flag": "--session_id"
-    },
-    {
-            "name": "hotel_keyword",
-            "description": "Keyword which identifies a hotel vs single subject session. This will be removed from the single subject session label.",
-            "type": "string",
-            "required": false,
-            "replacement-key": "#HOTELSESSIONLABELID#",
-            "command-line-flag": "--hotel_session_label_identifier",
-            "default-value": "Hotel"
+            "replacement-key": "#SESSION_LABEL#",
+            "command-line-flag": "--session_label"
     }
   ],
   "outputs": [

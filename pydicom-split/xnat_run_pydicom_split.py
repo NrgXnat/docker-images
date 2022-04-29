@@ -4,20 +4,23 @@ import os
 import pydicom_split
 import requests
 import zipfile
+import json
 
 from pydicom import dcmread
 from requests.auth import HTTPBasicAuth
 
 
-def run_pydicom_split(username: str, password: str, xnat_url: str, project_id: str, session_id: str, offset: int,
-                      input_directory: str, output_directory: str, hotel_session_label_identifier: str):
+def run_pydicom_split(username: str, password: str, xnat_host: str, project_id: str, session_label: str, offset: int,
+                      input_directory: str, output_directory: str):
 
-    print("Processing project: " + project_id + " , session: " + session_id + " , directory: " + input_directory)
+    print("Processing project: " + project_id + " , session: " + session_label + " , directory: " + input_directory)
 
-    if xnat_url == 'http://localhost':
-        xnat_url = 'http://host.docker.internal'
+    print(xnat_host)
 
-    hotel_scan_record = get_hotel_scan_record(username, password, xnat_url, project_id, session_id)
+    if xnat_host == 'http://localhost':
+        xnat_host = 'http://host.docker.internal'
+
+    hotel_scan_record = get_hotel_scan_record(username, password, xnat_host, project_id, session_label)
 
     num_rows = max([subj['position']['y'] for subj in hotel_scan_record['hotelSubjects']])
     print("Number of rows: " + str(num_rows))
@@ -47,30 +50,29 @@ def run_pydicom_split(username: str, password: str, xnat_url: str, project_id: s
 
         print(f'Zip file created for subject {patient_name}')
 
-        send_session_to_xnat(username=username, password=password, xnat_url=xnat_url, project_id=project_id,
-                             subject_id=patient_name, session_id=session_id, dcm_zip=filename,
-                             hotel_session_label_identifier=hotel_session_label_identifier)
+        send_session_to_xnat(username=username, password=password, xnat_host=xnat_host, project_id=project_id,
+                             subject_label=patient_name, session_label=session_label, dcm_zip=filename)
+
+    update_scan_record(username=username, password=password, xnat_host=xnat_host, session_label=session_label,
+                       hotel_scan_record=hotel_scan_record)
 
     generate_qc_montage(split_output=split_output, output_directory=output_directory)
 
 
-def send_session_to_xnat(username: str, password: str, xnat_url: str, project_id: str, subject_id: str, session_id: str,
-                         dcm_zip: zipfile, hotel_session_label_identifier="Hotel"):
+def send_session_to_xnat(username: str, password: str, xnat_host: str, project_id: str, subject_label: str,
+                         session_label: str, dcm_zip: zipfile):
 
-    if session_id.startswith(f'{hotel_session_label_identifier}_'):
-        session_id = session_id.replace(f'{hotel_session_label_identifier}_', '')
-
-    dest_url = f'{xnat_url}/data/services/import'
+    dest_url = f'{xnat_host}/data/services/import'
     parameters = {
         'import-handler': 'DICOM-zip',
         'rename': 'true',
         'overwrite': 'append',
         'PROJECT_ID': project_id,
-        'SUBJECT_ID': subject_id,
-        'EXPT_LABEL': session_id + "_split_" + subject_id
+        'SUBJECT_ID': subject_label,
+        'EXPT_LABEL': session_label + "_split_" + subject_label
     }
 
-    print(f'Uploading splitter output for project: {project_id} , session: {session_id} , subject: {subject_id} to {dest_url}')
+    print(f'Uploading splitter output for project: {project_id} , session: {session_label} , subject: {subject_label} to {dest_url}')
 
     r = requests.post(dest_url,
                       auth=HTTPBasicAuth(username, password),
@@ -78,23 +80,41 @@ def send_session_to_xnat(username: str, password: str, xnat_url: str, project_id
                       files={'file': open(dcm_zip, 'rb')})
 
     if r.status_code == 200:
-        print(f'Splitter output for project: {project_id} , session: {session_id} , subject: {subject_id} successfully uploaded to XNAT')
+        print(f'Splitter output for project: {project_id} , session: {session_label} , subject: {subject_label} successfully uploaded to XNAT')
     elif r.status_code == 504:
         print(
-            f'Splitter output for project: {project_id} , session: {session_id} , subject: {subject_id} uploaded to'
+            f'Splitter output for project: {project_id} , session: {session_label} , subject: {subject_label} uploaded to'
             f' XNAT with unknown success. Server response 504 usually indicates a long upload not a failure.')
     else:
-        raise Exception(f'Failed to upload splitter output for project: {project_id} , session: {session_id} , subject: {subject_id}')
+        raise Exception(f'Failed to upload splitter output for project: {project_id} , session: {session_label} , subject:'
+                        f' {subject_label}')
 
-def get_hotel_session_label_identifier(username: str, password: str, xnat_url: str):
 
-    url = f'{xnat_url}/xapi/pixi/preferences/hotelSessionLabelIdentifier'
-    r = requests.get(url, auth=HTTPBasicAuth(username, password))
+def update_scan_record(username: str, password: str, xnat_host: str, session_label: str, hotel_scan_record: dict):
 
-    if r.status_code == 200:
-        return r.text
+    project_id = hotel_scan_record['projectID']
+
+    subjects = {}
+
+    for subject in hotel_scan_record['hotelSubjects']:
+        subject_id = subject['subjectId'] if 'subjectId' in subject else ''
+        subject_label = subject['subjectLabel'] if 'subjectLabel' in subject else ''
+
+        if subject_id and subject_label:
+            subjects[subject_id] = f"{session_label}_split_{subject_label}"
+
+    url = f"{xnat_host}/xapi/pixi/hotelscanrecords/{session_label}_scan_record/project/{project_id}/subjects"
+
+    print(f'Updating scan record at {url}')
+
+    r = requests.put(url,
+                     auth=HTTPBasicAuth(username, password),
+                     headers={'Content-type': 'application/json'},
+                     data=json.dumps(subjects))
+    if r.ok:
+        print('Hotel scan record updated')
     else:
-        return "Hotel"
+        print("Failed to update hotel scan record")
 
 
 def generate_qc_montage(split_output: dict, output_directory: str):
@@ -130,10 +150,8 @@ def generate_qc_montage(split_output: dict, output_directory: str):
         print(f"Saved QC Snapshot for subject: {patient_name}")
 
 
-def get_hotel_scan_record(username, password, host, projectID, sessionID):
-    url = "{host}/xapi/pixi/hotelscanrecords/project/{projectID}/{sessionID}".format(host=host,
-                                                                                     projectID=projectID,
-                                                                                     sessionID=sessionID)
+def get_hotel_scan_record(username, password, host, project_id, session_label):
+    url = f"{host}/xapi/pixi/hotelscanrecords/{session_label}_scan_record/project/{project_id}"
 
     print("Retrieving hotel scan record from " + url)
 
@@ -274,13 +292,10 @@ if __name__ == '__main__':
     parser.add_argument('DICOM_DIRECTORY', nargs='*')
     parser.add_argument('-u', '--username', type=str, default=None, required=True, help="XNAT username")
     parser.add_argument('-p', '--password', type=str, default=None, required=True, help="XNAT password")
-    parser.add_argument('-s', '--xnat_url', type=str, default=None, required=True, help="XNAT URL")
+    parser.add_argument('-s', '--xnat_host', type=str, default=None, required=True, help="XNAT Host")
     parser.add_argument('--project_id', type=str, default=None, required=True, help="XNAT Project ID")
-    parser.add_argument('--session_id', type=str, default=None, required=True, help="XNAT Hotel Session ID")
+    parser.add_argument('--session_label', type=str, default=None, required=True, help="XNAT Hotel Session Label")
     parser.add_argument('--output_directory', type=str, default=None, required=True, help="Output directory")
-    parser.add_argument('--hotel_session_label_identifier', type=str, default="Hotel", required=False,
-                        help="Keyword which identifies a hotel vs single subject session. This will be removed from the"
-                             " single subject session label.")
     parser.add_argument('-offset', '--offset', type=int, default=5,
                         help='offset from center, default 5 percent from center')
 
