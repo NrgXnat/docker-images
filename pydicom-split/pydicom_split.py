@@ -7,6 +7,7 @@ import sys
 import uuid
 import warnings
 import re
+import logging
 
 import numpy
 
@@ -14,9 +15,16 @@ import pydicom
 from pydicom.sequence import Sequence
 from pydicom.dataset import Dataset
 
+logging.basicConfig(stream=sys.stdout,
+                    filemode="w",
+                    format="%(levelname)s %(asctime)s - %(message)s",
+                    level=logging.DEBUG)
+
+logger = logging.getLogger()
 
 class DICOMDirectory:
     def __init__(self, directory=None):
+        logger.debug(f'DICOMDirectory: {directory}')
         self._directory = directory
 
     @property
@@ -39,6 +47,7 @@ class DICOMDirectory:
             filename = self.filenames.pop(0)
             path = os.path.join(self._directory, filename)
             try:
+                logger.debug(f'pydicom.dcmread({path})')
                 dataset = pydicom.dcmread(path)
             except pydicom.errors.InvalidDicomError:
                 warnings.warn('%s is not a valid DICOM file' % filename)
@@ -401,6 +410,7 @@ def set_pixel_data(dataset, pixel_array):
     dataset.Rows, dataset.Columns = pixel_array.shape
 
 def checkDirectory(directory, output_dir=None):
+    logger.debug(f'checkDirectory({directory}, {output_dir})')
     for root, subdirs, files in os.walk(directory):
         if len(files):
             if files.pop(0) != '.DS_Store':
@@ -409,6 +419,7 @@ def checkDirectory(directory, output_dir=None):
                     newRoot = os.path.join(newRoot, subdirs)
                 if not os.path.exists(newRoot):
                     os.makedirs(newRoot, exist_ok=True)
+                logger.debug(f'checkDirectory yield root: {root} newRoot: {newRoot}')
                 yield root, newRoot
 def split_dicom_directory(directory, axis=0, n=3, nTB=None, offset=5, keep_origin=False,
                           study_instance_uids=None, series_instance_uids=None,
@@ -418,6 +429,7 @@ def split_dicom_directory(directory, axis=0, n=3, nTB=None, offset=5, keep_origi
                           mangle_output_paths=False, order=None, orderT=None, orderB=None,
                           patient_weights=None, patient_orientations=None, patient_comments=None,
                           ra_ph_start_times=None, ra_nuc_tot_doses=None):
+    logger.info(f'Splitting directory {directory}')
     if nTB is not None:
         orderT = orderT.split(',')
         orderB = orderB.split(',')
