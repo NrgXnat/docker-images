@@ -46,6 +46,12 @@ class DICOMDirectory:
         while self.filenames:
             filename = self.filenames.pop(0)
             path = os.path.join(self._directory, filename)
+            if filename.endswith('catalog.xml'):
+                logger.info(f'Skipping catalog file: {path}')
+                continue
+            if filename.endswith('_qc.gif.xml'):
+                logger.info(f'Skipping quality control image file: {path}')
+                continue
             try:
                 logger.debug(f'pydicom.dcmread({path})')
                 dataset = pydicom.dcmread(path)
@@ -415,7 +421,7 @@ def checkDirectory(directory, output_dir=None):
         if len(files):
             if files.pop(0) != '.DS_Store':
                 newRoot = output_dir
-                for subdirs in [os.path.basename(root), *os.path.relpath(directory, root).split('/')[1:]]:
+                for subdirs in [os.path.basename(directory), *os.path.relpath(root, directory).split('/')]:
                     newRoot = os.path.join(newRoot, subdirs)
                 if not os.path.exists(newRoot):
                     os.makedirs(newRoot, exist_ok=True)
@@ -425,8 +431,7 @@ def split_dicom_directory(directory, axis=0, n=3, nTB=None, offset=5, keep_origi
                           study_instance_uids=None, series_instance_uids=None,
                           series_descriptions=None, output_dir=None,
                           derivation_description=None, patient_names=None,
-                          patient_ids=None, output_paths=None,
-                          mangle_output_paths=False, order=None, orderT=None, orderB=None,
+                          patient_ids=None, order=None, orderT=None, orderB=None,
                           patient_weights=None, patient_orientations=None, patient_comments=None,
                           ra_ph_start_times=None, ra_nuc_tot_doses=None):
     logger.info(f'Splitting directory {directory}')
@@ -473,6 +478,8 @@ def split_dicom_directory(directory, axis=0, n=3, nTB=None, offset=5, keep_origi
 
     for directoryChecked, newRoot in checkDirectory(directory, output_dir):
 
+        series_instance_uids = [x667_uuid() for i in range(n)]
+
         for path, dataset in DICOMDirectory(directoryChecked):
             try:
                 pixel_array = dataset.pixel_array
@@ -510,9 +517,6 @@ def split_dicom_directory(directory, axis=0, n=3, nTB=None, offset=5, keep_origi
             if not study_instance_uids:
                 study_instance_uids = [x667_uuid() for i in range(n)]
 
-            if not series_instance_uids:
-                series_instance_uids = [x667_uuid() for i in range(n)]
-
             for i, origin, pixel_array in dicom_splitter:
                 if parsed_patient_names[i] != 'blank':
                     split_dataset = copy.deepcopy(dataset)
@@ -537,12 +541,10 @@ def split_dicom_directory(directory, axis=0, n=3, nTB=None, offset=5, keep_origi
                     if series_descriptions:
                         split_dataset.SeriesDescription = series_descriptions[i]
                     else:
-                        if split_dataset.Modality == 'PT':
-                            split_dataset.SeriesDescription = parsed_patient_ids[i] + '.pet split'
-                        elif split_dataset.Modality == 'CT':
-                            split_dataset.SeriesDescription = parsed_patient_ids[i] + '.ct split'
+                        if 'SeriesDescription' in split_dataset:
+                            split_dataset.SeriesDescription += ' split ' + parsed_patient_ids[i]
                         else:
-                            split_dataset.SeriesDescription += ' split'
+                            split_dataset.SeriesDescription = 'split ' + parsed_patient_ids[i]
 
                     split_dataset.PatientName = parsed_patient_names[i]
                     split_dataset.PatientID = parsed_patient_ids[i]
@@ -557,22 +559,14 @@ def split_dicom_directory(directory, axis=0, n=3, nTB=None, offset=5, keep_origi
                         split_dataset.PatientOrientation = patient_orientations[i]
 
                     if split_dataset.Modality == 'PT':
-                        split_dataset.RadiopharmaceuticalInformationSequence[0].RadiopharmaceuticalStartTime = \
-                            ra_ph_start_times[i]
-                        split_dataset.RadiopharmaceuticalInformationSequence[0].RadionuclideTotalDose = \
-                            ra_nuc_tot_doses[i]
+                        if ra_ph_start_times:
+                            split_dataset.RadiopharmaceuticalInformationSequence[0].RadiopharmaceuticalStartTime = \
+                                ra_ph_start_times[i]
+                        if ra_nuc_tot_doses:
+                            split_dataset.RadiopharmaceuticalInformationSequence[0].RadionuclideTotalDose = \
+                                ra_nuc_tot_doses[i]
 
-                    if split_dataset.SeriesNumber:
-                        split_dataset.SeriesNumber = (10 * split_dataset.SeriesNumber) + i + 1
-
-                    if output_paths:
-                        output_path = os.path.join(output_paths, output_paths[i])
-                    elif mangle_output_paths:
-                        output_path = parsed_patient_ids[i] + id_trailing
-                    else:
-                        output_path = None
-                    created_output_path = make_output_path(newRoot, parsed_patient_names[i], output_path)
-
+                    created_output_path = make_output_path(newRoot, parsed_patient_names[i], None)
                     filename = os.path.join(created_output_path, os.path.basename(path))
                     split_dataset.save_as(filename)
                     outputs[parsed_patient_names[i]].append(filename)
