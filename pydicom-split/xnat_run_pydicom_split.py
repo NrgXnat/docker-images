@@ -5,58 +5,75 @@ import pydicom_split
 import requests
 import zipfile
 import json
+import logging
+import sys
 
 from pydicom import dcmread
 from requests.auth import HTTPBasicAuth
 
+logging.basicConfig(stream=sys.stdout,
+                    filemode="w",
+                    format="%(levelname)s %(asctime)s - %(message)s",
+                    level=logging.DEBUG)
+
+logger = logging.getLogger()
 
 def run_pydicom_split(username: str, password: str, xnat_host: str, project_id: str, session_label: str, offset: int,
                       input_directory: str, output_directory: str):
 
-    print("Processing project: " + project_id + " , session: " + session_label + " , directory: " + input_directory)
-
-    print(xnat_host)
-
     if xnat_host == 'http://localhost':
         xnat_host = 'http://host.docker.internal'
 
-    hotel_scan_record = get_hotel_scan_record(username, password, xnat_host, project_id, session_label)
+    update_scan_record_status(username, password, xnat_host, project_id, f'{session_label}_scan_record', "Splitting In Progress")
 
-    num_rows = max([subj['position']['y'] for subj in hotel_scan_record['hotelSubjects']])
-    print("Number of rows: " + str(num_rows))
+    try:
+        logger.info(f'Processing project: {project_id}, session: + {session_label}, directory: {input_directory}')
+        logger.debug(xnat_host)
 
-    if num_rows == 1:
-        split_output = run_pydicom_split_one_row(input_directory=input_directory,
-                                                 output_directory=output_directory,
-                                                 hotel_scan_record=hotel_scan_record,
-                                                 offset=offset)
-    elif num_rows == 2:
-        split_output = run_pydicom_split_two_rows(input_directory=input_directory,
-                                                  output_directory=output_directory,
-                                                  hotel_scan_record=hotel_scan_record,
-                                                  offset=offset)
-    else:
-        raise Exception('[ERROR] Cannot split more than two rows.')
+        hotel_scan_record = get_hotel_scan_record(username, password, xnat_host, project_id, session_label)
 
-    for patient_name in split_output.keys():
-        if patient_name == '' or patient_name == 'blank':
-            continue
+        num_rows = max([subj['position']['y'] for subj in hotel_scan_record['hotelSubjects']])
+        logger.debug("Number of rows: " + str(num_rows))
 
-        filename = os.path.join(output_directory, patient_name) + '.zip'
+        if num_rows == 1:
+            split_output = run_pydicom_split_one_row(input_directory=input_directory,
+                                                     output_directory=output_directory,
+                                                     hotel_scan_record=hotel_scan_record,
+                                                     offset=offset)
+        elif num_rows == 2:
+            split_output = run_pydicom_split_two_rows(input_directory=input_directory,
+                                                      output_directory=output_directory,
+                                                      hotel_scan_record=hotel_scan_record,
+                                                      offset=offset)
+        else:
+            raise Exception('[ERROR] Cannot split more than two rows.')
 
-        with zipfile.ZipFile(filename, 'w') as zf:
-            for dcm_file in split_output[patient_name]:
-                zf.write(dcm_file, os.path.relpath(dcm_file, output_directory))
+        for patient_name in split_output.keys():
+            if patient_name == '' or patient_name == 'blank':
+                continue
 
-        print(f'Zip file created for subject {patient_name}')
+            filename = os.path.join(output_directory, patient_name) + '.zip'
 
-        send_session_to_xnat(username=username, password=password, xnat_host=xnat_host, project_id=project_id,
-                             subject_label=patient_name, session_label=session_label, dcm_zip=filename)
+            with zipfile.ZipFile(filename, 'w') as zf:
+                for dcm_file in split_output[patient_name]:
+                    zf.write(dcm_file, os.path.relpath(dcm_file, output_directory))
 
-    update_scan_record(username=username, password=password, xnat_host=xnat_host, session_label=session_label,
-                       hotel_scan_record=hotel_scan_record)
+            logger.info(f'Zip file created for subject {patient_name}')
 
-    generate_qc_montage(split_output=split_output, output_directory=output_directory)
+            send_session_to_xnat(username=username, password=password, xnat_host=xnat_host, project_id=project_id,
+                                 subject_label=patient_name, session_label=session_label, dcm_zip=filename)
+
+        update_scan_record(username=username, password=password, xnat_host=xnat_host, session_label=session_label,
+                           hotel_scan_record=hotel_scan_record)
+
+        generate_qc_montage(split_output=split_output, output_directory=output_directory)
+
+        update_scan_record_status(username, password, xnat_host, project_id, f'{session_label}_scan_record', "Split Complete")
+
+    except Exception as e:
+        logger.exception("Fatal error while splitting hotel scan: " + str(e))
+        update_scan_record_status(username, password, xnat_host, project_id, f'{session_label}_scan_record', "Error: Not Split")
+        sys.exit("Fatal error while splitting hotel scan " + str(e))
 
 
 def send_session_to_xnat(username: str, password: str, xnat_host: str, project_id: str, subject_label: str,
@@ -72,7 +89,7 @@ def send_session_to_xnat(username: str, password: str, xnat_host: str, project_i
         'EXPT_LABEL': session_label + "_split_" + subject_label
     }
 
-    print(f'Uploading splitter output for project: {project_id} , session: {session_label} , subject: {subject_label} to {dest_url}')
+    logger.info(f'Uploading splitter output for project: {project_id} , session: {session_label} , subject: {subject_label} to {dest_url}')
 
     r = requests.post(dest_url,
                       auth=HTTPBasicAuth(username, password),
@@ -80,9 +97,9 @@ def send_session_to_xnat(username: str, password: str, xnat_host: str, project_i
                       files={'file': open(dcm_zip, 'rb')})
 
     if r.status_code == 200:
-        print(f'Splitter output for project: {project_id} , session: {session_label} , subject: {subject_label} successfully uploaded to XNAT')
+        logger.info(f'Splitter output for project: {project_id} , session: {session_label} , subject: {subject_label} successfully uploaded to XNAT')
     elif r.status_code == 504:
-        print(
+        logger.warning(
             f'Splitter output for project: {project_id} , session: {session_label} , subject: {subject_label} uploaded to'
             f' XNAT with unknown success. Server response 504 usually indicates a long upload not a failure.')
     else:
@@ -105,16 +122,32 @@ def update_scan_record(username: str, password: str, xnat_host: str, session_lab
 
     url = f"{xnat_host}/xapi/pixi/hotelscanrecords/{session_label}_scan_record/project/{project_id}/subjects"
 
-    print(f'Updating scan record at {url}')
+    logger.info(f'Updating scan record at {url}')
 
     r = requests.put(url,
                      auth=HTTPBasicAuth(username, password),
                      headers={'Content-type': 'application/json'},
                      data=json.dumps(subjects))
     if r.ok:
-        print('Hotel scan record updated')
+        logger.info('Hotel scan record updated')
     else:
-        print("Failed to update hotel scan record")
+        logger.error("Failed to update hotel scan record")
+
+def update_scan_record_status(username: str, password: str, xnat_host: str, project_id: str, scan_record_label: str,
+                              status: str):
+    url = f"{xnat_host}/xapi/pixi/hotelscanrecords/{scan_record_label}/project/{project_id}/status"
+
+    logger.debug(f'Updating scan record status: {scan_record_label} // {status}')
+
+    r = requests.put(url,
+                     auth=HTTPBasicAuth(username, password),
+                     headers={'Content-type': 'text/plain'},
+                     data=status)
+
+    if r.ok:
+        logger.debug('Hotel scan record status updated.')
+    else:
+        logger.error("Failed to update hotel scan record.")
 
 
 def generate_qc_montage(split_output: dict, output_directory: str):
@@ -123,7 +156,7 @@ def generate_qc_montage(split_output: dict, output_directory: str):
         if patient_name == '' or patient_name == 'blank':
             continue
 
-        print(f"Generating QC Snapshot for subject: {patient_name}")
+        logger.info(f"Generating QC Snapshot for subject: {patient_name}")
 
         dicom_files = split_output[patient_name]
         num_files = len(dicom_files)
@@ -147,20 +180,21 @@ def generate_qc_montage(split_output: dict, output_directory: str):
             os.mkdir(qc_output_path)
 
         plt.savefig(os.path.join(qc_output_path, f'{patient_name}-qc-snapshot.png'))
-        print(f"Saved QC Snapshot for subject: {patient_name}")
+        logger.info(f"Saved QC Snapshot for subject: {patient_name}")
 
 
 def get_hotel_scan_record(username, password, host, project_id, session_label):
     url = f"{host}/xapi/pixi/hotelscanrecords/{session_label}_scan_record/project/{project_id}"
 
-    print("Retrieving hotel scan record from " + url)
+    logger.info("Retrieving hotel scan record from " + url)
 
     r = requests.get(url, auth=HTTPBasicAuth(username, password))
 
     if r.status_code == 200:
-        print("Hotel scan record successfully retrieved")
+        logger.info("Hotel scan record successfully retrieved")
         return r.json()
     else:
+        logger.error("Unable to fetch Hotel Scan Record from XNAT")
         raise Exception("Unable to fetch Hotel Scan Record from XNAT")
 
 
@@ -191,7 +225,7 @@ def run_pydicom_split_one_row(input_directory: str, output_directory: str, hotel
 
     order = ','.join(order)
 
-    print("Running pydicom split...")
+    logger.info("Running pydicom split...")
     split_output = pydicom_split.split_dicom_directory(directory=input_directory,
                                                        axis=1,
                                                        n=n,
@@ -205,7 +239,7 @@ def run_pydicom_split_one_row(input_directory: str, output_directory: str, hotel
                                                        ra_ph_start_times=ra_ph_start_times,
                                                        ra_nuc_tot_doses=ra_nuc_tot_doses,
                                                        offset=offset)
-    print("Session/directory split successfully")
+    logger.info("Session/directory split successfully")
     return split_output
 
 
@@ -265,7 +299,7 @@ def run_pydicom_split_two_rows(input_directory: str, output_directory: str, hote
     orderB = ','.join(orderB)
 
     # axis?
-    print("Running pydicom split...")
+    logger.info("Running pydicom split...")
     split_output = pydicom_split.split_dicom_directory(directory=input_directory,
                                                        axis=1,
                                                        nTB=n_tb,
@@ -281,7 +315,7 @@ def run_pydicom_split_two_rows(input_directory: str, output_directory: str, hote
                                                        ra_nuc_tot_doses=ra_nuc_tot_doses,
                                                        offset=offset)
 
-    print("Session/directory split successfully")
+    logger.info("Session/directory split successfully")
     return split_output
 
 
