@@ -3,6 +3,7 @@
     "description": "Generate a bogus QC assessor for testing",
     "version": "1.1",
     "schema-version": "1.0",
+    "image": "xnat/generate-test-qc-assessor:latest",
     "type": "docker",
     "command-line": "generate-qc-assessor.py #SESSION_ID# #SESSION_LABEL# #PROJECT# $XNAT_HOST $XNAT_USER $XNAT_PASS /mount out.xml",
     "override-entrypoint": true,
@@ -34,12 +35,14 @@
         {
             "name": "ASSESSOR_XML",
             "description": "QC assessor XML file",
+            "required": true,
             "mount": "mount",
             "path": "out.xml"
         },
         {
             "name": "SUBDIRS",
             "description": "Nested subdirectories",
+            "required": false,
             "mount": "mount",
             "path": "dir0"
         }
@@ -52,24 +55,28 @@
             "external-inputs": [
                 {
                     "name": "session",
-                    "type": "Session"
+                    "type": "Session",
+                    "required": true
                 }
             ],
             "derived-inputs": [
                 {
                     "name": "session_id",
+                    "required": true,
                     "derived-from-wrapper-input": "session",
                     "derived-from-xnat-object-property": "id",
                     "provides-value-for-command-input": "SESSION_ID"
                 },
                 {
                     "name": "session_label",
+                    "required": true,
                     "derived-from-wrapper-input": "session",
                     "derived-from-xnat-object-property": "label",
                     "provides-value-for-command-input": "SESSION_LABEL"
                 },
                 {
                     "name": "project",
+                    "required": true,
                     "derived-from-wrapper-input": "session",
                     "derived-from-xnat-object-property": "project-id",
                     "provides-value-for-command-input": "PROJECT"
