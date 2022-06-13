@@ -87,7 +87,8 @@
                     "name": "assessor",
                     "type": "Assessor",
                     "accepts-command-output": "ASSESSOR_XML",
-                    "as-a-child-of": "session"
+                    "as-a-child-of": "session",
+                    "xsi-type": "xnat:qcManualAssessorData"
                 },
                 {
                     "name": "assessor_resource",
