@@ -1,11 +1,12 @@
 {
     "name": "debug",
-    "description": "Runs a user-provided command",
-    "label": "debug",
-    "version": "1.6",
+    "description": "Runs a user-provided command and writes the output to a file",
+    "label": "Debug - file",
+    "version": "1.7",
     "schema-version": "1.0",
     "type": "docker",
     "command-line": "#COMMAND# > /output/#OUTFILE#",
+    "image": "busybox:latest",
     "override-entrypoint": true,
     "mounts": [
         {
@@ -48,8 +49,8 @@
     "xnat": [
         {
             "name": "debug-project",
-            "description": "Run the debug container with a project mounted",
-            "label": "Debug",
+            "description": "Run the debug container with a project mounted and create an output resource",
+            "label": "Debug - file",
             "contexts": ["xnat:projectData"],
             "external-inputs": [
                 {
@@ -74,8 +75,8 @@
         },
         {
             "name": "debug-project-asset",
-            "description": "Run the debug container with a project-asset mounted",
-            "label": "Debug",
+            "description": "Run the debug container with a project asset mounted and create an output resource",
+            "label": "Debug - file",
             "contexts": ["xnat:abstractProjectAsset"],
             "external-inputs": [
                 {
@@ -100,7 +101,7 @@
         },
         {
             "name": "debug-subject",
-            "description": "Run the debug container with a subject mounted",
+            "description": "Run the debug container with a subject mounted and create an output resource",
             "contexts": ["xnat:subjectData"],
             "external-inputs": [
                 {
@@ -124,8 +125,8 @@
         },
         {
             "name": "debug-session",
-            "description": "Run the debug container with a session mounted",
-            "label": "Debug",
+            "description": "Run the debug container with a session mounted and create an output resource",
+            "label": "Debug - file",
             "contexts": ["xnat:imageSessionData"],
             "external-inputs": [
                 {
@@ -150,8 +151,8 @@
         },
         {
             "name": "debug-scan",
-            "description": "Run the debug container with a scan mounted",
-            "label": "Debug",
+            "description": "Run the debug container with a scan mounted and create an output resource",
+            "label": "Debug - file",
             "contexts": ["xnat:imageScanData"],
             "external-inputs": [
                 {
@@ -176,8 +177,8 @@
         },
         {
             "name": "debug-assessor",
-            "description": "Run the debug container with a assessor mounted",
-            "label": "Debug",
+            "description": "Run the debug container with an assessor mounted and create an output resource",
+            "label": "Debug - file",
             "contexts": ["xnat:imageAssessorData"],
             "external-inputs": [
                 {
