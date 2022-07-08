@@ -52,6 +52,9 @@ class DICOMDirectory:
             if filename.endswith('_qc.gif.xml'):
                 logger.info(f'Skipping quality control image file: {path}')
                 continue
+            if '.~lock' in filename:
+                logger.info(f'Skipping lock file: {path}')
+                continue
             try:
                 logger.debug(f'pydicom.dcmread({path})')
                 dataset = pydicom.dcmread(path)

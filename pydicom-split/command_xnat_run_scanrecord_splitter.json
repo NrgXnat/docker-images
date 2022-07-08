@@ -207,6 +207,7 @@
           "via-wrapup-command": null,
           "as-a-child-of": "session",
           "type": "Resource",
+          "xsi-type": null,
           "label": "split-session-qc-snapshots-resource",
           "format": null,
           "description": null,
