@@ -13,8 +13,8 @@ import requests
 import requests.packages.urllib3
 requests.packages.urllib3.disable_warnings()
 
-versionNumber='1.1'
-dateString='20180724'
+versionNumber='1.3'
+dateString='20220819'
 author='flavin'
 progName=sys.argv[0].split('/')[-1]
 idstring = '$Id: %s,v %s %s %s Exp $'%(progName,versionNumber,dateString,author)
@@ -131,7 +131,14 @@ def main():
         E("rater", name),
         E("stereotacticMarker", random.choice(["0", "1"])),
         E("incidentalFindings", random.choice(["None", "There is something here", "Wowza!", "Nothing", "Nada", "Bupkis", "Meh"])),
-        E("scans",
+        E("comments", random.choice(["Looks good", "All good", "Good", "Bad", "None", "NA"])),
+        E("pass", random.choice(["1", "0", "Yes", "No"])),
+        E("payable", random.choice(["1", "0", "Yes", "No"])),
+        E("rescan", random.choice(["1", "0", "Yes", "No"]))
+    ]
+    
+    if scans:
+        scansListElement = E("scans",
             *[E("scan",
                 E("imageScan_ID", scanId),
                 E("coverage", random.choice(["0", "1", "0.5", "0.25", "0.75", "0.9", "0.1"])),
@@ -139,12 +146,8 @@ def main():
                 E("otherImageArtifacts", random.choice(["None", "NA", "none", "Nothing", "Blurry pixels", "Obscured obscura", "Smudge on the lens", "No", "Nope", "Nothing"])),
                 E("pass", random.choice(["1", "0", "Yes", "No"]))
             ) for scanId in scans]
-        ),
-        E("comments", random.choice(["Looks good", "All good", "Good", "Bad", "None", "NA"])),
-        E("pass", random.choice(["1", "0", "Yes", "No"])),
-        E("payable", random.choice(["1", "0", "Yes", "No"])),
-        E("rescan", random.choice(["1", "0", "Yes", "No"]))
-    ]
+        )
+        assessorElementsList.append(scansListElement)
 
     assessorXML = E('QCManualAssessment', assessorTitleAttributesDict, *assessorElementsList)
 
