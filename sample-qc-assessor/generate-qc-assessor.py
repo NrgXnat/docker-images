@@ -13,8 +13,8 @@ import requests
 import requests.packages.urllib3
 requests.packages.urllib3.disable_warnings()
 
-versionNumber='1.3'
-dateString='20220819'
+versionNumber='1.3.1'
+dateString='20220823'
 author='flavin'
 progName=sys.argv[0].split('/')[-1]
 idstring = '$Id: %s,v %s %s %s Exp $'%(progName,versionNumber,dateString,author)
@@ -131,10 +131,6 @@ def main():
         E("rater", name),
         E("stereotacticMarker", random.choice(["0", "1"])),
         E("incidentalFindings", random.choice(["None", "There is something here", "Wowza!", "Nothing", "Nada", "Bupkis", "Meh"])),
-        E("comments", random.choice(["Looks good", "All good", "Good", "Bad", "None", "NA"])),
-        E("pass", random.choice(["1", "0", "Yes", "No"])),
-        E("payable", random.choice(["1", "0", "Yes", "No"])),
-        E("rescan", random.choice(["1", "0", "Yes", "No"]))
     ]
     
     if scans:
@@ -148,6 +144,13 @@ def main():
             ) for scanId in scans]
         )
         assessorElementsList.append(scansListElement)
+
+    assessorElementsList.extend([
+        E("comments", random.choice(["Looks good", "All good", "Good", "Bad", "None", "NA"])),
+        E("pass", random.choice(["1", "0", "Yes", "No"])),
+        E("payable", random.choice(["1", "0", "Yes", "No"])),
+        E("rescan", random.choice(["1", "0", "Yes", "No"]))
+    ])
 
     assessorXML = E('QCManualAssessment', assessorTitleAttributesDict, *assessorElementsList)
 
