@@ -5,12 +5,12 @@
   "version": "1.0",
   "schema-version": "1.0",
   "info-url": "https://github.com/abcsFrederick/pydicom_split",
-  "image": "pydicom_split:0.1",
+  "image": "xnat/pixi_pydicom_split:0.1",
   "container-name": "",
   "type": "docker",
   "index": "",
   "working-directory": "/usr/src/app",
-  "command-line": "python xnat_run_pydicom_split.py /input/SCANS -u $XNAT_USER -p $XNAT_PASS -s $XNAT_HOST --output_directory /output #PROJECT_ID# #SESSION_LABEL#",
+  "command-line": "python xnat_run_pydicom_split.py /input/SCANS -u $XNAT_USER -p $XNAT_PASS -s $XNAT_HOST --output_directory /output #PROJECT_ID# #SESSION_LABEL# #OFFSET-UD# #OFFSET-LR#",
   "override-entrypoint": true,
   "mounts": [
     {
@@ -60,18 +60,43 @@
       "false-value": null,
       "select-values": [],
       "multiple-delimiter": null
-    }
-  ],
-  "outputs": [
+    },
     {
-      "name": "qc_snapshots_output",
-      "description": "The QC snapshots of the split hotel session.",
+      "name": "offset-up-down",
+      "label": null,
+      "description": "Offset in pixels. 0 means no offset, + values offset down, - values offset up",
+      "type": "number",
+      "matcher": null,
+      "default-value": 0,
       "required": true,
-      "mount": "output-mount",
-      "path": "qc-snapshots",
-      "glob": null
+      "replacement-key": "#OFFSET-UD#",
+      "sensitive": null,
+      "command-line-flag": "--offset_ud",
+      "command-line-separator": null,
+      "true-value": null,
+      "false-value": null,
+      "select-values": [],
+      "multiple-delimiter": null
+    },
+    {
+      "name": "offset-left-right",
+      "label": null,
+      "description": "Offset in pixels. 0 means no offset, + values offset right, - values offset left",
+      "type": "number",
+      "matcher": null,
+      "default-value": 0,
+      "required": true,
+      "replacement-key": "#OFFSET-LR#",
+      "sensitive": null,
+      "command-line-flag": "--offset_lr",
+      "command-line-separator": null,
+      "true-value": null,
+      "false-value": null,
+      "select-values": [],
+      "multiple-delimiter": null
     }
   ],
+  "outputs": [],
   "xnat": [
     {
       "name": "hotel-session-splitter",
@@ -140,20 +165,7 @@
           "parser": null
         }
       ],
-      "output-handlers": [
-        {
-          "name": "split-session-qc-snapshots-resource",
-          "accepts-command-output": "qc_snapshots_output",
-          "via-wrapup-command": null,
-          "as-a-child-of": "session",
-          "type": "Resource",
-          "label": "split-session-qc-snapshots-resource",
-          "format": null,
-          "description": null,
-          "content": null,
-          "tags": []
-        }
-      ]
+      "output-handlers": []
     }
   ],
   "runtime": "",

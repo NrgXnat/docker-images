@@ -68,12 +68,13 @@ class DICOMDirectory:
         raise StopIteration
 
 class DICOMSplitterTB:
-    def __init__(self, pixel_array=None, axis=0, nT=2, nB=2, offset=5):
+    def __init__(self, pixel_array=None, axis=0, nT=2, nB=2, offset=0, offset_c=0):
         self._pixel_array = pixel_array
         self._axis = axis
         self._nT = nT
         self._nB = nB
         self._offset = offset
+        self._offset_c = offset_c
         self._nTotal = nB + nT
 
     @property
@@ -116,16 +117,24 @@ class DICOMSplitterTB:
     def offset(self, offset):
         self._offset = offset
 
+    @property
+    def offset_c(self):
+        return self._offset_c
+
+    @offset_c.setter
+    def offset_c(self, offset_c):
+        self._offset_c = offset_c
+
     def __iter__(self):
         self.index = 0
         if self._pixel_array is not None:
             # assume only 2 row for now
             sizeC = self._pixel_array.shape[1]
             sizeR = self._pixel_array.shape[0]
-            self._offsetInPx = math.floor(self._offset / 100 * sizeR)
+            self._offsetInPx = self._offset
+            self.sizeR = int(math.floor(sizeR / 2))
             self.sizeTC = int(math.floor(sizeC/self._nT))
             self.sizeBC = int(math.floor(sizeC/self._nB))
-            self.sizeR = int(math.floor(sizeR/2)) - self._offsetInPx
         return self
 
     def __next__(self):
@@ -151,12 +160,12 @@ class DICOMSplitterTB:
                 warnings.warn('image axis %d not divisible by %d'
                               ', split %d offset 1 pixel from previous split'
                               % (self._axis, self._n, index + 1))
-            start[1] = index % self._nT * self.sizeTC + offsetC
+            start[1] = 0 if index == 0 else index % self._nT * self.sizeTC + self.offset_c
             stop = numpy.zeros(self._pixel_array.ndim, numpy.int16)
-            stop[1] = start[1] + self.sizeTC
+            stop[1] = self._pixel_array.shape[1] if self.index == self._nT - 1 else start[1] + self.sizeTC + self.offset_c
 
-            start[0] = int(math.floor(self.index / self._nT)) * self.sizeR + offsetR
-            stop[0] = start[0] + self.sizeR
+            start[0] = 0
+            stop[0] = start[0] + self.sizeR + self._offsetInPx
             indicesC = numpy.arange(start[1], stop[1])
             indicesR = numpy.arange(start[0], stop[0])
         else:
@@ -169,13 +178,13 @@ class DICOMSplitterTB:
                 warnings.warn('image axis %d not divisible by %d'
                               ', split %d offset 1 pixel from previous split'
                               % (self._axis, self._nB, index + 1))
-            start[1] = (index - self._nT) % self._nB * self.sizeBC + offsetC
+            start[1] = 0 if (index - self._nT) == 0 else (index - self._nT) % self._nB * self.sizeBC + self.offset_c
             stop = numpy.zeros(self._pixel_array.ndim, numpy.int16)
-            stop[1] = start[1] + self.sizeBC
+            stop[1] = self._pixel_array.shape[1] if self.index - self._nT == self._nB - 1 else start[1] + self.sizeBC + self.offset_c
 
             # assume only 2 row for now
-            start[0] = self.sizeR + offsetR
-            stop[0] = start[0] + self.sizeR + 2 * self._offsetInPx
+            start[0] = self.sizeR + self._offsetInPx
+            stop[0] = self._pixel_array.shape[0]
             indicesC = numpy.arange(start[1], stop[1])
             indicesR = numpy.arange(start[0], stop[0])
         self.index += 1
@@ -186,10 +195,11 @@ class DICOMSplitterTB:
         return index, start, self._pixel_array[start[0]:stop[0],start[1]:stop[1]]
 
 class DICOMSplitter:
-    def __init__(self, pixel_array=None, axis=0, n=2):
+    def __init__(self, pixel_array=None, axis=0, n=2, offset=0):
         self._pixel_array = pixel_array
         self._axis = axis
         self._n = n
+        self._offset = offset
 
     @property
     def pixel_array(self):
@@ -215,6 +225,14 @@ class DICOMSplitter:
     def n(self, n):
         self._n = n
 
+    @property
+    def offset(self):
+        return self._offset
+
+    @offset.setter
+    def offset(self, offset):
+        self._offset = offset
+
     def __iter__(self):
         self.index = 0
         if self._pixel_array is not None:
@@ -239,9 +257,9 @@ class DICOMSplitter:
             warnings.warn('image axis %d not divisible by %d'
                           ', split %d offset 1 pixel from previous split'
                           % (self._axis, self._n, index + 1))
-        start[self._axis] = index * self.size + offset
+        start[self._axis] = 0 if index == 0 else index * self.size + offset + self._offset
         stop = numpy.zeros(self._pixel_array.ndim, numpy.int16)
-        stop[self._axis] = start[self._axis] + self.size
+        stop[self._axis] = self._pixel_array.shape[self._axis] if self.index == self._n - 1 else start[self._axis] + self.size + self._offset
         indices = numpy.arange(start[self._axis], stop[self._axis])
         self.index += 1
         # print(self.index)
@@ -430,7 +448,7 @@ def checkDirectory(directory, output_dir=None):
                     os.makedirs(newRoot, exist_ok=True)
                 logger.debug(f'checkDirectory yield root: {root} newRoot: {newRoot}')
                 yield root, newRoot
-def split_dicom_directory(directory, axis=0, n=3, nTB=None, offset=5, keep_origin=False,
+def split_dicom_directory(directory, axis=0, n=3, nTB=None, offset_ud=0, offset_lr=0, keep_origin=False,
                           study_instance_uids=None, series_instance_uids=None,
                           series_descriptions=None, output_dir=None,
                           derivation_description=None, patient_names=None,
@@ -491,10 +509,10 @@ def split_dicom_directory(directory, axis=0, n=3, nTB=None, offset=5, keep_origi
             if nTB is not None:
                 nT = int(nTB.split(',')[0])
                 nB = int(nTB.split(',')[1])
-                dicom_splitter = DICOMSplitterTB(pixel_array, axis, nT, nB, offset)
+                dicom_splitter = DICOMSplitterTB(pixel_array, axis, nT, nB, offset_ud, offset_lr)
                 n = nT + nB
             else:
-                dicom_splitter = DICOMSplitter(pixel_array, axis, n)
+                dicom_splitter = DICOMSplitter(pixel_array, axis, n, offset_lr if axis == 1 else offset_ud)
             dataset.ImageType = ['DERIVED', 'PRIMARY', 'SPLIT']
 
             dataset.DerivationDescription = derivation_description
@@ -610,8 +628,10 @@ if __name__ == '__main__':
     parser.add_argument('-order', '--order', help='order of patient placed in scanner', default='1,1,1')
     parser.add_argument('-orderT', '--orderT', help='order of patient placed in scanner of top bed', default='1,1,1')
     parser.add_argument('-orderB', '--orderB', help='order of patient placed in scanner of bottom bed', default='1,1,1')
-    parser.add_argument('-offset', '--offset', type=int, default=5,
-                        help='offset from center, default 5 percent from center')
+    parser.add_argument('-offset_ud', '--offset_ud', type=int, default=0,
+                        help='Offset in pixels. 0 means no offset, + values offset down, - values offset up')
+    parser.add_argument('-offset_lr', '--offset_lr', type=int, default=0,
+                        help='Offset in pixels. 0 means no offset, + values offset right, - values offset left')
 
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument('-n', type=int, help='split into N volumes')

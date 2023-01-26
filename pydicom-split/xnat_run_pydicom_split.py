@@ -18,8 +18,8 @@ logging.basicConfig(stream=sys.stdout,
 
 logger = logging.getLogger()
 
-def run_pydicom_split(username: str, password: str, xnat_host: str, project_id: str, session_label: str, offset: int,
-                      input_directory: str, output_directory: str):
+def run_pydicom_split(username: str, password: str, xnat_host: str, project_id: str, session_label: str, offset_ud: int,
+                      offset_lr: int, input_directory: str, output_directory: str):
 
     if xnat_host == 'http://localhost':
         xnat_host = 'http://host.docker.internal'
@@ -39,12 +39,14 @@ def run_pydicom_split(username: str, password: str, xnat_host: str, project_id: 
             split_output = run_pydicom_split_one_row(input_directory=input_directory,
                                                      output_directory=output_directory,
                                                      hotel_scan_record=hotel_scan_record,
-                                                     offset=offset)
+                                                     offset_ud=offset_ud,
+                                                     offset_lr=offset_lr)
         elif num_rows == 2:
             split_output = run_pydicom_split_two_rows(input_directory=input_directory,
                                                       output_directory=output_directory,
                                                       hotel_scan_record=hotel_scan_record,
-                                                      offset=offset)
+                                                      offset_ud=offset_ud,
+                                                      offset_lr=offset_lr)
         else:
             raise Exception('[ERROR] Cannot split more than two rows.')
 
@@ -66,7 +68,7 @@ def run_pydicom_split(username: str, password: str, xnat_host: str, project_id: 
         update_scan_record(username=username, password=password, xnat_host=xnat_host, session_label=session_label,
                            hotel_scan_record=hotel_scan_record)
 
-        generate_qc_montage(split_output=split_output, output_directory=output_directory)
+        # generate_qc_montage(split_output=split_output, output_directory=output_directory)
 
         update_scan_record_status(username, password, xnat_host, project_id, f'{session_label}_scan_record', "Split Complete")
 
@@ -198,7 +200,8 @@ def get_hotel_scan_record(username, password, host, project_id, session_label):
         raise Exception("Unable to fetch Hotel Scan Record from XNAT")
 
 
-def run_pydicom_split_one_row(input_directory: str, output_directory: str, hotel_scan_record: dict, offset: int) -> dict:
+def run_pydicom_split_one_row(input_directory: str, output_directory: str, hotel_scan_record: dict, offset_ud: int,
+                              offset_lr: int) -> dict:
     n = len(hotel_scan_record['hotelSubjects'])
     patient_names = ['blank'] * n
     order = ['0'] * n
@@ -238,13 +241,14 @@ def run_pydicom_split_one_row(input_directory: str, output_directory: str, hotel
                                                        patient_comments=patient_comments,
                                                        ra_ph_start_times=ra_ph_start_times,
                                                        ra_nuc_tot_doses=ra_nuc_tot_doses,
-                                                       offset=offset)
+                                                       offset_ud=offset_ud,
+                                                       offset_lr=offset_lr)
     logger.info("Session/directory split successfully")
     return split_output
 
 
 def run_pydicom_split_two_rows(input_directory: str, output_directory: str, hotel_scan_record: dict,
-                               offset: int) -> dict:
+                               offset_ud: int, offset_lr: int) -> dict:
     top_row_subjects = list(filter(lambda subj: subj['position']['y'] == 1, hotel_scan_record['hotelSubjects']))
     bottom_row_subjects = list(filter(lambda subj: subj['position']['y'] == 2, hotel_scan_record['hotelSubjects']))
 
@@ -313,7 +317,8 @@ def run_pydicom_split_two_rows(input_directory: str, output_directory: str, hote
                                                        patient_comments=patient_comments,
                                                        ra_ph_start_times=ra_ph_start_times,
                                                        ra_nuc_tot_doses=ra_nuc_tot_doses,
-                                                       offset=offset)
+                                                       offset_ud=offset_ud,
+                                                       offset_lr=offset_lr)
 
     logger.info("Session/directory split successfully")
     return split_output
@@ -330,8 +335,10 @@ if __name__ == '__main__':
     parser.add_argument('--project_id', type=str, default=None, required=True, help="XNAT Project ID")
     parser.add_argument('--session_label', type=str, default=None, required=True, help="XNAT Hotel Session Label")
     parser.add_argument('--output_directory', type=str, default=None, required=True, help="Output directory")
-    parser.add_argument('-offset', '--offset', type=int, default=5,
-                        help='offset from center, default 5 percent from center')
+    parser.add_argument('-offset_ud', '--offset_ud', type=int, default=0,
+                        help='Offset in pixels up and down. 0 means no offset, + values offset down, - values offset up')
+    parser.add_argument('-offset_lr', '--offset_lr', type=int, default=0,
+                        help='Offset in pixels. 0 means no offset, + values offset right, - values offset left')
 
     kwargs = vars(parser.parse_args())
     directories = kwargs.pop('DICOM_DIRECTORY')
