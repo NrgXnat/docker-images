@@ -6,23 +6,27 @@ with the [XNAT Container Services plugin](https://github.com/NrgXnat/container-s
 
 ## Instructions
 
-1. First build the image:
+1. First either pull the image from Docker Hub or build it yourself:
 
-    `docker build -t xnat/pixi_pydicom_split:latest -t xnat/pixi_pydicom_split:0.1 .`
+    `docker pull xnat/pixi_pydicom_split:latest`
 
-2. In XNAT navigate to Administer -> Plugin Settings -> Container Service / Images & Commands and show all 
-the hidden images. Find the `xnat/pixi_pydicom_split:0.1` image and click Add New Command. Copy the contents of 
-`command_xnat_run_pydicom_split.json` into the new command modal and save.
+    or
+
+    `docker build -t xnat/pixi_pydicom_split:latest -t .`
+
+2. In XNAT navigate to Administer -> Plugin Settings -> Container Service / Images & Commands and select the 'New Image'
+button. Enter the image name 'xnat/pixi_pydicom_split' and version tag ':latest'. Click Pull Image.
 
 3. Navigate to the Command Configurations tab and to enable the command at the site-wide level.
 
 4. The command needs to be enabled at the project level. Navigate to your project, and go to Project Settings 
 (found in the Actions box). From the Container Service group select Configure Commands, and enable the pydicom_split
-command.
+commands.
 
 5. Before the container can split the image session a Hotel Scan Record is required. From the project homepage, in the 
-actions box select Record New Hotel Scan. Provide the Session Label of the image session to split, and enter the details 
-for each hotel subject. For empty hotel positions leve the Subject ID blank.
+actions box select 'Record Preclinical Data' -> 'Record New Hotel Scan'. Provide the Session Label of the image session to 
+split, and enter the details for each hotel subject. Click Submit.
 
-6. After submitting the Hotel Scan Record navigate to the image session and launch the hotel splitter container. The 
-hotel splitter will send the individual image sessions back to XNAT.
+6. After submitting the Hotel Scan Record launch the hotel splitter container by selecting 'Run Containers' -> 
+'Scan Record Splitter'. The hotel splitter will split hotel image session and send the individual image sessions back to
+XNAT.
