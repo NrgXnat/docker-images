@@ -84,7 +84,7 @@ def send_session_to_xnat(username: str, password: str, xnat_host: str, project_i
     dest_url = f'{xnat_host}/data/services/import'
     parameters = {
         'import-handler': 'DICOM-zip',
-        'rename': 'true',
+        'Direct-Archive': 'true',
         'overwrite': 'append',
         'PROJECT_ID': project_id,
         'SUBJECT_ID': subject_label,
