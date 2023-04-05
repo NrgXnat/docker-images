@@ -5,7 +5,7 @@
   "version": "1.0",
   "schema-version": "1.0",
   "info-url": "https://github.com/abcsFrederick/pydicom_split",
-  "image": "xnat/pixi_pydicom_split:0.1",
+  "image": "xnat/pixi_pydicom_split:latest",
   "container-name": "",
   "type": "docker",
   "index": "",
