@@ -12,7 +12,7 @@ with the [XNAT Container Services plugin](https://github.com/NrgXnat/container-s
 
     or
 
-    `docker build -t xnat/pixi_pydicom_split:latest -t .`
+    `docker build -t xnat/pixi_pydicom_split:latest .`
 
 2. In XNAT navigate to Administer -> Plugin Settings -> Container Service / Images & Commands and select the 'New Image'
 button. Enter the image name 'xnat/pixi_pydicom_split' and version tag ':latest'. Click Pull Image.
