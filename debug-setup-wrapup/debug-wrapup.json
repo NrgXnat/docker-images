@@ -1,0 +1,12 @@
+{
+    "name": "debug-wrapup",
+    "description": "A command intended to be used as wrapup for debug-with-setup-wrapup",
+    "version": "1.0",
+    "type": "docker-wrapup",
+    "image": "busybox:latest",
+    "command-line": "/bin/sh -c 'echo Beginning wrapup; echo ls -R /input; ls -R /input; cp /input/setup-was-here /output; cp /input/main-was-here /output; touch /output/wrapup-was-here; echo Wrapup complete'",
+    "override-entrypoint": true,
+    "inputs": [],
+    "mounts": [],
+    "xnat": []
+}

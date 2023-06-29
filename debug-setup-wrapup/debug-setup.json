@@ -1,0 +1,12 @@
+{
+    "name": "debug-setup",
+    "description": "A command intended to be used as setup for debug-with-setup-wrapup",
+    "version": "1.0",
+    "type": "docker-setup",
+    "image": "busybox:latest",
+    "command-line": "/bin/sh -c 'echo Beginning setup; echo ls -R /input; ls -R /input; touch /output/setup-was-here; echo Setup complete'",
+    "override-entrypoint": true,
+    "inputs": [],
+    "mounts": [],
+    "xnat": []
+}

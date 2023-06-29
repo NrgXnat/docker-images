@@ -1,0 +1,168 @@
+{
+    "name": "debug-with-setup-wrapup",
+    "description": "Runs a user-provided command. By default, makes a list of files in /input.",
+    "version": "1.0",
+    "schema-version": "1.0",
+    "type": "docker",
+    "image": "busybox:latest",
+    "command-line": "/bin/sh -c 'echo Beginning main; echo ls -R /input; ls -R /input; cp /input/setup-was-here /output; touch /output/main-was-here; echo Main complete'",
+    "override-entrypoint": true,
+    "mounts": [
+        {
+            "name": "in",
+            "writable": "false",
+            "path": "/input"
+        },
+        {
+            "name": "out",
+            "writable": "true",
+            "path": "/output"
+        }
+    ],
+    "inputs": [],
+    "outputs": [
+        {
+            "name": "output",
+            "description": "Whatever output files they want to put in here",
+            "mount": "out",
+            "required": false
+        }
+    ],
+    "xnat": [
+        {
+            "name": "debug-project-with-setup-wrapup",
+            "description": "Run the debug container with a project mounted via a setup container",
+            "contexts": ["xnat:projectData"],
+            "external-inputs": [
+                {
+                    "name": "project",
+                    "description": "Input project",
+                    "type": "Project",
+                    "required": true,
+                    "provides-files-for-command-mount": "in",
+                    "via-setup-command": "busybox:latest:debug-setup",
+                    "load-children": false
+                }
+            ],
+            "derived-inputs": [],
+            "output-handlers": [
+                {
+                    "name": "output-resource",
+                    "accepts-command-output": "output",
+                    "via-wrapup-command": "busybox:latest:debug-wrapup",
+                    "as-a-child-of-wrapper-input": "project",
+                    "type": "Resource",
+                    "label": "DEBUG_OUTPUT"
+                }
+            ]
+        },
+        {
+            "name": "debug-subject-with-setup-wrapup",
+            "description": "Run the debug container with a subject mounted via a setup container",
+            "contexts": ["xnat:subjectData"],
+            "external-inputs": [
+                {
+                    "name": "subject",
+                    "description": "Input subject",
+                    "type": "Subject",
+                    "required": true,
+                    "provides-files-for-command-mount": "in",
+                    "via-setup-command": "busybox:latest:debug-setup",
+                    "load-children": false
+                }
+            ],
+            "derived-inputs": [],
+            "output-handlers": [
+                {
+                    "name": "output-resource",
+                    "accepts-command-output": "output",
+                    "via-wrapup-command": "busybox:latest:debug-wrapup",
+                    "as-a-child-of-wrapper-input": "subject",
+                    "type": "Resource",
+                    "label": "DEBUG_OUTPUT"
+                }
+            ]
+        },
+        {
+            "name": "debug-session-with-setup-wrapup",
+            "description": "Run the debug container with a session mounted via a setup container",
+            "contexts": ["xnat:imageSessionData"],
+            "external-inputs": [
+                {
+                    "name": "session",
+                    "description": "Input session",
+                    "type": "Session",
+                    "required": true,
+                    "provides-files-for-command-mount": "in",
+                    "via-setup-command": "busybox:latest:debug-setup",
+                    "load-children": false
+                }
+            ],
+            "derived-inputs": [],
+            "output-handlers": [
+                {
+                    "name": "output-resource",
+                    "accepts-command-output": "output",
+                    "via-wrapup-command": "busybox:latest:debug-wrapup",
+                    "as-a-child-of-wrapper-input": "session",
+                    "type": "Resource",
+                    "label": "DEBUG_OUTPUT"
+                }
+            ]
+        },
+        {
+            "name": "debug-scan-with-setup-wrapup",
+            "description": "Run the debug container with a scan mounted via a setup container",
+            "contexts": ["xnat:imageScanData"],
+            "external-inputs": [
+                {
+                    "name": "scan",
+                    "description": "Input scan",
+                    "type": "Scan",
+                    "required": true,
+                    "provides-files-for-command-mount": "in",
+                    "via-setup-command": "busybox:latest:debug-setup",
+                    "load-children": false
+                }
+            ],
+            "derived-inputs": [],
+            "output-handlers": [
+                {
+                    "name": "output-resource",
+                    "accepts-command-output": "output",
+                    "via-wrapup-command": "busybox:latest:debug-wrapup",
+                    "as-a-child-of-wrapper-input": "scan",
+                    "type": "Resource",
+                    "label": "DEBUG_OUTPUT"
+                }
+            ]
+        },
+        {
+            "name": "debug-assessor-with-setup-wrapup",
+            "description": "Run the debug container with a assessor mounted via a setup container",
+            "contexts": ["xnat:imageAssessorData"],
+            "external-inputs": [
+                {
+                    "name": "assessor",
+                    "description": "Input assessor",
+                    "type": "Assessor",
+                    "required": true,
+                    "provides-files-for-command-mount": "in",
+                    "via-setup-command": "busybox:latest:debug-setup",
+                    "load-children": false
+                }
+            ],
+            "derived-inputs": [],
+            "output-handlers": [
+                {
+                    "name": "output-resource",
+                    "accepts-command-output": "output",
+                    "via-wrapup-command": "busybox:latest:debug-wrapup",
+                    "as-a-child-of-wrapper-input": "assessor",
+                    "type": "Resource",
+                    "label": "DEBUG_OUTPUT"
+                }
+            ]
+        }
+    ]
+}
