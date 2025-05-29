@@ -1,0 +1,171 @@
+{
+    "name": "inveonFolder2DICOM",
+    "description": "Runs inveonFolder2DICOM.py",
+    "label": "inveonFolder2DICOM",
+    "info-url": "https://github.com/preclinical-imaging/pixi-inveon",
+    "version": "0.0.10",
+    "schema-version": "1.0",
+    "type": "docker",
+    "image": "xnat/pixi-inveon2dicom:v1",
+    "command-line": "python3 -m inveonimaging.inveonFolder2DICOM [CODE_TABLE] [CT_PREFIX] [PET_PREFIX] [FILE] [LEGACY_CONVERTED] [MULTI_FRAME] [STUDY_DESCRIPTION] [PATIENT_NAME] [PATIENT_ID] [PATIENT_DOB] [PATIENT_SEX] [IGNORE_ALL_EXTRA_FILES] [IGNORE_FILE_WITH_EXT] /input/INVEON /output",
+    "mounts": [
+        {
+            "name": "inveon-in",
+            "writable": "false",
+            "path": "/input"
+        },
+        {
+            "name": "dicom-out",
+            "writable": "true",
+            "path": "/output"
+        }
+    ],
+    "inputs": [
+        {
+            "name": "code_table",
+            "description": "JSON file with code table",
+            "type": "string",
+            "required": false,
+            "replacement-key": "[CODE_TABLE]",
+            "command-line-flag": "--codetable"
+        },
+        {
+            "name": "ct_prefix",
+            "description": "Prefix for a CT file",
+            "type": "string",
+            "default-value": "CT",
+            "required": true,
+            "replacement-key": "[CT_PREFIX]",
+            "command-line-flag": "--ct"
+        },
+        {                     
+            "name": "pet_prefix",     
+            "description": "Prefix for a PET file",                        
+            "type": "string",
+            "default-value": "PET",
+            "required": true, 
+            "replacement-key": "[PET_PREFIX]",
+            "command-line-flag": "--pet"    
+        },
+        {                     
+            "name": "file",     
+            "description": "Name of output file for multiframe output",                        
+            "type": "string",
+            "required": false, 
+            "replacement-key": "[FILE]",
+            "command-line-flag": "--file"    
+        },
+        {                     
+            "name": "legacy_converted",     
+            "description": "Use legacy conversion",                        
+            "type": "boolean",
+            "required": false, 
+            "replacement-key": "[LEGACY_CONVERTED]",
+            "true-value": "--legacyconverted",
+            "false-value": ""    
+        },
+        {
+            "name": "multiframe",
+            "description": "Multiframe data",
+            "type": "boolean",
+            "required": false,
+            "replacement-key": "[MULTI_FRAME]",
+            "true-value": "--multiframe",
+            "false-value": ""
+        },  
+        {
+            "name": "study_description",
+            "description": "Set DICOM StudyDescription",
+            "type": "string",
+            "required": false,
+            "replacement-key": "[STUDY_DESCRIPTION]",
+            "command-line-flag": "--studydescription"
+        },  
+        {
+            "name": "patient_name",
+            "description": "Set DICOM PatientName",
+            "type": "string",
+            "required": false,
+            "replacement-key": "[PATIENT_NAME]",
+            "command-line-flag": "--patientname"
+        },  
+        {
+            "name": "patient_id",    
+            "description": "Set DICOM PatientID",
+            "type": "string", 
+            "required": false,
+            "replacement-key": "[PATIENT_ID]",
+            "command-line-flag": "--patientid"    
+        },
+        {
+            "name": "patient_dob",    
+            "description": "Set DICOM PatientBirthDate",
+            "type": "string", 
+            "required": false,
+            "replacement-key": "[PATIENT_DOB]",
+            "command-line-flag": "--patientdob"    
+        },
+        {
+            "name": "patient_sex",    
+            "description": "Set DICOM PatientSex",
+            "type": "string", 
+            "required": false,
+            "replacement-key": "[PATIENT_SEX]",
+            "command-line-flag": "--patientsex"    
+        },
+        {
+            "name": "ignore_all_extra_files",
+            "description": "Ignore presence of all files with extensions other than .img and .hdr",
+            "type": "boolean",
+            "required": false,
+            "default-value": false,
+            "replacement-key": "[IGNORE_ALL_EXTRA_FILES]",
+            "true-value": "--ignoreAllExtraFiles",
+            "false-value": ""
+        },
+        {
+            "name": "ignore_file_with_ext",
+            "description": "Ignore presence of files with specific extensions other than .img and .hdr",
+            "type": "string",
+            "required": true,
+            "default-value": ".xml",
+            "replacement-key": "[IGNORE_FILE_WITH_EXT]",
+            "command-line-flag": "--ignoreFileWithExt"
+        }
+    ],
+    "outputs": [
+        {
+            "name": "dicom",
+            "description": "The DICOM files",
+            "mount": "dicom-out",
+            "required": "true"
+        }
+    ],
+    "xnat": [
+	{
+            "name": "inveonFolder2DICOM",
+            "description": "Runs the inveonFolder2DICOM  container with scan mounted and generates a DICOM output resource",
+            "label": "inveonFolder2DICOM",
+            "contexts": ["xnat:imageScanData"],
+            "external-inputs": [
+                {
+                    "name": "scan",
+                    "description": "Input scan",
+                    "type": "Scan",
+                    "required": true,
+                    "provides-files-for-command-mount": "inveon-in"
+                }
+            ],
+            "derived-inputs": [],
+            "output-handlers": [
+                {
+                    "name": "dicom-resource",
+                    "accepts-command-output": "dicom",
+                    "as-a-child-of-wrapper-input": "scan",
+                    "type": "Resource",
+                    "label": "DICOM"
+                }
+            ]
+        }
+    ]
+}
