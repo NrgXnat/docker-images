@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ pipeline: xnat-get-file.xml
+  ~ XNAT http://www.xnat.org
+  ~ Copyright (c) 2018, Washington University School of Medicine
+  ~ All Rights Reserved
+  ~
+  ~ Released under the Simplified BSD.
+  -->
+
+<!-- edited with XMLSPY v2004 rel. 3 U (http://www.xmlspy.com) by Mohana Ramaratnam (NRG India) -->
+<pip:Resource xmlns:pip="http://nrg.wustl.edu/pipeline">
+	<pip:name>xnat_get_file.sh</pip:name>
+	<pip:location>/Users/xnat/data/pipeline/validation-tools</pip:location>
+	<pip:type>Executable</pip:type>
+	<pip:description>Gets the URI of a file</pip:description>
+	<pip:input>
+		<pip:argument id="host">
+			<pip:description>XNAT Host</pip:description>
+		</pip:argument>
+		<pip:argument id="user">
+			<pip:description>XNAT user</pip:description>
+		</pip:argument>
+		<pip:argument id="password" isSensitive="true">
+			<pip:description>XNAT user password</pip:description>
+		</pip:argument>
+		<pip:argument id="project">
+			<pip:description>XNAT project</pip:description>
+		</pip:argument>
+		<pip:argument id="catalog_content">
+			<pip:description>The content tag within a catalog</pip:description>
+		</pip:argument>
+		<pip:argument id="collection">
+			<pip:description>Value of label attribute to identify a collection</pip:description>
+		</pip:argument>
+		<pip:argument id="file">
+			<pip:description>Path to the file that is retrieved from XNAT</pip:description>
+		</pip:argument>
+	</pip:input>
+</pip:Resource>

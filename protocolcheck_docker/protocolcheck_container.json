@@ -1,0 +1,216 @@
+{
+  "name": "Protocol Validation",
+  "label": "Protocol Validation",
+  "description": "Applies the protocol check (aka validation) on the experiment",
+  "version": "1.0",
+  "schema-version": "1.0",
+  "image": "xnat/validation:v2.0",
+  "type": "docker",
+  "working-directory": "/output",
+  "command-line": "/usr/share/protocolcheck/validate.sh #PROJECT# #SESSION_LABEL# #SESSION# #SUBJECT#  #SESSION_TYPE#  #CATALOG_CONTENT# #RULE_FILE# #NOTIFY# #IMPORT_PROJECT_SITE_FILE# #XNATSERVER#",
+  "mounts": [
+    {
+      "name": "in",
+      "writable": false,
+      "path": "/input"
+    },
+    {
+      "name": "out",
+      "writable": true,
+      "path": "/output"
+    }
+  ],
+  "environment-variables": {},  
+  "inputs": [
+    {
+      "name": "project",
+      "description": "Project ID",
+      "type": "string",
+      "required": true,
+      "replacement-key": "#PROJECT#",
+      "command-line-flag": "",
+      "command-line-separator": ""
+    },
+    {
+      "name": "session_label",
+      "description": "Session Label",
+      "type": "string",
+      "required": true,
+      "replacement-key": "#SESSION_LABEL#",
+      "command-line-flag": "",
+      "command-line-separator": ""
+    },
+    {
+      "name": "session_id",
+      "description": "Session ID",
+      "type": "string",
+      "required": true,
+      "replacement-key": "#SESSION#",
+      "command-line-flag": "",
+      "command-line-separator": ""
+    },
+
+   {
+      "name": "subject",
+      "description": "Subject Label",
+      "type": "string",
+      "required": true,
+      "replacement-key": "#SUBJECT#",
+      "command-line-flag": "",
+      "command-line-separator": ""
+    },    
+   {
+      "name": "session_type",
+      "description": "Experiment XSI Type",
+      "type": "string",
+      "default-value":"xnat:mrSessionData",
+      "required": true,
+      "replacement-key": "#SESSION_TYPE#",
+      "command-line-flag": "",
+      "command-line-separator": ""
+    },    
+   {
+      "name": "catalog_content",
+      "description": "Catalog Content tag of the project level resource for validation",
+      "type": "string",
+      "required": true,
+      "replacement-key": "#CATALOG_CONTENT#",
+      "command-line-flag": "",
+      "command-line-separator": ""
+    },    
+   {
+      "name": "rulefile",
+      "description": "Rule file for the validation",
+      "type": "string",
+      "required": true,
+      "replacement-key": "#RULE_FILE#",
+      "command-line-flag": "",
+      "command-line-separator": ""
+    },    
+   {
+      "name": "notify",
+      "description": "Notify users: possible inputs 1 or 2. When set to 2, users are notified only if validation fails.",
+      "type": "string",
+      "default-value":"1",
+      "required": true,
+      "replacement-key": "#NOTIFY#",
+      "command-line-flag": "",
+      "command-line-separator": ""
+    },    
+    {
+      "name": "import_project_site_file",
+      "description": "Set 1 if there is a project sepecific site import file and 0 otherwise",
+      "type": "string",
+      "default-value":"0",
+      "required": true,
+      "replacement-key": "#IMPORT_PROJECT_SITE_FILE#",
+      "command-line-flag": "",
+      "command-line-separator": ""
+    },
+    {
+      "name": "xnatserver",
+      "description": "XNAT Site ID",
+      "type": "string",
+      "default-value":"XNAT",
+      "required": true,
+      "replacement-key": "#XNATSERVER#",
+      "command-line-flag": "",
+      "command-line-separator": ""
+    }
+  ],
+  "xnat": [
+    {
+      "name": "protocolcheck",
+      "label": null,
+      "description": "Protocol Check (aka validation)",
+      "contexts": [
+        "xnat:imageSessionData"
+      ],
+      "external-inputs": [
+        {
+          "name": "session",
+          "description": "Input session",
+          "type": "Session",
+          "matcher": null,
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "provides-value-for-command-input": null,
+          "provides-files-for-command-mount": "in",
+          "via-setup-command": null,
+          "user-settable": null,
+          "load-children": true
+        }
+      ],
+      "derived-inputs": [
+        {
+          "name": "label",
+          "description": "Session label",
+          "type": "string",
+          "matcher": null,
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "provides-value-for-command-input": "session_label",
+          "provides-files-for-command-mount": null,
+          "user-settable": null,
+          "load-children": true,
+          "derived-from-wrapper-input": "session",
+          "derived-from-xnat-object-property": "label",
+          "via-setup-command": null
+        },
+	{
+   	  "name": "id",
+          "description": "Session ID",
+          "type": "string",
+          "matcher": null,
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "provides-value-for-command-input": "session_id",
+          "provides-files-for-command-mount": null,
+          "user-settable": null,
+          "load-children": true,
+          "derived-from-wrapper-input": "session",
+          "derived-from-xnat-object-property": "id",
+          "via-setup-command": null
+        },
+        {
+          "name": "xnat_project",
+          "description": "Project in which session is stored",
+          "type": "string",
+          "matcher": null,
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "sensitive": null,
+          "provides-value-for-command-input": "project",
+          "provides-files-for-command-mount": null,
+          "user-settable": null,
+          "load-children": true,
+          "derived-from-wrapper-input": "session",
+          "derived-from-xnat-object-property": "project-id",
+          "via-setup-command": null
+        },
+        {
+          "name": "subjectid",
+          "description": "Subject Accession ID",
+          "type": "string",
+          "matcher": null,
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "sensitive": null,
+          "provides-value-for-command-input": "subject",
+          "provides-files-for-command-mount": null,
+          "user-settable": null,
+          "load-children": true,
+          "derived-from-wrapper-input": "session",
+          "derived-from-xnat-object-property": "subject-id",
+          "via-setup-command": null
+        }
+      ]
+    }
+  ],
+  "reserve-memory": 15000
+}
