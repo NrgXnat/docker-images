@@ -263,5 +263,6 @@ for bidsSubject in bidsSubjectMap.itervalues():
 if sessionBidsScans:
     # Its a single session, copy the dataset_description file
     sessionBidsJsonPath = os.path.join(inputDir, 'RESOURCES', 'BIDS', 'dataset_description.json')
-    shutil.copyflie(sessionBidsJsonPath, outputDir)
+    print("Copying the dataset_description.json file")
+    shutil.copy(sessionBidsJsonPath, outputDir)
 print("Done.")
