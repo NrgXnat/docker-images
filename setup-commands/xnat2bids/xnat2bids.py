@@ -260,5 +260,9 @@ for bidsSubject in bidsSubjectMap.itervalues():
             copyScanBidsFiles(sessionDir, bidsSession.bidsScans)
     else:
         copyScanBidsFiles(subjectDir, bidsSubject.bidsScans)
-
+if sessionBidsScans:
+    # Its a single session, copy the dataset_description file
+    sessionBidsJsonPath = os.path.join(inputDir, 'RESOURCES', 'BIDS', 'dataset_description.json')
+    print("Copying the dataset_description.json file")
+    shutil.copy(sessionBidsJsonPath, outputDir)
 print("Done.")
