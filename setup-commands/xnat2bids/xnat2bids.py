@@ -28,7 +28,7 @@ bidsAnatModalities = ['t1w', 't2w', 't1rho', 't1map', 't2map', 't2star', 'flair'
 bidsFuncModalities = ['bold', 'physio', 'stim', 'sbref']
 bidsDwiModalities = ['dwi', 'dti']
 bidsBehavioralModalities = ['beh']
-bidsFieldmapModalities = ['phasemap', 'magnitude1']
+bidsFieldmapModalities = ['phasemap', 'phasediff', 'magnitude1', 'magnitude2', 'fieldmap', 'epi']
 
 class BidsScan(object):
     def __init__(self, scanId, bidsNameMap, *args):

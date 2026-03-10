@@ -102,9 +102,12 @@ def main():
     print("Generating random user information.")
     r = requests.get('https://randomuser.me/api/', params={"inc": "name", "noinfo": "true", "nat": "us"})
     if r.ok:
-        userResults = r.json()['results'][0]
-        nameObj = userResults['name']
-        name = ' '.join((nameObj['title'], nameObj['first'], nameObj['last']))
+        try:
+           userResults = r.json()['results'][0]
+           nameObj = userResults['name']
+           name = ' '.join((nameObj['title'], nameObj['first'], nameObj['last']))
+        except IndexError:
+           name = 'A. User'  
     else:
         name = 'A. User'
     print("Generated username {}.".format(name))
@@ -170,5 +173,5 @@ def main():
         f.write(randstring(length)+"\n")
 
 if __name__ == '__main__':
-    print idstring
+    print(idstring)
     main()
