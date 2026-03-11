@@ -189,6 +189,43 @@ def copyScanBidsFiles(destDirBase, bidsScanList):
         for f in scan.sourceFiles:
             shutil.copy(f, destDir)
 
+def injectIntendedFor(destDirBase, subjectDir):
+    """Inject IntendedFor into fmap JSON sidecars per BIDS spec.
+
+    All fieldmaps are declared as intended for all func and dwi runs
+    in the session. Paths are relative to the subject directory.
+    """
+    fmapDir = os.path.join(destDirBase, 'fmap')
+    if not os.path.isdir(fmapDir):
+        return
+
+    # Collect target .nii.gz paths from func/ and dwi/
+    targets = []
+    for subdir in ('func', 'dwi'):
+        d = os.path.join(destDirBase, subdir)
+        if os.path.isdir(d):
+            for f in sorted(glob(os.path.join(d, '*.nii.gz'))):
+                # IntendedFor is relative to subject dir with forward slashes
+                rel = os.path.relpath(f, subjectDir).replace(os.sep, '/')
+                targets.append(rel)
+
+    if not targets:
+        return
+
+    # Inject into every fmap JSON sidecar
+    for fmap_json in sorted(glob(os.path.join(fmapDir, '*.json'))):
+        try:
+            with open(fmap_json) as fh:
+                data = json.load(fh)
+            data['IntendedFor'] = targets
+            with open(fmap_json, 'w') as fh:
+                json.dump(data, fh, indent=2)
+                fh.write('\n')
+            print("Injected IntendedFor into {}: {}".format(
+                os.path.basename(fmap_json), targets))
+        except Exception as e:
+            print("WARNING: Could not patch {}: {}".format(fmap_json, e))
+
 version = "1.0"
 args = docopt(__doc__, version=version)
 
@@ -258,8 +295,10 @@ for bidsSubject in bidsSubjectMap.itervalues():
             sessionDir = os.path.join(subjectDir, "ses-" + bidsSession.sessionLabel)
             os.mkdir(sessionDir)
             copyScanBidsFiles(sessionDir, bidsSession.bidsScans)
+            injectIntendedFor(sessionDir, subjectDir)
     else:
         copyScanBidsFiles(subjectDir, bidsSubject.bidsScans)
+        injectIntendedFor(subjectDir, subjectDir)
 if sessionBidsScans:
     # Its a single session, copy the dataset_description file
     sessionBidsJsonPath = os.path.join(inputDir, 'RESOURCES', 'BIDS', 'dataset_description.json')
