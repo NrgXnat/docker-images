@@ -189,6 +189,35 @@ def copyScanBidsFiles(destDirBase, bidsScanList):
         for f in scan.sourceFiles:
             shutil.copy(f, destDir)
 
+def injectTaskName(destDirBase):
+    """Inject TaskName into func JSON sidecars if missing.
+
+    Derives the value from the task-<label> entity in the filename.
+    """
+    funcDir = os.path.join(destDirBase, 'func')
+    if not os.path.isdir(funcDir):
+        return
+
+    for func_json in sorted(glob(os.path.join(funcDir, '*.json'))):
+        basename = os.path.basename(func_json)
+        nameMap = generateBidsNameMap(basename.replace('.json', ''))
+        taskLabel = nameMap.get('task')
+        if not taskLabel:
+            continue
+
+        try:
+            with open(func_json) as fh:
+                data = json.load(fh)
+            if 'TaskName' not in data:
+                data['TaskName'] = taskLabel
+                with open(func_json, 'w') as fh:
+                    json.dump(data, fh, indent=2)
+                    fh.write('\n')
+                print("Injected TaskName '{}' into {}".format(
+                    taskLabel, basename))
+        except Exception as e:
+            print("WARNING: Could not patch {}: {}".format(func_json, e))
+
 def injectIntendedFor(destDirBase, subjectDir):
     """Inject IntendedFor into fmap JSON sidecars per BIDS spec.
 
@@ -244,7 +273,17 @@ if sessionBidsScans:
     if not subject:
         # We would have already printed an error message, so no need to print anything here
         sys.exit(1)
-    bidsSubjectMap = {subject: BidsSubject(subject, bidsScans=sessionBidsScans)}
+
+    # Check if scans have a session entity in their filenames
+    sessionLabels = list({scan.bidsNameMap.get('ses') for scan in sessionBidsScans if scan.bidsNameMap.get('ses')})
+    if sessionLabels:
+        # Filenames contain ses- entity, so create a proper session directory
+        sessionLabel = sessionLabels[0]
+        print("Detected session label '{}' in filenames. Creating session directory.".format(sessionLabel))
+        bidsSession = BidsSession(sessionLabel, sessionBidsScans)
+        bidsSubjectMap = {subject: BidsSubject(subject, bidsSession=bidsSession)}
+    else:
+        bidsSubjectMap = {subject: BidsSubject(subject, bidsScans=sessionBidsScans)}
 else:
     # Ok, we didn't find any BIDS scan directories in inputDir. We may be looking at a collection of session directories.
     print("")
@@ -296,9 +335,11 @@ for bidsSubject in bidsSubjectMap.itervalues():
             os.mkdir(sessionDir)
             copyScanBidsFiles(sessionDir, bidsSession.bidsScans)
             injectIntendedFor(sessionDir, subjectDir)
+            injectTaskName(sessionDir)
     else:
         copyScanBidsFiles(subjectDir, bidsSubject.bidsScans)
         injectIntendedFor(subjectDir, subjectDir)
+        injectTaskName(subjectDir)
 if sessionBidsScans:
     # Its a single session, copy the dataset_description file
     sessionBidsJsonPath = os.path.join(inputDir, 'RESOURCES', 'BIDS', 'dataset_description.json')
