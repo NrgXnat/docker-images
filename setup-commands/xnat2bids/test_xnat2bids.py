@@ -357,6 +357,79 @@ class TestInjectTaskName(unittest.TestCase):
             self.assertEqual(data['TaskName'], task)
 
 
+class TestCleanFmapDir(unittest.TestCase):
+    """Test removal of bval/bvec files from fmap directory."""
+
+    def setUp(self):
+        self.tmpdir = tempfile.mkdtemp()
+
+    def tearDown(self):
+        shutil.rmtree(self.tmpdir)
+
+    def _import_function(self):
+        """Import cleanFmapDir without triggering docopt."""
+        import types
+        src_path = os.path.join(os.path.dirname(__file__), 'xnat2bids.py')
+        with open(src_path) as f:
+            source = f.read()
+
+        module = types.ModuleType('xnat2bids_test')
+        module.__dict__['os'] = os
+        import glob as glob_mod
+        module.__dict__['glob'] = glob_mod.glob
+
+        lines = source.split('\n')
+        func_lines = []
+        in_func = False
+        for line in lines:
+            if line.startswith('def cleanFmapDir('):
+                in_func = True
+            elif in_func and line and not line[0].isspace() and not line.startswith('#'):
+                break
+            if in_func:
+                func_lines.append(line)
+
+        exec('\n'.join(func_lines), module.__dict__)
+        return module.__dict__['cleanFmapDir']
+
+    def test_removes_bval_bvec_from_fmap(self):
+        """bval and bvec files should be removed from fmap directory."""
+        cleanFmapDir = self._import_function()
+        fmapDir = os.path.join(self.tmpdir, 'fmap')
+        os.makedirs(fmapDir)
+
+        # Create valid fmap files
+        for f in ['sub-01_epi.nii.gz', 'sub-01_epi.json']:
+            open(os.path.join(fmapDir, f), 'w').close()
+        # Create invalid bval/bvec
+        for f in ['sub-01_epi.bval', 'sub-01_epi.bvec']:
+            open(os.path.join(fmapDir, f), 'w').close()
+
+        cleanFmapDir(self.tmpdir)
+
+        remaining = sorted(os.listdir(fmapDir))
+        self.assertEqual(remaining, ['sub-01_epi.json', 'sub-01_epi.nii.gz'])
+
+    def test_no_fmap_dir(self):
+        """Should silently return if no fmap directory exists."""
+        cleanFmapDir = self._import_function()
+        cleanFmapDir(self.tmpdir)  # Should not raise
+
+    def test_fmap_without_bval_bvec(self):
+        """Should leave fmap alone if no bval/bvec present."""
+        cleanFmapDir = self._import_function()
+        fmapDir = os.path.join(self.tmpdir, 'fmap')
+        os.makedirs(fmapDir)
+
+        for f in ['sub-01_epi.nii.gz', 'sub-01_epi.json']:
+            open(os.path.join(fmapDir, f), 'w').close()
+
+        cleanFmapDir(self.tmpdir)
+
+        remaining = sorted(os.listdir(fmapDir))
+        self.assertEqual(remaining, ['sub-01_epi.json', 'sub-01_epi.nii.gz'])
+
+
 class TestSessionDirectoryDetection(unittest.TestCase):
     """Test that generateBidsNameMap correctly parses ses- entity from filenames.
 

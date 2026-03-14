@@ -218,6 +218,21 @@ def injectTaskName(destDirBase):
         except Exception as e:
             print("WARNING: Could not patch {}: {}".format(func_json, e))
 
+def cleanFmapDir(destDirBase):
+    """Remove bval/bvec files from fmap directory.
+
+    dcm2niix generates bval/bvec for DWI-based EPI fieldmaps but these
+    are not valid BIDS files in fmap/ and cause validation errors.
+    """
+    fmapDir = os.path.join(destDirBase, 'fmap')
+    if not os.path.isdir(fmapDir):
+        return
+
+    for ext in ('*.bval', '*.bvec'):
+        for f in glob(os.path.join(fmapDir, ext)):
+            os.remove(f)
+            print("Removed invalid fmap file: {}".format(os.path.basename(f)))
+
 def injectIntendedFor(destDirBase, subjectDir):
     """Inject IntendedFor into fmap JSON sidecars per BIDS spec.
 
@@ -336,10 +351,12 @@ for bidsSubject in bidsSubjectMap.itervalues():
             copyScanBidsFiles(sessionDir, bidsSession.bidsScans)
             injectIntendedFor(sessionDir, subjectDir)
             injectTaskName(sessionDir)
+            cleanFmapDir(sessionDir)
     else:
         copyScanBidsFiles(subjectDir, bidsSubject.bidsScans)
         injectIntendedFor(subjectDir, subjectDir)
         injectTaskName(subjectDir)
+        cleanFmapDir(subjectDir)
 if sessionBidsScans:
     # Its a single session, copy the dataset_description file
     sessionBidsJsonPath = os.path.join(inputDir, 'RESOURCES', 'BIDS', 'dataset_description.json')
